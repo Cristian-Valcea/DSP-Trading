@@ -9,6 +9,7 @@ Provides async interface to Interactive Brokers TWS/Gateway with:
 """
 
 import asyncio
+import inspect
 import logging
 from contextlib import asynccontextmanager
 from datetime import date, datetime, timedelta
@@ -205,18 +206,15 @@ class IBKRClient:
 
                 self._ib = IB()
 
-                # Use asyncio timeout for connection
+                # Use ib_insync async API directly (thread-safe, no executor).
                 await asyncio.wait_for(
-                    asyncio.get_event_loop().run_in_executor(
-                        None,
-                        lambda: self._ib.connect(
-                            self.host,
-                            self.port,
-                            clientId=self.client_id,
-                            timeout=self.timeout
-                        )
+                    self._ib.connectAsync(
+                        self.host,
+                        self.port,
+                        clientId=self.client_id,
+                        timeout=self.timeout,
                     ),
-                    timeout=self.timeout * 2
+                    timeout=self.timeout * 2,
                 )
 
                 self._connected = True
@@ -290,14 +288,9 @@ class IBKRClient:
         await self._rate_limiter.acquire()
 
         try:
-            # Run synchronous ib_insync calls in executor
-            result = await asyncio.wait_for(
-                asyncio.get_event_loop().run_in_executor(
-                    None,
-                    lambda: func(*args, **kwargs)
-                ),
-                timeout=self.timeout
-            )
+            result = func(*args, **kwargs)
+            if inspect.isawaitable(result):
+                result = await asyncio.wait_for(result, timeout=self.timeout)
 
             if self._monitor:
                 self._monitor.heartbeat()
@@ -324,24 +317,40 @@ class IBKRClient:
         """
         self._ensure_connected()
 
-        # Request account values
-        account_values = await self._api_call(
-            self._ib.accountSummary
-        )
-
-        if not account_values:
-            # Fallback to reqAccountSummary
-            await self._api_call(
-                self._ib.reqAccountSummary
-            )
-            await asyncio.sleep(0.5)  # Wait for data
-            account_values = self._ib.accountSummary()
+        # Use async API; calling the sync wrapper from an async loop will crash.
+        account_values = await self._api_call(self._ib.accountSummaryAsync)
 
         # Parse account values into summary
-        values = {}
+        wanted_tags = {
+            "NetLiquidation",
+            "AvailableFunds",
+            "BuyingPower",
+            "MaintMarginReq",
+            "TotalCashValue",
+        }
+        values_by_currency: Dict[str, Dict[str, float]] = {}
         for av in account_values:
-            if av.currency == "USD":
-                values[av.tag] = float(av.value) if av.value else 0.0
+            if av.tag not in wanted_tags:
+                continue
+            try:
+                val = float(av.value) if av.value else 0.0
+            except (TypeError, ValueError):
+                logger.debug("Skipping non-numeric account value: %s=%r", av.tag, av.value)
+                continue
+
+            currency = av.currency or "BASE"
+            values_by_currency.setdefault(currency, {})[av.tag] = val
+
+        # Choose the currency bucket that contains the largest NetLiquidation.
+        best_currency = "BASE"
+        best_nlv = -1.0
+        for currency, vals in values_by_currency.items():
+            nlv = vals.get("NetLiquidation", 0.0)
+            if nlv > best_nlv:
+                best_nlv = nlv
+                best_currency = currency
+
+        values = values_by_currency.get(best_currency, {})
 
         return AccountSummary(
             nlv=values.get("NetLiquidation", 0.0),
@@ -349,6 +358,7 @@ class IBKRClient:
             buying_power=values.get("BuyingPower", 0.0),
             margin_used=values.get("MaintMarginReq", 0.0),
             cash=values.get("TotalCashValue", 0.0),
+            currency=best_currency,
             account_id=account_values[0].account if account_values else "",
         )
 
@@ -361,9 +371,8 @@ class IBKRClient:
         """
         self._ensure_connected()
 
-        positions = await self._api_call(
-            self._ib.positions
-        )
+        await self._api_call(self._ib.reqPositionsAsync)
+        positions = self._ib.positions()
 
         result = {}
         for pos in positions:
@@ -380,9 +389,7 @@ class IBKRClient:
             )
 
         # Update market values and PnL
-        portfolio = await self._api_call(
-            self._ib.portfolio
-        )
+        portfolio = self._ib.portfolio()
 
         for item in portfolio:
             symbol = item.contract.symbol
@@ -423,7 +430,7 @@ class IBKRClient:
         contract = await self._get_contract(symbol)
 
         bars = await self._api_call(
-            self._ib.reqHistoricalData,
+            self._ib.reqHistoricalDataAsync,
             contract,
             endDateTime="",
             durationStr=duration,
@@ -440,8 +447,12 @@ class IBKRClient:
         # Convert to DataFrame
         data = []
         for bar in bars:
+            ts = pd.Timestamp(bar.date)
+            if ts.tzinfo is not None:
+                ts = ts.tz_localize(None)
+            ts = ts.normalize()
             data.append({
-                "date": bar.date.date() if hasattr(bar.date, 'date') else bar.date,
+                "date": ts,
                 "open": bar.open,
                 "high": bar.high,
                 "low": bar.low,
@@ -469,18 +480,10 @@ class IBKRClient:
         self._ensure_connected()
 
         contract = await self._get_contract(symbol)
-
-        # Request snapshot
-        ticker = await self._api_call(
-            self._ib.reqMktData,
-            contract,
-            "",
-            True,  # snapshot=True
-            False,
-        )
-
-        # Wait for data
-        await asyncio.sleep(0.5)
+        tickers = await self._api_call(self._ib.reqTickersAsync, contract)
+        ticker = tickers[0] if tickers else None
+        if ticker is None:
+            raise ValueError(f"No ticker returned for {symbol}")
 
         return Quote(
             symbol=symbol,
@@ -509,10 +512,7 @@ class IBKRClient:
 
         contract = await self._get_contract(symbol)
 
-        details = await self._api_call(
-            self._ib.reqContractDetails,
-            contract
-        )
+        details = await self._api_call(self._ib.reqContractDetailsAsync, contract)
 
         if details:
             min_tick = details[0].minTick
@@ -548,10 +548,7 @@ class IBKRClient:
             contract.currency = "USD"
 
         # Qualify the contract
-        qualified = await self._api_call(
-            self._ib.qualifyContracts,
-            contract
-        )
+        qualified = await self._api_call(self._ib.qualifyContractsAsync, contract)
 
         if qualified:
             self._contract_cache[cache_key] = qualified[0]
@@ -582,7 +579,7 @@ class IBKRClient:
 
         # Get chain info
         chains = await self._api_call(
-            self._ib.reqSecDefOptParams,
+            self._ib.reqSecDefOptParamsAsync,
             underlying,
             "",
             "STK",
@@ -647,10 +644,7 @@ class IBKRClient:
         )
 
         # Qualify contract
-        qualified = await self._api_call(
-            self._ib.qualifyContracts,
-            contract
-        )
+        qualified = await self._api_call(self._ib.qualifyContractsAsync, contract)
 
         if not qualified:
             raise ValueError(f"Could not qualify option contract: {underlying} {strike} {expiry} {right}")
@@ -658,16 +652,13 @@ class IBKRClient:
         contract = qualified[0]
 
         # Request market data with greeks
-        ticker = await self._api_call(
-            self._ib.reqMktData,
+        tickers = await self._api_call(
+            self._ib.reqTickersAsync,
             contract,
-            "100,101,104,106",  # Option greeks
-            True,  # snapshot
-            False,
         )
-
-        # Wait for data
-        await asyncio.sleep(1.0)
+        ticker = tickers[0] if tickers else None
+        if ticker is None:
+            raise ValueError(f"No ticker returned for option {underlying} {strike} {expiry} {right}")
 
         # Build OptionContract
         opt = OptionContract(
@@ -681,7 +672,7 @@ class IBKRClient:
         )
 
         # Add greeks if available
-        if ticker.modelGreeks:
+        if getattr(ticker, "modelGreeks", None):
             opt.delta = ticker.modelGreeks.delta
             opt.gamma = ticker.modelGreeks.gamma
             opt.theta = ticker.modelGreeks.theta
@@ -731,11 +722,7 @@ class IBKRClient:
             raise ValueError(f"Unsupported order type: {order.order_type}")
 
         # Place order
-        trade = await self._api_call(
-            self._ib.placeOrder,
-            contract,
-            ib_order,
-        )
+        trade = self._ib.placeOrder(contract, ib_order)
 
         # Wait briefly for status update
         await asyncio.sleep(0.5)
@@ -777,11 +764,7 @@ class IBKRClient:
             )
 
         # Request what-if
-        what_if = await self._api_call(
-            self._ib.whatIfOrder,
-            contract,
-            ib_order,
-        )
+        what_if = await self._api_call(self._ib.whatIfOrderAsync, contract, ib_order)
 
         # Get current NLV for margin ratio
         summary = await self.get_account_summary()
@@ -854,9 +837,7 @@ class IBKRClient:
         """
         self._ensure_connected()
 
-        fills = await self._api_call(
-            self._ib.fills
-        )
+        fills = self._ib.fills()
 
         result = []
         for fill in fills:
@@ -888,9 +869,7 @@ class IBKRClient:
         """
         self._ensure_connected()
 
-        dt = await self._api_call(
-            self._ib.reqCurrentTime
-        )
+        dt = await self._api_call(self._ib.reqCurrentTimeAsync)
 
         return dt
 

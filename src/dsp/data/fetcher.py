@@ -96,11 +96,17 @@ class DataFetcher:
             cached = self.cache.get_daily_bars(symbol, start_date, end_date)
             if cached is not None:
                 logger.debug(f"Cache hit for {symbol} daily bars")
+                cached = self._standardize_columns(cached)
+                cached = self._standardize_index(cached)
                 return cached
 
         # Fetch from IBKR
         what_to_show = self.ADJUSTED_LAST if adjusted else self.TRADES
-        duration = f"{lookback_days} D"
+        if lookback_days <= 365:
+            duration = f"{lookback_days} D"
+        else:
+            years = (lookback_days + 364) // 365
+            duration = f"{years} Y"
 
         try:
             df = await self.ibkr.get_historical_data(
@@ -116,6 +122,11 @@ class DataFetcher:
 
             # Standardize column names
             df = self._standardize_columns(df)
+            df = self._standardize_index(df)
+            df = df.loc[
+                (df.index >= pd.Timestamp(start_date))
+                & (df.index <= pd.Timestamp(end_date))
+            ].copy()
 
             # Validate if requested
             if validate:
@@ -344,7 +355,11 @@ class DataFetcher:
         Returns:
             Total return as decimal (0.10 = 10%)
         """
-        lookback_days = months * 30 + 35  # Extra buffer
+        # Need enough trading days to compute the requested window.
+        # If skip_month=True we drop ~21 trading days, so we must request more history.
+        trading_days_required = int(months * 21) + (21 if skip_month else 0)
+        # Convert trading days → calendar days with a cushion for holidays/gaps.
+        lookback_days = max(months * 30 + 35, int(trading_days_required * 1.8) + 10)
 
         if end_date is None:
             end_date = self.calendar.get_latest_complete_session()
@@ -447,6 +462,26 @@ class DataFetcher:
         # Also lowercase any remaining columns
         df.columns = [c.lower() if isinstance(c, str) else c for c in df.columns]
 
+        return df
+
+    def _standardize_index(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Standardize the DataFrame index to a tz-naive normalized DatetimeIndex.
+
+        IBKR and Parquet round-trips can produce indices of type `datetime.date`,
+        `datetime64`, or tz-aware `Timestamp`. Downstream code expects comparable
+        pandas Timestamps.
+        """
+        if "date" in df.columns:
+            df = df.copy()
+            df["date"] = pd.to_datetime(df["date"], errors="coerce")
+            df = df.set_index("date")
+
+        df.index = pd.to_datetime(df.index, errors="coerce")
+        if getattr(df.index, "tz", None) is not None:
+            df.index = df.index.tz_localize(None)
+        df.index = df.index.normalize()
+        df = df.sort_index()
         return df
 
     async def prefetch_universe(
