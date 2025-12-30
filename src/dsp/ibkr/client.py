@@ -485,14 +485,21 @@ class IBKRClient:
         if ticker is None:
             raise ValueError(f"No ticker returned for {symbol}")
 
+        # Helper to safely convert to int (handles NaN which is truthy but not convertible)
+        def safe_int(val) -> int:
+            import math
+            if val is None or (isinstance(val, float) and math.isnan(val)):
+                return 0
+            return int(val)
+
         return Quote(
             symbol=symbol,
             bid=ticker.bid if ticker.bid and ticker.bid > 0 else 0.0,
             ask=ticker.ask if ticker.ask and ticker.ask > 0 else 0.0,
             last=ticker.last if ticker.last and ticker.last > 0 else 0.0,
-            bid_size=int(ticker.bidSize) if ticker.bidSize else 0,
-            ask_size=int(ticker.askSize) if ticker.askSize else 0,
-            volume=int(ticker.volume) if ticker.volume else 0,
+            bid_size=safe_int(ticker.bidSize),
+            ask_size=safe_int(ticker.askSize),
+            volume=safe_int(ticker.volume),
         )
 
     async def get_min_tick(self, symbol: str) -> float:
