@@ -349,10 +349,13 @@ class SleeveC:
             if dte < min_dte:
                 min_dte = dte
 
+        # If no spreads, min_dte stays as inf; convert to 0 for status but
+        # needs_roll should be False when there are no spreads to roll.
+        has_spreads = bool(self._active_spreads)
         min_dte = int(min_dte) if min_dte != float('inf') else 0
 
-        # Check if roll is needed
-        needs_roll = min_dte <= self.config.roll_dte
+        # Check if roll is needed - only if we have spreads AND they're near expiry
+        needs_roll = has_spreads and (min_dte <= self.config.roll_dte)
 
         # Calculate coverage ratio
         if portfolio_nav > 0 and total_contracts > 0:
@@ -409,8 +412,10 @@ class SleeveC:
         # Find new spread target
         new_target = await self.spread_manager.find_strikes_by_delta(
             underlying=self.config.underlying,
-            target_long_delta=PutSpreadManager.LONG_PUT_DELTA,
-            target_short_delta=PutSpreadManager.SHORT_PUT_DELTA,
+            target_long_delta=self.config.long_delta_target,
+            target_short_delta=self.config.short_delta_target,
+            min_dte=self.config.target_dte_min,
+            max_dte=self.config.target_dte_max,
         )
 
         if new_target is None:
@@ -482,8 +487,10 @@ class SleeveC:
         # Find spread target
         target = await self.spread_manager.find_strikes_by_delta(
             underlying=self.config.underlying,
-            target_long_delta=PutSpreadManager.LONG_PUT_DELTA,
-            target_short_delta=PutSpreadManager.SHORT_PUT_DELTA,
+            target_long_delta=self.config.long_delta_target,
+            target_short_delta=self.config.short_delta_target,
+            min_dte=self.config.target_dte_min,
+            max_dte=self.config.target_dte_max,
         )
 
         if target is None:

@@ -106,6 +106,15 @@ class SleeveCConfig:
     underlying: str = "SPY"
     max_spreads: int = 5
 
+    # Backwards-compatible aliases used by some modules.
+    @property
+    def annual_budget(self) -> float:
+        return self.annual_budget_pct
+
+    @property
+    def roll_dte(self) -> int:
+        return self.roll_dte_trigger
+
 
 @dataclass
 class RiskConfig:
@@ -171,6 +180,10 @@ class Config:
 
     # Universe data (loaded separately)
     sleeve_b_universe: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)
+
+
+# Backwards-compatible name used by the orchestrator.
+DSPConfig = Config
 
 
 def _apply_env_overrides(config: Config) -> Config:
