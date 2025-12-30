@@ -104,6 +104,8 @@ class DailyOrchestrator:
         # Tracking
         self._last_execution: Optional[ExecutionResult] = None
         self._positions: Dict[str, Position] = {}
+        self._external_positions: Dict[str, Position] = {}
+        self._external_positions_blocking: bool = False
 
     async def initialize(self) -> bool:
         """
@@ -186,6 +188,39 @@ class DailyOrchestrator:
         """Sync current positions from IBKR."""
         self._positions = await self._ibkr.get_positions()
 
+        # External positions safety check: DSP-100K v1 only manages STK/ETF.
+        # If the account contains FUT/OPT/etc, risk and margin signals are contaminated and
+        # the executor may not be able to manage those exposures.
+        self._external_positions = {
+            symbol: pos
+            for symbol, pos in self._positions.items()
+            if pos.quantity != 0 and (pos.sec_type or "").upper() != "STK"
+        }
+        self._external_positions_blocking = (
+            bool(self._external_positions) and not bool(self.config.general.allow_external_positions)
+        )
+        if self._external_positions:
+            summary = ", ".join(
+                f"{p.symbol}({(p.sec_type or '').upper()})={p.quantity}"
+                for p in list(self._external_positions.values())[:10]
+            )
+            more = "" if len(self._external_positions) <= 10 else f" …(+{len(self._external_positions) - 10} more)"
+            if self._external_positions_blocking:
+                logger.warning(
+                    "⚠️  External positions detected (non-STK): %s%s. "
+                    "Trading will be BLOCKED unless you flatten them or set "
+                    "general.allow_external_positions=true (or DSP_ALLOW_EXTERNAL_POSITIONS=true).",
+                    summary,
+                    more,
+                )
+            else:
+                logger.warning(
+                    "⚠️  External positions detected (non-STK): %s%s. "
+                    "Proceeding because allow_external_positions=true.",
+                    summary,
+                    more,
+                )
+
         # Update sleeves with current positions
         sleeve_b_positions = {
             s: int(p.quantity) for s, p in self._positions.items()
@@ -237,9 +272,29 @@ class DailyOrchestrator:
             # Sync positions
             await self._sync_positions()
 
+            if self._external_positions_blocking:
+                msg = (
+                    "External (non-STK) positions are present in the account; "
+                    "DSP-100K v1 refuses to trade to avoid mixing strategies. "
+                    "Flatten them first, or set general.allow_external_positions=true "
+                    "(DSP_ALLOW_EXTERNAL_POSITIONS=true) to override."
+                )
+                logger.error("🛑 %s", msg)
+                self.state = OrchestratorState.ERROR
+                return ExecutionResult(
+                    as_of_date=today,
+                    success=False,
+                    sleeve_b_report=None,
+                    sleeve_c_report=None,
+                    risk_status=await self._risk.get_status(today),
+                    total_commission=0,
+                    total_slippage_bps=0,
+                    errors=[msg],
+                )
+
             # Get account summary
             summary = await self._ibkr.get_account_summary()
-            logger.info(f"Account NLV: ${summary.nlv:,.2f}")
+            logger.info(f"Account NLV: {summary.currency} {summary.nlv:,.2f}")
 
             # 2. Risk check
             risk_status = await self._risk.get_status(today)
@@ -262,7 +317,12 @@ class DailyOrchestrator:
             # 3. Generate daily plan
             plan = await self._generate_plan(today, summary, risk_status)
             logger.info(f"Generated plan with {len(plan.sleeve_b_orders)} Sleeve B orders")
-            logger.info(f"Scale factor: {plan.scale_factor:.2f}")
+            logger.info(
+                "Scale factor (effective): %.2f (risk_mgr=%.2f, manual=%.2f)",
+                plan.scale_factor,
+                risk_status.scale_factor,
+                float(self.config.general.risk_scale),
+            )
 
             # 4. Execute Sleeve B
             sleeve_b_report = None
@@ -376,8 +436,10 @@ class DailyOrchestrator:
         # Simplified allocation: 30% Sleeve A, 30% Sleeve B, 2.5% Sleeve C budget
         sleeve_b_nav = total_nav * 0.30
 
-        # Apply risk scale factor
-        scale_factor = risk_status.scale_factor
+        # Apply risk scale factors:
+        # - risk_status.scale_factor is computed by RiskManager (drawdown/vol/margin)
+        # - config.general.risk_scale is an operator-controlled manual scale (e.g. 0.25 for small-size live)
+        scale_factor = risk_status.scale_factor * float(self.config.general.risk_scale)
 
         # Get current prices
         prices = await self._get_current_prices(self._sleeve_b.symbols)

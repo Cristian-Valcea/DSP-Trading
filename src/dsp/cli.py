@@ -110,7 +110,10 @@ def run(ctx: click.Context, force: bool) -> None:
                 table.add_row("Total Commission", f"${result.total_commission:.2f}")
                 table.add_row("Avg Slippage", f"{result.total_slippage_bps:.1f} bps")
                 table.add_row("Risk Level", result.risk_status.level.value)
-                table.add_row("Scale Factor", f"{result.risk_status.scale_factor:.2f}")
+                manual_scale = float(config.general.risk_scale)
+                table.add_row("Scale (risk mgr)", f"{result.risk_status.scale_factor:.2f}")
+                table.add_row("Scale (manual)", f"{manual_scale:.2f}")
+                table.add_row("Scale (effective)", f"{result.risk_status.scale_factor * manual_scale:.2f}")
 
                 console.print(table)
                 return True
@@ -149,6 +152,7 @@ def status(ctx: click.Context) -> None:
                 return
 
             status = orchestrator.get_status()
+            summary = await orchestrator._ibkr.get_account_summary()
             risk_status = await orchestrator._risk.get_status()
 
             # Status table
@@ -162,6 +166,11 @@ def status(ctx: click.Context) -> None:
                 "[green]Connected[/green]" if status["ibkr_connected"] else "[red]Disconnected[/red]",
             )
             table.add_row("Positions", str(status["positions_count"]))
+            external_positions = getattr(orchestrator, "_external_positions", {}) or {}
+            if external_positions:
+                blocking = bool(getattr(orchestrator, "_external_positions_blocking", False))
+                label = f"{len(external_positions)} (BLOCKING)" if blocking else str(len(external_positions))
+                table.add_row("External Positions", f"[yellow]{label}[/yellow]")
 
             if status["last_execution"]["date"]:
                 table.add_row("Last Execution", status["last_execution"]["date"])
@@ -180,7 +189,10 @@ def status(ctx: click.Context) -> None:
             risk_table.add_column("Value", style="green")
 
             risk_table.add_row("Risk Level", risk_status.level.value)
-            risk_table.add_row("Scale Factor", f"{risk_status.scale_factor:.2f}")
+            manual_scale = float(config.general.risk_scale)
+            risk_table.add_row("Scale (risk mgr)", f"{risk_status.scale_factor:.2f}")
+            risk_table.add_row("Scale (manual)", f"{manual_scale:.2f}")
+            risk_table.add_row("Scale (effective)", f"{risk_status.scale_factor * manual_scale:.2f}")
             risk_table.add_row(
                 "Double Strike",
                 "[red]ACTIVE[/red]" if risk_status.double_strike_active else "[green]Inactive[/green]",
@@ -190,8 +202,8 @@ def status(ctx: click.Context) -> None:
             dd = risk_status.drawdown
             dd_color = "green" if dd.drawdown_pct < 0.06 else "yellow" if dd.drawdown_pct < 0.10 else "red"
             risk_table.add_row("Drawdown", f"[{dd_color}]{dd.drawdown_pct:.1%}[/{dd_color}]")
-            risk_table.add_row("Peak NAV", f"${dd.peak_nav:,.2f}")
-            risk_table.add_row("Current NAV", f"${dd.current_nav:,.2f}")
+            risk_table.add_row("Peak NAV", f"{summary.currency} {dd.peak_nav:,.2f}")
+            risk_table.add_row("Current NAV", f"{summary.currency} {dd.current_nav:,.2f}")
 
             # Margin
             margin = risk_status.margin
@@ -430,7 +442,7 @@ def validate(ctx: click.Context) -> None:
                 console.print("[green]✓[/green] IBKR connection successful")
                 summary = await client.get_account_summary()
                 console.print(f"  Account: {summary.account_id}")
-                console.print(f"  NLV: ${summary.nlv:,.2f}")
+                console.print(f"  NLV: {summary.currency} {summary.nlv:,.2f}")
                 await client.disconnect()
             else:
                 errors.append("Failed to connect to IBKR")
@@ -513,9 +525,27 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
             summary = await orchestrator._ibkr.get_account_summary()
             risk_status = await orchestrator._risk.get_status()
 
-            console.print(f"  Account NLV: ${summary.nlv:,.2f}")
+            console.print(f"  Account NLV: {summary.currency} {summary.nlv:,.2f}")
             console.print(f"  Risk Level: {risk_status.level.value}")
-            console.print(f"  Scale Factor: {risk_status.scale_factor:.2f}")
+            manual_scale = float(config.general.risk_scale)
+            console.print(f"  Scale (risk mgr): {risk_status.scale_factor:.2f}")
+            console.print(f"  Scale (manual):  {manual_scale:.2f}")
+            console.print(f"  Scale (effective): {risk_status.scale_factor * manual_scale:.2f}")
+
+            external_positions = getattr(orchestrator, "_external_positions", {}) or {}
+            external_blocking = bool(getattr(orchestrator, "_external_positions_blocking", False))
+            if external_positions:
+                preview = ", ".join(
+                    f"{p.symbol}({p.sec_type})={p.quantity}"
+                    for p in list(external_positions.values())[:10]
+                )
+                more = "" if len(external_positions) <= 10 else f" …(+{len(external_positions) - 10} more)"
+                console.print()
+                console.print(
+                    f"[yellow]⚠ External positions detected (non-STK): {len(external_positions)} "
+                    f"(blocking run={external_blocking})[/yellow]"
+                )
+                console.print(f"  {preview}{more}")
             console.print()
 
             # Check trading halt
@@ -524,9 +554,26 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
                 return {
                     "status": "halted",
                     "reason": "Trading halted - risk breach",
+                    "external_positions": {
+                        "count": len(external_positions),
+                        "blocking": external_blocking,
+                        "positions": [
+                            {
+                                "symbol": p.symbol,
+                                "sec_type": p.sec_type,
+                                "quantity": p.quantity,
+                                "market_value": p.market_value,
+                                "currency": p.currency,
+                            }
+                            for p in external_positions.values()
+                        ],
+                    },
                     "risk_status": {
                         "level": risk_status.level.value,
-                        "scale_factor": risk_status.scale_factor,
+                        "scale_factor": risk_status.scale_factor * manual_scale,
+                        "risk_manager_scale_factor": risk_status.scale_factor,
+                        "manual_scale_factor": manual_scale,
+                        "effective_scale_factor": risk_status.scale_factor * manual_scale,
                         "double_strike_active": risk_status.double_strike_active,
                     },
                     "orders": [],
@@ -548,10 +595,28 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
                 "account": {
                     "nlv": summary.nlv,
                     "buying_power": getattr(summary, "buying_power", 0),
+                    "currency": getattr(summary, "currency", "USD"),
+                },
+                "external_positions": {
+                    "count": len(external_positions),
+                    "blocking": external_blocking,
+                    "positions": [
+                        {
+                            "symbol": p.symbol,
+                            "sec_type": p.sec_type,
+                            "quantity": p.quantity,
+                            "market_value": p.market_value,
+                            "currency": p.currency,
+                        }
+                        for p in external_positions.values()
+                    ],
                 },
                 "risk_status": {
                     "level": risk_status.level.value,
                     "scale_factor": daily_plan.scale_factor,
+                    "risk_manager_scale_factor": risk_status.scale_factor,
+                    "manual_scale_factor": manual_scale,
+                    "effective_scale_factor": daily_plan.scale_factor,
                     "double_strike_active": risk_status.double_strike_active,
                     "drawdown_pct": risk_status.drawdown.drawdown_pct if risk_status.drawdown else 0,
                 },

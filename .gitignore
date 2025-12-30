@@ -51,8 +51,10 @@ docs/_build/
 # Data and logs (keep structure, ignore contents)
 data/cache/*
 !data/cache/.gitkeep
+data/risk_state.json
 logs/audit/*
 !logs/audit/.gitkeep
+logs/audit_*.jsonl
 logs/trades/*
 !logs/trades/.gitkeep
 logs/*.log

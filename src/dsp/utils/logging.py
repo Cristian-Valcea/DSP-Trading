@@ -46,7 +46,9 @@ class AuditLogger:
     """
 
     def __init__(self, log_dir: Path):
-        self.log_dir = log_dir
+        # Keep audit logs under a dedicated subdirectory so they're easy to ignore
+        # in git and easy to rotate/ship separately from app logs.
+        self.log_dir = log_dir if log_dir.name == "audit" else (log_dir / "audit")
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
         # Daily log file

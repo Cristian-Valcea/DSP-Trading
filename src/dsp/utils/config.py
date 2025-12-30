@@ -174,6 +174,7 @@ class GeneralConfig:
     cash_buffer: float = 0.10  # 10% cash buffer
     margin_cap: float = 0.60  # 60% margin cap
     risk_scale: float = 1.0  # 0.25 for small-size live
+    allow_external_positions: bool = False  # Fail closed if account has FUT/OPT/etc.
 
 
 @dataclass
@@ -210,6 +211,10 @@ def _apply_env_overrides(config: Config) -> Config:
     # General overrides
     if os.getenv("DSP_RISK_SCALE"):
         config.general.risk_scale = float(os.getenv("DSP_RISK_SCALE"))
+    if os.getenv("DSP_ALLOW_EXTERNAL_POSITIONS"):
+        config.general.allow_external_positions = (
+            os.getenv("DSP_ALLOW_EXTERNAL_POSITIONS").lower() == "true"
+        )
     if os.getenv("DSP_CASH_BUFFER"):
         config.general.cash_buffer = float(os.getenv("DSP_CASH_BUFFER"))
     if os.getenv("DSP_MARGIN_CAP"):
