@@ -49,16 +49,17 @@ def run(ctx: click.Context, force: bool) -> None:
     """Run the daily trading cycle."""
     config_path = ctx.obj["config_path"]
     strict = ctx.obj.get("strict", False)
+    strict_mode = bool(strict or STRICT_CONFIG)
 
     console.print(f"[bold blue]DSP-100K Daily Execution[/bold blue]")
     console.print(f"Config: {config_path}")
     console.print(f"Force: {force}")
-    if strict or STRICT_CONFIG:
+    if strict_mode:
         console.print(f"[yellow]Strict config mode: enabled[/yellow]")
     console.print()
 
     try:
-        config = load_config(config_path, strict=strict)
+        config = load_config(config_path, strict=strict_mode)
     except ConfigValidationError as e:
         console.print(f"[bold red]Config validation failed (strict mode):[/bold red]")
         console.print(f"  [red]{e}[/red]")
@@ -136,9 +137,11 @@ def run(ctx: click.Context, force: bool) -> None:
 def status(ctx: click.Context) -> None:
     """Show current system status."""
     config_path = ctx.obj["config_path"]
+    strict = ctx.obj.get("strict", False)
+    strict_mode = bool(strict or STRICT_CONFIG)
 
     try:
-        config = load_config(config_path)
+        config = load_config(config_path, strict=strict_mode)
     except Exception as e:
         console.print(f"[bold red]Error loading config:[/bold red] {e}")
         sys.exit(1)
@@ -250,9 +253,11 @@ def status(ctx: click.Context) -> None:
 def positions(ctx: click.Context) -> None:
     """Show current positions."""
     config_path = ctx.obj["config_path"]
+    strict = ctx.obj.get("strict", False)
+    strict_mode = bool(strict or STRICT_CONFIG)
 
     try:
-        config = load_config(config_path)
+        config = load_config(config_path, strict=strict_mode)
     except Exception as e:
         console.print(f"[bold red]Error loading config:[/bold red] {e}")
         sys.exit(1)
@@ -319,9 +324,11 @@ def positions(ctx: click.Context) -> None:
 def signals(ctx: click.Context, symbols: Optional[str]) -> None:
     """Show current trend signals for Sleeve B."""
     config_path = ctx.obj["config_path"]
+    strict = ctx.obj.get("strict", False)
+    strict_mode = bool(strict or STRICT_CONFIG)
 
     try:
-        config = load_config(config_path)
+        config = load_config(config_path, strict=strict_mode)
     except Exception as e:
         console.print(f"[bold red]Error loading config:[/bold red] {e}")
         sys.exit(1)
@@ -390,14 +397,16 @@ def validate(ctx: click.Context) -> None:
     """Validate configuration and system setup."""
     config_path = ctx.obj["config_path"]
     strict = ctx.obj.get("strict", False)
+    strict_mode = bool(strict or STRICT_CONFIG)
 
     console.print("[bold blue]DSP-100K System Validation[/bold blue]")
-    if strict or STRICT_CONFIG:
+    if strict_mode:
         console.print("[yellow]Strict config mode: enabled[/yellow]")
     console.print()
 
     errors = []
     warnings = []
+    config = None
 
     # Check config file exists
     if not Path(config_path).exists():
@@ -406,7 +415,7 @@ def validate(ctx: click.Context) -> None:
         console.print(f"[green]✓[/green] Config file found: {config_path}")
 
         try:
-            config = load_config(config_path, strict=strict)
+            config = load_config(config_path, strict=strict_mode)
             console.print("[green]✓[/green] Config file parsed successfully")
 
             # Validate risk settings
@@ -429,6 +438,10 @@ def validate(ctx: click.Context) -> None:
 
     async def check_ibkr():
         try:
+            if config is None:
+                warnings.append("Skipping IBKR check because config failed to load")
+                return
+
             from .ibkr import IBKRClient
 
             client = IBKRClient(
@@ -494,14 +507,15 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
     """
     config_path = ctx.obj["config_path"]
     strict = ctx.obj.get("strict", False)
+    strict_mode = bool(strict or STRICT_CONFIG)
 
     console.print("[bold blue]DSP-100K Dry-Run Plan Generation[/bold blue]")
     console.print(f"Config: {config_path}")
-    console.print(f"Strict mode: {strict or STRICT_CONFIG}")
+    console.print(f"Strict mode: {strict_mode}")
     console.print()
 
     try:
-        config = load_config(config_path, strict=strict)
+        config = load_config(config_path, strict=strict_mode)
     except ConfigValidationError as e:
         console.print(f"[bold red]Config validation failed (strict mode):[/bold red]")
         console.print(f"  [red]{e}[/red]")
