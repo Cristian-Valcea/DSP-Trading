@@ -180,7 +180,8 @@ class MarginMonitor:
             )
 
         # Calculate projected utilization
-        projected_margin = current.margin_used + impact.init_margin_change
+        # current.margin_used comes from MaintMarginReq, so use maint_margin_change for consistency.
+        projected_margin = current.margin_used + impact.maint_margin_change
         projected_utilization = projected_margin / current.nlv if current.nlv > 0 else 1.0
 
         # Check against cap

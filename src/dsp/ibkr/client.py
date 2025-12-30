@@ -751,33 +751,69 @@ class IBKRClient:
         contract = await self._get_contract(order.symbol)
 
         # Create IBKR order
+        # Important: set TIF explicitly. Without it, TWS may emit error 10349
+        # ("Order TIF was set to DAY based on order preset") and ib_insync will
+        # treat the what-if as failed, returning an empty list.
         if order.order_type == "MKT":
             ib_order = MarketOrder(
                 action=order.side,
                 totalQuantity=order.quantity,
+                tif=order.tif,
+                outsideRth=order.outside_rth,
             )
         else:
+            if order.limit_price is None:
+                raise ValueError("Limit orders require a limit_price")
             ib_order = LimitOrder(
                 action=order.side,
                 totalQuantity=order.quantity,
-                lmtPrice=order.limit_price or 0,
+                lmtPrice=order.limit_price,
+                tif=order.tif,
+                outsideRth=order.outside_rth,
             )
 
         # Request what-if
         what_if = await self._api_call(self._ib.whatIfOrderAsync, contract, ib_order)
+        # ib_insync may return [] when TWS treats the request as failed.
+        if isinstance(what_if, list):
+            if len(what_if) == 1:
+                what_if = what_if[0]
+            else:
+                raise RuntimeError(
+                    f"IBKR whatIfOrder returned {len(what_if)} results for {order.symbol}; "
+                    f"expected 1. (If 0, check TWS messages / order presets.)"
+                )
 
         # Get current NLV for margin ratio
         summary = await self.get_account_summary()
 
-        post_margin = float(what_if.maintMarginChange) if what_if.maintMarginChange else 0.0
-        post_margin_ratio = post_margin / summary.nlv if summary.nlv > 0 else 0.0
+        def _safe_float(value) -> float:
+            try:
+                return float(value) if value not in (None, "", "None") else 0.0
+            except (TypeError, ValueError):
+                return 0.0
+
+        init_change = _safe_float(getattr(what_if, "initMarginChange", None))
+        maint_change = _safe_float(getattr(what_if, "maintMarginChange", None))
+
+        # Compute projected post-trade maint margin usage ratio using the *current* maint margin
+        # from account summary plus the what-if change.
+        post_maint_margin = summary.margin_used + maint_change
+        post_margin_ratio = post_maint_margin / summary.nlv if summary.nlv > 0 else 1.0
+
+        commission = _safe_float(getattr(what_if, "commission", None))
+        # ib_insync uses sys.float_info.max as sentinel for "unset" commission.
+        if commission > 1e100:
+            commission = _safe_float(getattr(what_if, "maxCommission", None)) or _safe_float(
+                getattr(what_if, "minCommission", None)
+            )
 
         return MarginImpact(
-            init_margin_change=float(what_if.initMarginChange) if what_if.initMarginChange else 0.0,
-            maint_margin_change=float(what_if.maintMarginChange) if what_if.maintMarginChange else 0.0,
-            equity_with_loan=float(what_if.equityWithLoan) if what_if.equityWithLoan else 0.0,
+            init_margin_change=init_change,
+            maint_margin_change=maint_change,
+            equity_with_loan=_safe_float(getattr(what_if, "equityWithLoanAfter", None)),
             post_trade_margin=post_margin_ratio,
-            commission=float(what_if.commission) if what_if.commission else 0.0,
+            commission=commission,
         )
 
     async def cancel_order(self, order_id: int) -> bool:
