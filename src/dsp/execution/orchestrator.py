@@ -146,6 +146,17 @@ class DailyOrchestrator:
 
             # Initialize sleeves
             self._sleeve_b = SleeveB(self.config.sleeve_b, self._fetcher)
+
+            # Sleeve C (options) - AUTO-DISABLED until options execution implemented
+            # The executor only supports STK/ETF; Sleeve C emits OPT orders that would
+            # silently fail. Hard-disable it here to prevent false sense of hedging.
+            if self.config.sleeve_c.enabled:
+                logger.warning(
+                    "⚠️  Sleeve C AUTO-DISABLED: Options execution not implemented. "
+                    "Put spread orders would be silently ignored by executor. "
+                    "Set sleeve_c.enabled=false in config to suppress this warning."
+                )
+            self._sleeve_c_enabled = False  # Override config until options work
             self._sleeve_c = SleeveC(self.config.sleeve_c, self._ibkr)
 
             # Load current positions
@@ -383,22 +394,25 @@ class DailyOrchestrator:
         if adjustment.rebalance_needed:
             sleeve_b_orders = self._sleeve_b.get_target_orders(adjustment)
 
-        # Generate Sleeve C orders (hedges)
+        # Generate Sleeve C orders (hedges) - DISABLED until options execution works
         sleeve_c_orders = []
-        hedge_status = await self._sleeve_c.get_status(total_nav, as_of_date)
+        if self._sleeve_c_enabled:
+            hedge_status = await self._sleeve_c.get_status(total_nav, as_of_date)
 
-        if hedge_status.needs_roll:
-            roll_plan = await self._sleeve_c.plan_roll(total_nav, as_of_date)
-            if roll_plan:
-                # Close existing spreads
-                # (simplified - would need actual close orders)
-                # Open new spreads
-                sleeve_c_orders = self._sleeve_c.get_orders(roll_plan.new_spread_target)
+            if hedge_status.needs_roll:
+                roll_plan = await self._sleeve_c.plan_roll(total_nav, as_of_date)
+                if roll_plan:
+                    # Close existing spreads
+                    # (simplified - would need actual close orders)
+                    # Open new spreads
+                    sleeve_c_orders = self._sleeve_c.get_orders(roll_plan.new_spread_target)
 
-        elif hedge_status.needs_increase:
-            new_hedge = await self._sleeve_c.plan_new_hedge(total_nav, as_of_date)
-            if new_hedge:
-                sleeve_c_orders = self._sleeve_c.get_orders(new_hedge)
+            elif hedge_status.needs_increase:
+                new_hedge = await self._sleeve_c.plan_new_hedge(total_nav, as_of_date)
+                if new_hedge:
+                    sleeve_c_orders = self._sleeve_c.get_orders(new_hedge)
+        else:
+            logger.debug("Sleeve C disabled - skipping hedge orders")
 
         return DailyPlan(
             as_of_date=as_of_date,

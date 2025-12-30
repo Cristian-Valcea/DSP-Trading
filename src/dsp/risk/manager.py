@@ -10,10 +10,12 @@ Implements portfolio-level risk controls:
 Per SPEC_DSP_100K.md Section 4.
 """
 
+import json
 import logging
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from enum import Enum
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
@@ -26,6 +28,10 @@ from ..utils.logging import get_audit_logger
 from .margin import MarginMonitor, MarginStatus
 
 logger = logging.getLogger(__name__)
+
+
+# Default path for risk state persistence
+DEFAULT_RISK_STATE_PATH = Path("data/risk_state.json")
 
 
 class RiskLevel(str, Enum):
@@ -113,6 +119,7 @@ class RiskManager:
         config: RiskConfig,
         ibkr_client: IBKRClient,
         data_fetcher: DataFetcher,
+        state_path: Optional[Path] = None,
     ):
         """
         Initialize risk manager.
@@ -121,12 +128,14 @@ class RiskManager:
             config: Risk configuration
             ibkr_client: IBKR client for account data
             data_fetcher: Data fetcher for volatility calculations
+            state_path: Path for persisting risk state (default: data/risk_state.json)
         """
         self.config = config
         self.ibkr = ibkr_client
         self.fetcher = data_fetcher
         self.margin_monitor = MarginMonitor(ibkr_client, config.margin_cap)
         self.audit = get_audit_logger()
+        self._state_path = state_path or DEFAULT_RISK_STATE_PATH
 
         # Peak tracking for drawdown
         self._peak_nav: float = 0.0
@@ -138,6 +147,9 @@ class RiskManager:
 
         # Current scale factor (1.0 = normal, < 1.0 = deleveraged)
         self._scale_factor: float = 1.0
+
+        # Load persisted state on init
+        self._load_state()
 
     async def get_status(
         self,
@@ -206,6 +218,7 @@ class RiskManager:
         if current_nav > self._peak_nav:
             self._peak_nav = current_nav
             self._peak_date = as_of_date
+            self._save_state()  # Persist on new high
 
     def _calculate_drawdown(
         self,
@@ -354,12 +367,17 @@ class RiskManager:
         Per spec: If drawdown breaches warning twice in rolling 365 days,
         halve exposure for 30 days.
         """
+        before_history = self._strike_history.copy()
+        before_double_strike = self._double_strike_active
+
         # Clean old strikes (older than 365 days)
         cutoff = as_of_date - timedelta(days=365)
         self._strike_history = [
             (d, dd) for d, dd in self._strike_history
             if d >= cutoff
         ]
+        if self._strike_history != before_history:
+            self._save_state()
 
         # Check for new strike
         if drawdown.drawdown_pct >= self.config.dd_warning:
@@ -372,15 +390,20 @@ class RiskManager:
                     "drawdown_pct": drawdown.drawdown_pct,
                     "strike_count": len(self._strike_history),
                 })
+                self._save_state()
 
         # Check for double strike
         if len(self._strike_history) >= 2:
-            self._double_strike_active = True
-            self.audit.log_risk_event("DOUBLE_STRIKE_ACTIVE", {
-                "strikes": [(str(d), dd) for d, dd in self._strike_history],
-            })
+            if not self._double_strike_active:  # Only log on transition
+                self._double_strike_active = True
+                self.audit.log_risk_event("DOUBLE_STRIKE_ACTIVE", {
+                    "strikes": [(str(d), dd) for d, dd in self._strike_history],
+                })
+                self._save_state()  # Persist state change
         else:
             self._double_strike_active = False
+            if before_double_strike and not self._double_strike_active:
+                self._save_state()
 
     def _determine_risk_level(self, alerts: List[RiskAlert]) -> RiskLevel:
         """Determine overall risk level from alerts."""
@@ -449,6 +472,7 @@ class RiskManager:
         self._peak_nav = new_peak
         self._peak_date = peak_date
         logger.info(f"Reset peak NAV to ${new_peak:,.2f} on {peak_date}")
+        self._save_state()
 
     def clear_double_strike(self) -> None:
         """
@@ -461,3 +485,59 @@ class RiskManager:
         self.audit.log_risk_event("DOUBLE_STRIKE_CLEARED", {
             "reason": "Manual override",
         })
+        self._save_state()
+
+    def _load_state(self) -> None:
+        """Load persisted risk state from disk."""
+        if not self._state_path.exists():
+            logger.info(f"No persisted risk state found at {self._state_path}")
+            return
+
+        try:
+            with open(self._state_path) as f:
+                data = json.load(f)
+
+            # Restore peak tracking
+            self._peak_nav = data.get("peak_nav", 0.0)
+            if data.get("peak_date"):
+                self._peak_date = date.fromisoformat(data["peak_date"])
+
+            # Restore strike history
+            self._strike_history = [
+                (date.fromisoformat(d), dd) for d, dd in data.get("strike_history", [])
+            ]
+            self._double_strike_active = data.get("double_strike_active", False)
+
+            logger.info(
+                f"Loaded risk state: peak_nav=${self._peak_nav:,.2f}, "
+                f"peak_date={self._peak_date}, "
+                f"strikes={len(self._strike_history)}, "
+                f"double_strike={self._double_strike_active}"
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to load risk state: {e}")
+
+    def _save_state(self) -> None:
+        """Persist risk state to disk."""
+        try:
+            # Ensure directory exists
+            self._state_path.parent.mkdir(parents=True, exist_ok=True)
+
+            data = {
+                "peak_nav": self._peak_nav,
+                "peak_date": str(self._peak_date) if self._peak_date else None,
+                "strike_history": [
+                    (str(d), dd) for d, dd in self._strike_history
+                ],
+                "double_strike_active": self._double_strike_active,
+                "last_saved": datetime.now().isoformat(),
+            }
+
+            with open(self._state_path, "w") as f:
+                json.dump(data, f, indent=2)
+
+            logger.debug(f"Saved risk state to {self._state_path}")
+
+        except Exception as e:
+            logger.error(f"Failed to save risk state: {e}")

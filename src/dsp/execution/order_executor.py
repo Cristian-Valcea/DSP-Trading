@@ -20,6 +20,15 @@ from ..utils.time import is_in_execution_window, get_ny_time
 logger = logging.getLogger(__name__)
 
 
+class UnsupportedSecurityTypeError(Exception):
+    """Raised when an order is for an unsupported security type (e.g., options)."""
+    pass
+
+
+# Security types that OrderExecutor can actually execute
+SUPPORTED_SEC_TYPES = {"STK", "ETF"}
+
+
 @dataclass
 class ExecutionReport:
     """Report for a single order execution."""
@@ -131,6 +140,14 @@ class OrderExecutor:
 
         for order_dict in orders:
             try:
+                # Hard-block non-STK/ETF orders (e.g., options from Sleeve C)
+                sec_type = order_dict.get("sec_type", "STK")
+                if sec_type not in SUPPORTED_SEC_TYPES:
+                    raise UnsupportedSecurityTypeError(
+                        f"Cannot execute sec_type={sec_type!r} for {order_dict.get('symbol', '?')}. "
+                        f"Only {SUPPORTED_SEC_TYPES} are supported. Options execution not implemented."
+                    )
+
                 report = await self._execute_single(
                     order_dict,
                     check_margin=check_margin,
@@ -145,11 +162,24 @@ class OrderExecutor:
 
             except Exception as e:
                 logger.error(f"Execution error for {order_dict}: {e}")
+                # Best-effort: Build a safe Order object for reporting without
+                # raising during validation (e.g., missing limit_price).
+                symbol = order_dict.get("symbol", "?")
+                side = order_dict.get("side", "BUY")
+                if side not in ("BUY", "SELL"):
+                    side = "BUY"
+                try:
+                    quantity = int(order_dict.get("quantity", 0))
+                except (TypeError, ValueError):
+                    quantity = 0
+                if quantity <= 0:
+                    quantity = 1
                 executions.append(ExecutionReport(
                     order=Order(
-                        symbol=order_dict.get("symbol", "?"),
-                        side=order_dict.get("side", "?"),
-                        quantity=order_dict.get("quantity", 0),
+                        symbol=symbol,
+                        side=side,
+                        quantity=quantity,
+                        order_type="MKT",
                     ),
                     submitted=False,
                     filled=False,

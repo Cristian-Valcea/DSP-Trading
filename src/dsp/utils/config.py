@@ -14,6 +14,14 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
+# When True, fail on any unknown config keys instead of just warning
+STRICT_CONFIG = os.getenv("DSP_STRICT_CONFIG", "false").lower() == "true"
+
+
+class ConfigValidationError(ValueError):
+    """Raised when config validation fails in strict mode."""
+    pass
+
 # Equity ETFs that are NOT allowed in Sleeve B (non-equity trend sleeve)
 DISALLOWED_EQUITY_ETFS = {"SPY", "QQQ", "IWM", "EFA", "EEM", "VTI", "VOO", "DIA"}
 
@@ -243,8 +251,21 @@ def _validate_sleeve_b_universe(universe: Dict[str, List[Dict[str, Any]]]) -> No
         )
 
 
-def _dataclass_from_dict(cls, data: Dict[str, Any], *, section: str):
-    """Create a dataclass instance from a dictionary, warning on ignored keys."""
+def _dataclass_from_dict(cls, data: Dict[str, Any], *, section: str, strict: bool = False):
+    """Create a dataclass instance from a dictionary, warning on ignored keys.
+
+    Args:
+        cls: The dataclass type to instantiate
+        data: Dictionary of config values
+        section: Name of the config section (for error messages)
+        strict: If True, raise ConfigValidationError on unknown keys
+
+    Returns:
+        Instance of cls with values from data
+
+    Raises:
+        ConfigValidationError: If strict=True and unknown keys are present
+    """
     if data is None:
         return cls()
 
@@ -256,6 +277,11 @@ def _dataclass_from_dict(cls, data: Dict[str, Any], *, section: str):
 
     ignored = sorted(set(data.keys()) - valid_fields)
     if ignored:
+        if strict or STRICT_CONFIG:
+            raise ConfigValidationError(
+                f"Unknown config keys in [{section}]: {ignored}. "
+                f"Set DSP_STRICT_CONFIG=false to ignore (not recommended)."
+            )
         logger.warning("Ignored unknown config keys in %s: %s", section, ignored)
 
     return cls(**filtered)
@@ -263,7 +289,8 @@ def _dataclass_from_dict(cls, data: Dict[str, Any], *, section: str):
 
 def load_config(
     config_path: Optional[str] = None,
-    universe_path: Optional[str] = None
+    universe_path: Optional[str] = None,
+    strict: Optional[bool] = None,
 ) -> Config:
     """
     Load configuration from YAML files.
@@ -271,14 +298,18 @@ def load_config(
     Args:
         config_path: Path to main config YAML (default: config/dsp100k.yaml)
         universe_path: Path to Sleeve B universe YAML (default: config/universes/sleeve_b.yaml)
+        strict: If True, fail on unknown config keys. If None, uses DSP_STRICT_CONFIG env var.
 
     Returns:
         Config object with all settings loaded
 
     Raises:
+        ConfigValidationError: If strict mode enabled and unknown keys found
         ValueError: If configuration validation fails
         FileNotFoundError: If config files not found
     """
+    # Use explicit strict param, otherwise fall back to env var
+    strict_mode = strict if strict is not None else STRICT_CONFIG
     # Default paths
     base_dir = Path(__file__).parent.parent.parent.parent  # dsp100k/
 
@@ -306,19 +337,24 @@ def load_config(
     }
     ignored_top_level = sorted(set(config_data.keys()) - allowed_top_level)
     if ignored_top_level:
+        if strict_mode:
+            raise ConfigValidationError(
+                f"Unknown top-level config sections: {ignored_top_level}. "
+                f"Set DSP_STRICT_CONFIG=false to ignore (not recommended)."
+            )
         logger.warning("Ignored unknown top-level config sections: %s", ignored_top_level)
 
     # Build config object
     config = Config(
-        general=_dataclass_from_dict(GeneralConfig, config_data.get("general"), section="general"),
-        ibkr=_dataclass_from_dict(IBKRConfig, config_data.get("ibkr"), section="ibkr"),
-        sleeve_a=_dataclass_from_dict(SleeveAConfig, config_data.get("sleeve_a"), section="sleeve_a"),
-        sleeve_b=_dataclass_from_dict(SleeveBConfig, config_data.get("sleeve_b"), section="sleeve_b"),
-        sleeve_c=_dataclass_from_dict(SleeveCConfig, config_data.get("sleeve_c"), section="sleeve_c"),
-        risk=_dataclass_from_dict(RiskConfig, config_data.get("risk"), section="risk"),
-        execution=_dataclass_from_dict(ExecutionConfig, config_data.get("execution"), section="execution"),
+        general=_dataclass_from_dict(GeneralConfig, config_data.get("general"), section="general", strict=strict_mode),
+        ibkr=_dataclass_from_dict(IBKRConfig, config_data.get("ibkr"), section="ibkr", strict=strict_mode),
+        sleeve_a=_dataclass_from_dict(SleeveAConfig, config_data.get("sleeve_a"), section="sleeve_a", strict=strict_mode),
+        sleeve_b=_dataclass_from_dict(SleeveBConfig, config_data.get("sleeve_b"), section="sleeve_b", strict=strict_mode),
+        sleeve_c=_dataclass_from_dict(SleeveCConfig, config_data.get("sleeve_c"), section="sleeve_c", strict=strict_mode),
+        risk=_dataclass_from_dict(RiskConfig, config_data.get("risk"), section="risk", strict=strict_mode),
+        execution=_dataclass_from_dict(ExecutionConfig, config_data.get("execution"), section="execution", strict=strict_mode),
         transaction_costs=_dataclass_from_dict(
-            TransactionCostConfig, config_data.get("transaction_costs"), section="transaction_costs"
+            TransactionCostConfig, config_data.get("transaction_costs"), section="transaction_costs", strict=strict_mode
         ),
     )
 

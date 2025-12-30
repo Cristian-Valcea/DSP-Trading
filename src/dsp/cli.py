@@ -5,10 +5,12 @@ Command-line interface for running the Diversified Systematic Portfolio.
 """
 
 import asyncio
+import json
 import logging
 import os
 import sys
-from datetime import date
+from dataclasses import asdict
+from datetime import date, datetime
 from pathlib import Path
 from typing import Optional
 
@@ -17,7 +19,7 @@ from rich.console import Console
 from rich.table import Table
 
 from .execution.orchestrator import DailyOrchestrator
-from .utils.config import load_config
+from .utils.config import load_config, ConfigValidationError, STRICT_CONFIG
 from .utils.logging import setup_logging
 
 console = Console()
@@ -26,12 +28,14 @@ console = Console()
 @click.group()
 @click.option("--config", "-c", default="config/dsp100k.yaml", help="Path to config file")
 @click.option("--verbose", "-v", is_flag=True, help="Enable verbose output")
+@click.option("--strict", is_flag=True, help="Enable strict config validation (fail on unknown keys)")
 @click.pass_context
-def cli(ctx: click.Context, config: str, verbose: bool) -> None:
+def cli(ctx: click.Context, config: str, verbose: bool, strict: bool) -> None:
     """DSP-100K: Diversified Systematic Portfolio Manager."""
     ctx.ensure_object(dict)
     ctx.obj["config_path"] = config
     ctx.obj["verbose"] = verbose
+    ctx.obj["strict"] = strict
 
     # Setup logging
     level = "DEBUG" if verbose else "INFO"
@@ -44,14 +48,21 @@ def cli(ctx: click.Context, config: str, verbose: bool) -> None:
 def run(ctx: click.Context, force: bool) -> None:
     """Run the daily trading cycle."""
     config_path = ctx.obj["config_path"]
+    strict = ctx.obj.get("strict", False)
 
     console.print(f"[bold blue]DSP-100K Daily Execution[/bold blue]")
     console.print(f"Config: {config_path}")
     console.print(f"Force: {force}")
+    if strict or STRICT_CONFIG:
+        console.print(f"[yellow]Strict config mode: enabled[/yellow]")
     console.print()
 
     try:
-        config = load_config(config_path)
+        config = load_config(config_path, strict=strict)
+    except ConfigValidationError as e:
+        console.print(f"[bold red]Config validation failed (strict mode):[/bold red]")
+        console.print(f"  [red]{e}[/red]")
+        sys.exit(1)
     except Exception as e:
         console.print(f"[bold red]Error loading config:[/bold red] {e}")
         sys.exit(1)
@@ -366,8 +377,11 @@ def signals(ctx: click.Context, symbols: Optional[str]) -> None:
 def validate(ctx: click.Context) -> None:
     """Validate configuration and system setup."""
     config_path = ctx.obj["config_path"]
+    strict = ctx.obj.get("strict", False)
 
     console.print("[bold blue]DSP-100K System Validation[/bold blue]")
+    if strict or STRICT_CONFIG:
+        console.print("[yellow]Strict config mode: enabled[/yellow]")
     console.print()
 
     errors = []
@@ -380,7 +394,7 @@ def validate(ctx: click.Context) -> None:
         console.print(f"[green]✓[/green] Config file found: {config_path}")
 
         try:
-            config = load_config(config_path)
+            config = load_config(config_path, strict=strict)
             console.print("[green]✓[/green] Config file parsed successfully")
 
             # Validate risk settings
@@ -450,6 +464,185 @@ def validate(ctx: click.Context) -> None:
     else:
         console.print()
         console.print("[bold green]Validation PASSED[/bold green]")
+
+
+@cli.command()
+@click.option("--output", "-o", default=None, help="Output file for plan JSON (default: stdout)")
+@click.option("--force", is_flag=True, help="Force plan generation even if market is closed")
+@click.pass_context
+def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
+    """
+    Generate execution plan without placing trades (dry-run mode).
+
+    This command connects to IBKR to fetch current prices and positions,
+    generates the daily execution plan, and exports it as JSON without
+    actually placing any orders.
+
+    Use this to review what orders WOULD be placed before running 'run'.
+    """
+    config_path = ctx.obj["config_path"]
+    strict = ctx.obj.get("strict", False)
+
+    console.print("[bold blue]DSP-100K Dry-Run Plan Generation[/bold blue]")
+    console.print(f"Config: {config_path}")
+    console.print(f"Strict mode: {strict or STRICT_CONFIG}")
+    console.print()
+
+    try:
+        config = load_config(config_path, strict=strict)
+    except ConfigValidationError as e:
+        console.print(f"[bold red]Config validation failed (strict mode):[/bold red]")
+        console.print(f"  [red]{e}[/red]")
+        sys.exit(1)
+    except Exception as e:
+        console.print(f"[bold red]Error loading config:[/bold red] {e}")
+        sys.exit(1)
+
+    async def generate_plan():
+        orchestrator = DailyOrchestrator(config)
+
+        try:
+            console.print("[yellow]Connecting to IBKR...[/yellow]")
+            if not await orchestrator.initialize():
+                console.print("[bold red]Initialization failed[/bold red]")
+                return None
+
+            console.print("[green]✓ Connected to IBKR[/green]")
+
+            # Get account summary and risk status
+            summary = await orchestrator._ibkr.get_account_summary()
+            risk_status = await orchestrator._risk.get_status()
+
+            console.print(f"  Account NLV: ${summary.nlv:,.2f}")
+            console.print(f"  Risk Level: {risk_status.level.value}")
+            console.print(f"  Scale Factor: {risk_status.scale_factor:.2f}")
+            console.print()
+
+            # Check trading halt
+            if orchestrator._risk.is_trading_halted:
+                console.print("[bold red]⚠️  Trading is HALTED due to risk breach[/bold red]")
+                return {
+                    "status": "halted",
+                    "reason": "Trading halted - risk breach",
+                    "risk_status": {
+                        "level": risk_status.level.value,
+                        "scale_factor": risk_status.scale_factor,
+                        "double_strike_active": risk_status.double_strike_active,
+                    },
+                    "orders": [],
+                    "generated_at": datetime.now().isoformat(),
+                }
+
+            # Generate the plan
+            console.print("[yellow]Generating execution plan...[/yellow]")
+            today = orchestrator.calendar.get_latest_complete_session()
+
+            daily_plan = await orchestrator._generate_plan(today, summary, risk_status)
+
+            # Build output structure
+            plan_output = {
+                "status": "ok",
+                "dry_run": True,
+                "as_of_date": str(daily_plan.as_of_date),
+                "generated_at": datetime.now().isoformat(),
+                "account": {
+                    "nlv": summary.nlv,
+                    "buying_power": getattr(summary, "buying_power", 0),
+                },
+                "risk_status": {
+                    "level": risk_status.level.value,
+                    "scale_factor": daily_plan.scale_factor,
+                    "double_strike_active": risk_status.double_strike_active,
+                    "drawdown_pct": risk_status.drawdown.drawdown_pct if risk_status.drawdown else 0,
+                },
+                "sleeve_b": {
+                    "enabled": config.sleeve_b.enabled,
+                    "order_count": len(daily_plan.sleeve_b_orders),
+                    "orders": daily_plan.sleeve_b_orders,
+                },
+                "sleeve_c": {
+                    "enabled": config.sleeve_c.enabled,
+                    "auto_disabled": not orchestrator._sleeve_c_enabled,
+                    "order_count": len(daily_plan.sleeve_c_orders),
+                    "orders": daily_plan.sleeve_c_orders,
+                },
+                "estimated_turnover": daily_plan.estimated_turnover,
+            }
+
+            console.print("[green]✓ Plan generated successfully[/green]")
+            return plan_output
+
+        finally:
+            await orchestrator.shutdown()
+
+    plan_data = asyncio.run(generate_plan())
+
+    if plan_data is None:
+        sys.exit(1)
+
+    # Display summary
+    console.print()
+    console.print("[bold]Execution Plan Summary[/bold]")
+
+    table = Table()
+    table.add_column("Component", style="cyan")
+    table.add_column("Status", style="green")
+    table.add_column("Orders")
+
+    # Sleeve B
+    sleeve_b = plan_data["sleeve_b"]
+    table.add_row(
+        "Sleeve B",
+        "[green]Enabled[/green]" if sleeve_b["enabled"] else "[dim]Disabled[/dim]",
+        str(sleeve_b["order_count"]),
+    )
+
+    # Sleeve C
+    sleeve_c = plan_data["sleeve_c"]
+    status = "[red]Auto-disabled[/red]" if sleeve_c["auto_disabled"] else (
+        "[green]Enabled[/green]" if sleeve_c["enabled"] else "[dim]Disabled[/dim]"
+    )
+    table.add_row("Sleeve C", status, str(sleeve_c["order_count"]))
+
+    console.print(table)
+
+    # Show order details
+    if sleeve_b["orders"]:
+        console.print()
+        console.print("[bold]Sleeve B Orders:[/bold]")
+        for order in sleeve_b["orders"]:
+            side = order.get("side", "?")
+            qty = order.get("quantity", 0)
+            symbol = order.get("symbol", "?")
+            reason = order.get("reason", "")
+            side_color = "green" if side == "BUY" else "red"
+            console.print(f"  [{side_color}]{side}[/{side_color}] {qty} {symbol} - {reason}")
+
+    if sleeve_c["orders"]:
+        console.print()
+        console.print("[bold]Sleeve C Orders:[/bold]")
+        for order in sleeve_c["orders"]:
+            side = order.get("side", "?")
+            qty = order.get("quantity", 0)
+            symbol = order.get("symbol", "?")
+            console.print(f"  {side} {qty} {symbol}")
+
+    # Output to file or stdout
+    json_output = json.dumps(plan_data, indent=2, default=str)
+
+    if output:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        with open(output, "w") as f:
+            f.write(json_output)
+        console.print()
+        console.print(f"[green]✓ Plan saved to {output}[/green]")
+    else:
+        console.print()
+        console.print("[bold]Full Plan JSON:[/bold]")
+        console.print(json_output)
+
+    console.print()
+    console.print("[bold yellow]⚠️  DRY RUN - No orders were placed[/bold yellow]")
 
 
 def main():

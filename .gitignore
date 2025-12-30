@@ -55,6 +55,7 @@ logs/audit/*
 !logs/audit/.gitkeep
 logs/trades/*
 !logs/trades/.gitkeep
+logs/*.log
 
 # Environment
 .env
