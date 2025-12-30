@@ -1,55 +1,83 @@
 # DSP-100K Configuration
 # Diversified Systematic Portfolio - $100K Target Capital
 # Per SPEC_DSP_100K.md
+# STRICT MODE COMPATIBLE - All keys match dataclass fields exactly
+
+# General Portfolio Settings
+general:
+  nlv_target: 100000
+  cash_buffer: 0.10           # 10% cash buffer
+  margin_cap: 0.60            # 60% margin cap
+  risk_scale: 1.0             # 0.25 for small-size live
+  allow_external_positions: false  # Fail closed if account has FUT/OPT/etc.
 
 # IBKR Connection Settings
 ibkr:
   host: "127.0.0.1"
-  port: 7497  # Paper trading port (7496 for Gateway)
+  port: 7497                  # Paper trading port (7496 for Gateway)
   client_id: 100
-  timeout: 30
-  readonly: false
+  timeout_s: 30               # Connection timeout in seconds
+  historical_duration: "2 Y"
+  historical_bar_size: "1 day"
 
 # Risk Management Configuration
 risk:
   # Volatility targeting
-  vol_target: 0.07        # 7% portfolio volatility target
-  vol_cap: 0.08           # 8% hard cap
-  sleeve_a_vol_target: 0.05  # 5% for equity L/S
-  sleeve_b_vol_target: 0.035 # 3.5% for cross-asset trend
+  vol_target: 0.07            # 7% portfolio volatility target
+  vol_cap: 0.08               # 8% hard cap
+  sleeve_a_vol_target: 0.05   # 5% for equity L/S
+  sleeve_b_vol_target: 0.035  # 3.5% for cross-asset trend
 
   # Drawdown controls
-  dd_warning: 0.06        # 6% drawdown warning
-  dd_hard_stop: 0.10      # 10% hard stop - liquidate to cash
+  dd_warning: 0.06            # 6% drawdown warning
+  dd_hard_stop: 0.10          # 10% hard stop - liquidate to cash
 
   # Margin controls
-  margin_cap: 0.60        # 60% margin utilization cap
+  margin_cap: 0.60            # 60% margin utilization cap
 
-  # Concentration limits
-  single_name_cap: 0.15   # 15% max per position
+  # Correlation limits
+  sleeve_correlation_limit: 0.60  # A-B correlation limit
+  sleeve_correlation_window: 30   # days
 
 # Sleeve A Configuration (Equity L/S - Disabled for Phase 1)
 sleeve_a:
   enabled: false
-  allocation: 0.30        # 30% NAV target
-  vol_target: 0.05        # 5% volatility
-  long_count: 6           # Top 6 momentum longs
-  short_count: 6          # Bottom 6 momentum shorts
-  rebalance_frequency: "weekly"  # Every Friday
-  sector_cap: 0.30        # 30% max per sector
+  vol_target: 0.05            # 5% volatility
+  n_long: 6                   # Top 6 momentum longs
+  n_short: 6                  # Bottom 6 momentum shorts
+  max_weight_per_name: 0.04   # 4% of NLV per position
+  max_sector_gross: 0.30      # 30% max per sector
+  rebalance_frequency: "weekly"
+  trade_band: 0.0025          # Don't trade if change < 0.25%
+
+  # Risk controls
+  short_squeeze_gap: 0.20     # 20% gap triggers cover
+  max_loss_per_name: 0.0075   # 0.75% of NLV
+  beta_limit: 0.10            # |β| ≤ 0.10
+  spy_hedge_cap: 0.20         # 20% of NLV
+
+  # Universe filters
+  min_price: 10.0
+  min_adv: 20000000           # $20M ADV
+
+  # Kill criteria
+  kill_sharpe_threshold: 0.0
+  kill_drawdown_threshold: 0.15
 
 # Sleeve B Configuration (Cross-Asset Trend)
 sleeve_b:
   enabled: true
-  allocation: 0.30        # 30% NAV target
-  vol_target: 0.035       # 3.5% volatility target
-  single_name_cap: 0.15   # 15% max per ETF
+  vol_target: 0.035           # 3.5% volatility target
+  rebalance_frequency: "weekly"
+  turnover_cap: 0.50          # 50% weekly cap
+  deadband: 0.25              # Score deadband
+  single_name_cap: 0.15       # 15% max per ETF
+  rebal_threshold: 0.05       # 5% threshold to trigger rebalance
 
-  # Trend signal weights
-  signal_weights:
-    1m: 0.25              # 1-month return (25%)
-    3m: 0.50              # 3-month return (50%)
-    12m_skip: 0.25        # 12-month return skip most recent month (25%)
+  # Trend signal weights (multi-horizon)
+  weight_1m: 0.25             # 1-month return (25%)
+  weight_3m: 0.50             # 3-month return (50%)
+  weight_12m: 0.25            # 12-month return skip most recent month (25%)
 
   # Universe - non-equity ETFs only
   # NOTE: VNQ/VNQI are EXCLUDED because REITs are equity instruments
@@ -61,7 +89,6 @@ sleeve_b:
     - HYG   # High Yield Corporate
     - EMB   # Emerging Markets Bonds
     - TIP   # TIPS
-
     # Commodities
     - GLD   # Gold
     - SLV   # Silver
@@ -69,32 +96,33 @@ sleeve_b:
     - UNG   # Natural Gas
     - DBA   # Agriculture
     - DBB   # Base Metals
-
     # Currencies
     - UUP   # US Dollar
     - FXE   # Euro
     - FXY   # Yen
     - FXB   # British Pound
-
     # Volatility
     - VIXY  # VIX Short-Term
 
-  # Rebalance settings
-  rebal_threshold: 0.05  # 5% threshold to trigger rebalance
+  # Kill criteria
+  spy_correlation_limit: 0.70
+  spy_correlation_days: 60
 
 # Sleeve C Configuration (Put Spread Hedge)
 sleeve_c:
   enabled: true
-  annual_budget_pct: 0.0125  # 1.25% annual budget for hedges
+  annual_budget_pct: 0.0125   # 1.25% annual budget for hedges
 
-  # Spread structure
-  long_put_delta: -0.25   # 25-delta long put
-  short_put_delta: -0.10  # 10-delta short put
+  # Delta targets
+  long_delta_target: -0.25    # 25-delta long put
+  short_delta_target: -0.10   # 10-delta short put
+  delta_drift_min: -0.35
+  delta_drift_max: -0.15
 
   # Expiration targeting
-  target_dte_min: 30      # Minimum 30 DTE
-  target_dte_max: 45      # Maximum 45 DTE
-  roll_trigger_dte: 10    # Roll when DTE < 10
+  target_dte_min: 30          # Minimum 30 DTE
+  target_dte_max: 45          # Maximum 45 DTE
+  roll_dte_trigger: 10        # Roll when DTE < 10
 
   # Underlying
   underlying: "SPY"
@@ -109,42 +137,14 @@ execution:
   window_end: "10:15"
 
   # Order settings
-  limit_buffer_bps: 10    # 10 bps buffer for marketable limits
-  max_wait_seconds: 300   # 5 minute max wait per order
-  retry_attempts: 3
-  retry_delay_seconds: 5
+  order_timeout_s: 120        # 2 minute timeout per order
+  max_slippage_bps: 50        # 50 bps max slippage
+  retry_count: 3
 
-  # Batch settings
-  batch_delay_seconds: 2  # Delay between orders in batch
-
-# Data Configuration
-data:
-  # Cache settings
-  cache_dir: "data/cache"
-  cache_ttl_hours: 24
-
-  # Validation settings
-  min_history_days: 252   # 1 year minimum
-  max_gap_days: 5
-
-  # Data sources
-  primary_source: "IBKR"
-
-# Logging Configuration
-logging:
-  level: "INFO"
-  format: "json"
-  audit_dir: "logs/audit"
-  trade_log_dir: "logs/trades"
-
-# Schedule Configuration
-schedule:
-  # Daily execution time (ET)
-  daily_run_time: "09:30"
-
-  # Weekend handling
-  skip_weekends: true
-  skip_holidays: true
-
-  # Calendar
-  exchange: "NYSE"
+# Transaction Cost Model
+transaction_costs:
+  stock_slippage_bps: 10.0
+  stock_commission_per_share: 0.005
+  etf_slippage_bps: 5.0
+  option_commission_per_contract: 0.65
+  option_friction_pct: 0.05   # 5% of premium

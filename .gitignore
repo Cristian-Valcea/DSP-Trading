@@ -52,6 +52,8 @@ docs/_build/
 data/cache/*
 !data/cache/.gitkeep
 data/risk_state.json
+data/plans/*
+!data/plans/.gitkeep
 logs/audit/*
 !logs/audit/.gitkeep
 logs/audit_*.jsonl
