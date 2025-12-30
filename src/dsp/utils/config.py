@@ -4,6 +4,7 @@ Configuration management for DSP-100K.
 Loads configuration from YAML files with environment variable overrides.
 """
 
+import logging
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -11,6 +12,7 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
+logger = logging.getLogger(__name__)
 
 # Equity ETFs that are NOT allowed in Sleeve B (non-equity trend sleeve)
 DISALLOWED_EQUITY_ETFS = {"SPY", "QQQ", "IWM", "EFA", "EEM", "VTI", "VOO", "DIA"}
@@ -241,8 +243,8 @@ def _validate_sleeve_b_universe(universe: Dict[str, List[Dict[str, Any]]]) -> No
         )
 
 
-def _dataclass_from_dict(cls, data: Dict[str, Any]):
-    """Create a dataclass instance from a dictionary, ignoring extra keys."""
+def _dataclass_from_dict(cls, data: Dict[str, Any], *, section: str):
+    """Create a dataclass instance from a dictionary, warning on ignored keys."""
     if data is None:
         return cls()
 
@@ -251,6 +253,10 @@ def _dataclass_from_dict(cls, data: Dict[str, Any]):
 
     # Filter to only valid fields
     filtered = {k: v for k, v in data.items() if k in valid_fields}
+
+    ignored = sorted(set(data.keys()) - valid_fields)
+    if ignored:
+        logger.warning("Ignored unknown config keys in %s: %s", section, ignored)
 
     return cls(**filtered)
 
@@ -288,17 +294,31 @@ def load_config(
         with open(config_path) as f:
             config_data = yaml.safe_load(f) or {}
 
+    allowed_top_level = {
+        "general",
+        "ibkr",
+        "sleeve_a",
+        "sleeve_b",
+        "sleeve_c",
+        "risk",
+        "execution",
+        "transaction_costs",
+    }
+    ignored_top_level = sorted(set(config_data.keys()) - allowed_top_level)
+    if ignored_top_level:
+        logger.warning("Ignored unknown top-level config sections: %s", ignored_top_level)
+
     # Build config object
     config = Config(
-        general=_dataclass_from_dict(GeneralConfig, config_data.get("general")),
-        ibkr=_dataclass_from_dict(IBKRConfig, config_data.get("ibkr")),
-        sleeve_a=_dataclass_from_dict(SleeveAConfig, config_data.get("sleeve_a")),
-        sleeve_b=_dataclass_from_dict(SleeveBConfig, config_data.get("sleeve_b")),
-        sleeve_c=_dataclass_from_dict(SleeveCConfig, config_data.get("sleeve_c")),
-        risk=_dataclass_from_dict(RiskConfig, config_data.get("risk")),
-        execution=_dataclass_from_dict(ExecutionConfig, config_data.get("execution")),
+        general=_dataclass_from_dict(GeneralConfig, config_data.get("general"), section="general"),
+        ibkr=_dataclass_from_dict(IBKRConfig, config_data.get("ibkr"), section="ibkr"),
+        sleeve_a=_dataclass_from_dict(SleeveAConfig, config_data.get("sleeve_a"), section="sleeve_a"),
+        sleeve_b=_dataclass_from_dict(SleeveBConfig, config_data.get("sleeve_b"), section="sleeve_b"),
+        sleeve_c=_dataclass_from_dict(SleeveCConfig, config_data.get("sleeve_c"), section="sleeve_c"),
+        risk=_dataclass_from_dict(RiskConfig, config_data.get("risk"), section="risk"),
+        execution=_dataclass_from_dict(ExecutionConfig, config_data.get("execution"), section="execution"),
         transaction_costs=_dataclass_from_dict(
-            TransactionCostConfig, config_data.get("transaction_costs")
+            TransactionCostConfig, config_data.get("transaction_costs"), section="transaction_costs"
         ),
     )
 
