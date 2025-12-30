@@ -1,0 +1,41 @@
+# DSP-100K Dependencies
+# Diversified Systematic Portfolio
+
+# IBKR API
+ib_insync>=0.9.86
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+pyarrow>=14.0.0  # For parquet support
+
+# Market Calendar
+pandas_market_calendars>=4.3.0
+
+# Configuration
+pyyaml>=6.0
+
+# Date/Time
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# HTTP/Async
+aiohttp>=3.8.0
+httpx>=0.24.0
+
+# Logging
+structlog>=23.1.0
+
+# CLI
+click>=8.1.0
+rich>=13.0.0  # Pretty terminal output
+
+# Type hints
+typing_extensions>=4.0.0
+
+# Development dependencies (optional)
+# pytest>=7.0.0
+# pytest-asyncio>=0.21.0
+# black>=23.0.0
+# isort>=5.12.0
+# mypy>=1.0.0

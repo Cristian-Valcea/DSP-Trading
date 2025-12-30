@@ -1,0 +1,295 @@
+"""
+Configuration management for DSP-100K.
+
+Loads configuration from YAML files with environment variable overrides.
+"""
+
+import os
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import yaml
+
+
+# Equity ETFs that are NOT allowed in Sleeve B (non-equity trend sleeve)
+DISALLOWED_EQUITY_ETFS = {"SPY", "QQQ", "IWM", "EFA", "EEM", "VTI", "VOO", "DIA"}
+
+
+@dataclass
+class IBKRConfig:
+    """IBKR connection configuration."""
+    host: str = "127.0.0.1"
+    port: int = 7497
+    client_id: int = 1
+    timeout_s: int = 10
+    historical_duration: str = "2 Y"
+    historical_bar_size: str = "1 day"
+
+
+@dataclass
+class SleeveAConfig:
+    """Sleeve A (Equity L/S) configuration."""
+    enabled: bool = True
+    vol_target: float = 0.06  # 6% annualized
+    n_long: int = 20
+    n_short: int = 20
+    max_weight_per_name: float = 0.04  # 4% of NLV
+    max_sector_gross: float = 0.20  # 20% sector cap
+    rebalance_frequency: str = "monthly"
+    trade_band: float = 0.0025  # Don't trade if change < 0.25%
+
+    # Risk controls
+    short_squeeze_gap: float = 0.20  # 20% gap triggers cover
+    max_loss_per_name: float = 0.0075  # 0.75% of NLV
+    beta_limit: float = 0.10  # |β| ≤ 0.10
+    spy_hedge_cap: float = 0.20  # 20% of NLV
+
+    # Universe filters
+    min_price: float = 10.0
+    min_adv: float = 20_000_000  # $20M ADV
+
+    # Kill criteria
+    kill_sharpe_threshold: float = 0.0
+    kill_drawdown_threshold: float = 0.15
+
+
+@dataclass
+class SleeveBConfig:
+    """Sleeve B (Cross-Asset Trend) configuration."""
+    enabled: bool = True
+    vol_target: float = 0.035  # 3.5% annualized
+    rebalance_frequency: str = "weekly"
+    turnover_cap: float = 0.50  # 50% weekly cap
+    deadband: float = 0.25  # Score deadband
+    max_weight_per_etf: float = 0.15  # 15% of NLV
+
+    # Signal weights (multi-horizon)
+    weight_1m: float = 0.25
+    weight_3m: float = 0.50
+    weight_12m: float = 0.25
+
+    # Kill criteria
+    spy_correlation_limit: float = 0.70
+    spy_correlation_days: int = 60
+
+
+@dataclass
+class SleeveCConfig:
+    """Sleeve C (SPY Hedge) configuration."""
+    enabled: bool = True
+    annual_budget_pct: float = 0.0125  # 1.25% of NLV
+    target_dte_min: int = 90
+    target_dte_max: int = 120
+    roll_dte_trigger: int = 45
+
+    # Delta targets
+    long_delta_target: float = -0.25  # ~25 delta put
+    short_delta_target: float = -0.10  # ~10 delta put
+    delta_drift_min: float = -0.35
+    delta_drift_max: float = -0.15
+
+
+@dataclass
+class RiskConfig:
+    """Portfolio-level risk configuration."""
+    drawdown_warning: float = 0.06  # 6% triggers scale-down
+    drawdown_hard_stop: float = 0.10  # 10% triggers flatten
+    sleeve_correlation_limit: float = 0.60  # A-B correlation limit
+    sleeve_correlation_window: int = 30  # days
+
+
+@dataclass
+class ExecutionConfig:
+    """Order execution configuration."""
+    window_start: str = "09:35"
+    window_end: str = "10:15"
+    order_timeout_s: int = 120
+    max_slippage_bps: int = 50  # 50 bps max slippage
+    retry_count: int = 2
+
+
+@dataclass
+class TransactionCostConfig:
+    """Transaction cost model configuration."""
+    stock_slippage_bps: float = 10.0
+    stock_commission_per_share: float = 0.005
+    etf_slippage_bps: float = 5.0
+    option_commission_per_contract: float = 0.65
+    option_friction_pct: float = 0.05  # 5% of premium
+
+
+@dataclass
+class GeneralConfig:
+    """General portfolio configuration."""
+    nlv_target: float = 100_000
+    cash_buffer: float = 0.10  # 10% cash buffer
+    margin_cap: float = 0.60  # 60% margin cap
+    risk_scale: float = 1.0  # 0.25 for small-size live
+
+
+@dataclass
+class Config:
+    """Complete DSP-100K configuration."""
+    general: GeneralConfig = field(default_factory=GeneralConfig)
+    ibkr: IBKRConfig = field(default_factory=IBKRConfig)
+    sleeve_a: SleeveAConfig = field(default_factory=SleeveAConfig)
+    sleeve_b: SleeveBConfig = field(default_factory=SleeveBConfig)
+    sleeve_c: SleeveCConfig = field(default_factory=SleeveCConfig)
+    risk: RiskConfig = field(default_factory=RiskConfig)
+    execution: ExecutionConfig = field(default_factory=ExecutionConfig)
+    transaction_costs: TransactionCostConfig = field(default_factory=TransactionCostConfig)
+
+    # Universe data (loaded separately)
+    sleeve_b_universe: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)
+
+
+def _apply_env_overrides(config: Config) -> Config:
+    """Apply environment variable overrides to config."""
+
+    # IBKR overrides
+    if os.getenv("DSP_IBKR_HOST"):
+        config.ibkr.host = os.getenv("DSP_IBKR_HOST")
+    if os.getenv("DSP_IBKR_PORT"):
+        config.ibkr.port = int(os.getenv("DSP_IBKR_PORT"))
+    if os.getenv("DSP_IBKR_CLIENT_ID"):
+        config.ibkr.client_id = int(os.getenv("DSP_IBKR_CLIENT_ID"))
+
+    # General overrides
+    if os.getenv("DSP_RISK_SCALE"):
+        config.general.risk_scale = float(os.getenv("DSP_RISK_SCALE"))
+    if os.getenv("DSP_CASH_BUFFER"):
+        config.general.cash_buffer = float(os.getenv("DSP_CASH_BUFFER"))
+    if os.getenv("DSP_MARGIN_CAP"):
+        config.general.margin_cap = float(os.getenv("DSP_MARGIN_CAP"))
+
+    # Sleeve enable/disable
+    if os.getenv("DSP_SLEEVE_A_ENABLED"):
+        config.sleeve_a.enabled = os.getenv("DSP_SLEEVE_A_ENABLED").lower() == "true"
+    if os.getenv("DSP_SLEEVE_B_ENABLED"):
+        config.sleeve_b.enabled = os.getenv("DSP_SLEEVE_B_ENABLED").lower() == "true"
+    if os.getenv("DSP_SLEEVE_C_ENABLED"):
+        config.sleeve_c.enabled = os.getenv("DSP_SLEEVE_C_ENABLED").lower() == "true"
+
+    return config
+
+
+def _validate_sleeve_b_universe(universe: Dict[str, List[Dict[str, Any]]]) -> None:
+    """
+    Validate Sleeve B universe does not contain equity ETFs.
+
+    Raises ValueError if any disallowed symbols are present.
+    This is a hard fail - do not "warn and continue".
+    """
+    if not universe:
+        return
+
+    symbols = set()
+    for asset_class, etfs in universe.items():
+        for etf in etfs:
+            if "symbol" in etf:
+                symbols.add(etf["symbol"].upper())
+
+    banned = sorted(symbols & DISALLOWED_EQUITY_ETFS)
+    if banned:
+        raise ValueError(
+            f"Sleeve B v1 may NOT include equity index ETFs to avoid duplicating "
+            f"equity beta from Sleeve A. Found: {banned}. "
+            f"Remove these from the universe config."
+        )
+
+
+def _dataclass_from_dict(cls, data: Dict[str, Any]):
+    """Create a dataclass instance from a dictionary, ignoring extra keys."""
+    if data is None:
+        return cls()
+
+    # Get valid field names
+    valid_fields = {f.name for f in cls.__dataclass_fields__.values()}
+
+    # Filter to only valid fields
+    filtered = {k: v for k, v in data.items() if k in valid_fields}
+
+    return cls(**filtered)
+
+
+def load_config(
+    config_path: Optional[str] = None,
+    universe_path: Optional[str] = None
+) -> Config:
+    """
+    Load configuration from YAML files.
+
+    Args:
+        config_path: Path to main config YAML (default: config/dsp100k.yaml)
+        universe_path: Path to Sleeve B universe YAML (default: config/universes/sleeve_b.yaml)
+
+    Returns:
+        Config object with all settings loaded
+
+    Raises:
+        ValueError: If configuration validation fails
+        FileNotFoundError: If config files not found
+    """
+    # Default paths
+    base_dir = Path(__file__).parent.parent.parent.parent  # dsp100k/
+
+    if config_path is None:
+        config_path = os.getenv("DSP_CONFIG_PATH", str(base_dir / "config" / "dsp100k.yaml"))
+
+    if universe_path is None:
+        universe_path = str(base_dir / "config" / "universes" / "sleeve_b.yaml")
+
+    # Load main config
+    config_data = {}
+    if Path(config_path).exists():
+        with open(config_path) as f:
+            config_data = yaml.safe_load(f) or {}
+
+    # Build config object
+    config = Config(
+        general=_dataclass_from_dict(GeneralConfig, config_data.get("general")),
+        ibkr=_dataclass_from_dict(IBKRConfig, config_data.get("ibkr")),
+        sleeve_a=_dataclass_from_dict(SleeveAConfig, config_data.get("sleeve_a")),
+        sleeve_b=_dataclass_from_dict(SleeveBConfig, config_data.get("sleeve_b")),
+        sleeve_c=_dataclass_from_dict(SleeveCConfig, config_data.get("sleeve_c")),
+        risk=_dataclass_from_dict(RiskConfig, config_data.get("risk")),
+        execution=_dataclass_from_dict(ExecutionConfig, config_data.get("execution")),
+        transaction_costs=_dataclass_from_dict(
+            TransactionCostConfig, config_data.get("transaction_costs")
+        ),
+    )
+
+    # Load Sleeve B universe
+    if Path(universe_path).exists():
+        with open(universe_path) as f:
+            universe_data = yaml.safe_load(f) or {}
+            config.sleeve_b_universe = universe_data.get("sleeve_b_universe", {})
+
+    # Validate Sleeve B universe (hard fail on equity ETFs)
+    _validate_sleeve_b_universe(config.sleeve_b_universe)
+
+    # Apply environment variable overrides
+    config = _apply_env_overrides(config)
+
+    return config
+
+
+def save_config(config: Config, config_path: str) -> None:
+    """Save configuration to YAML file."""
+    from dataclasses import asdict
+
+    # Convert to dict, excluding universe (saved separately)
+    data = {
+        "general": asdict(config.general),
+        "ibkr": asdict(config.ibkr),
+        "sleeve_a": asdict(config.sleeve_a),
+        "sleeve_b": asdict(config.sleeve_b),
+        "sleeve_c": asdict(config.sleeve_c),
+        "risk": asdict(config.risk),
+        "execution": asdict(config.execution),
+        "transaction_costs": asdict(config.transaction_costs),
+    }
+
+    with open(config_path, "w") as f:
+        yaml.dump(data, f, default_flow_style=False, sort_keys=False)
