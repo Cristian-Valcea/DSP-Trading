@@ -39,20 +39,21 @@ class IBKRConfig:
 
 @dataclass
 class SleeveAConfig:
-    """Sleeve A (Equity L/S) configuration."""
+    """Sleeve A (Equity Momentum + SPY hedge) configuration."""
     enabled: bool = True
-    vol_target: float = 0.06  # 6% annualized
+    vol_target: float = 0.05  # 5% annualized (cap, no leverage)
     n_long: int = 20
     n_short: int = 20
     max_weight_per_name: float = 0.04  # 4% of NLV
     max_sector_gross: float = 0.20  # 20% sector cap
     rebalance_frequency: str = "monthly"
     trade_band: float = 0.0025  # Don't trade if change < 0.25%
+    hedge_trade_band: float = 0.05  # Don't adjust SPY hedge if change < 5% of sleeve NAV
 
     # Risk controls
     short_squeeze_gap: float = 0.20  # 20% gap triggers cover
     max_loss_per_name: float = 0.0075  # 0.75% of NLV
-    beta_limit: float = 0.10  # |β| ≤ 0.10
+    beta_limit: float = 0.60  # Reduce beta to <= 0.60 net (not market-neutral)
     spy_hedge_cap: float = 0.20  # 20% of NLV
 
     # Universe filters
@@ -95,6 +96,34 @@ class SleeveBConfig:
     # Kill criteria
     spy_correlation_limit: float = 0.70
     spy_correlation_days: int = 60
+
+
+@dataclass
+class SleeveDMConfig:
+    """Sleeve DM (ETF Dual Momentum) configuration."""
+    enabled: bool = False
+
+    # Universe
+    risky_universe: List[str] = field(default_factory=lambda: [
+        "SPY", "EFA", "EEM", "IEF", "TLT", "TIP", "GLD", "PDBC", "UUP",
+    ])
+    cash_symbol: str = "SHY"
+
+    # Signal
+    top_k: int = 3
+    min_momentum: float = 0.0  # Require momentum > 0 to hold (else cash)
+    momentum_window_days: int = 252
+    momentum_skip_days: int = 21
+
+    # Vol targeting (conservative estimator, matches backtest)
+    vol_target: float = 0.08
+    vol_lookback_days: int = 63
+    max_leverage: float = 1.5
+
+    # Execution / sizing
+    rebalance_frequency: str = "monthly"
+    lookback_days: int = 420  # Calendar days to fetch (>= 12m + skip + vol cushion)
+    min_order_notional: float = 100.0
 
 
 @dataclass
@@ -175,6 +204,9 @@ class GeneralConfig:
     margin_cap: float = 0.60  # 60% margin cap
     risk_scale: float = 1.0  # 0.25 for small-size live
     allow_external_positions: bool = False  # Fail closed if account has FUT/OPT/etc.
+    sleeve_a_nav_pct: float = 0.60
+    sleeve_b_nav_pct: float = 0.30
+    sleeve_dm_nav_pct: float = 0.0
 
 
 @dataclass
@@ -184,12 +216,14 @@ class Config:
     ibkr: IBKRConfig = field(default_factory=IBKRConfig)
     sleeve_a: SleeveAConfig = field(default_factory=SleeveAConfig)
     sleeve_b: SleeveBConfig = field(default_factory=SleeveBConfig)
+    sleeve_dm: SleeveDMConfig = field(default_factory=SleeveDMConfig)
     sleeve_c: SleeveCConfig = field(default_factory=SleeveCConfig)
     risk: RiskConfig = field(default_factory=RiskConfig)
     execution: ExecutionConfig = field(default_factory=ExecutionConfig)
     transaction_costs: TransactionCostConfig = field(default_factory=TransactionCostConfig)
 
     # Universe data (loaded separately)
+    sleeve_a_universe: List[Dict[str, Any]] = field(default_factory=list)
     sleeve_b_universe: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)
 
 
@@ -227,6 +261,8 @@ def _apply_env_overrides(config: Config) -> Config:
         config.sleeve_b.enabled = os.getenv("DSP_SLEEVE_B_ENABLED").lower() == "true"
     if os.getenv("DSP_SLEEVE_C_ENABLED"):
         config.sleeve_c.enabled = os.getenv("DSP_SLEEVE_C_ENABLED").lower() == "true"
+    if os.getenv("DSP_SLEEVE_DM_ENABLED"):
+        config.sleeve_dm.enabled = os.getenv("DSP_SLEEVE_DM_ENABLED").lower() == "true"
 
     return config
 
@@ -295,6 +331,7 @@ def _dataclass_from_dict(cls, data: Dict[str, Any], *, section: str, strict: boo
 def load_config(
     config_path: Optional[str] = None,
     universe_path: Optional[str] = None,
+    sleeve_a_universe_path: Optional[str] = None,
     strict: Optional[bool] = None,
 ) -> Config:
     """
@@ -324,6 +361,9 @@ def load_config(
     if universe_path is None:
         universe_path = str(base_dir / "config" / "universes" / "sleeve_b.yaml")
 
+    if sleeve_a_universe_path is None:
+        sleeve_a_universe_path = str(base_dir / "config" / "universes" / "sleeve_a_universe.yaml")
+
     # Load main config
     config_data = {}
     if Path(config_path).exists():
@@ -335,6 +375,7 @@ def load_config(
         "ibkr",
         "sleeve_a",
         "sleeve_b",
+        "sleeve_dm",
         "sleeve_c",
         "risk",
         "execution",
@@ -355,6 +396,7 @@ def load_config(
         ibkr=_dataclass_from_dict(IBKRConfig, config_data.get("ibkr"), section="ibkr", strict=strict_mode),
         sleeve_a=_dataclass_from_dict(SleeveAConfig, config_data.get("sleeve_a"), section="sleeve_a", strict=strict_mode),
         sleeve_b=_dataclass_from_dict(SleeveBConfig, config_data.get("sleeve_b"), section="sleeve_b", strict=strict_mode),
+        sleeve_dm=_dataclass_from_dict(SleeveDMConfig, config_data.get("sleeve_dm"), section="sleeve_dm", strict=strict_mode),
         sleeve_c=_dataclass_from_dict(SleeveCConfig, config_data.get("sleeve_c"), section="sleeve_c", strict=strict_mode),
         risk=_dataclass_from_dict(RiskConfig, config_data.get("risk"), section="risk", strict=strict_mode),
         execution=_dataclass_from_dict(ExecutionConfig, config_data.get("execution"), section="execution", strict=strict_mode),
@@ -362,6 +404,29 @@ def load_config(
             TransactionCostConfig, config_data.get("transaction_costs"), section="transaction_costs", strict=strict_mode
         ),
     )
+
+    # Load Sleeve A universe (static, versioned YAML with sectors).
+    if Path(sleeve_a_universe_path).exists():
+        with open(sleeve_a_universe_path) as f:
+            sleeve_a_data = yaml.safe_load(f) or {}
+            sleeve_a_universe = (sleeve_a_data.get("sleeve_a_universe") or {}).get("symbols") or []
+            if not isinstance(sleeve_a_universe, list):
+                raise ValueError(
+                    f"Invalid Sleeve A universe format in {sleeve_a_universe_path}: "
+                    f"expected sleeve_a_universe.symbols to be a list"
+                )
+            # Validate minimal schema early (fail-fast).
+            for entry in sleeve_a_universe:
+                if not isinstance(entry, dict):
+                    raise ValueError(
+                        f"Invalid Sleeve A universe entry in {sleeve_a_universe_path}: {entry!r} (expected mapping)"
+                    )
+                if not entry.get("symbol") or not entry.get("sector"):
+                    raise ValueError(
+                        f"Invalid Sleeve A universe entry in {sleeve_a_universe_path}: "
+                        f"missing required keys 'symbol' and/or 'sector': {entry!r}"
+                    )
+            config.sleeve_a_universe = sleeve_a_universe
 
     # Load Sleeve B universe
     if Path(universe_path).exists():
@@ -388,6 +453,7 @@ def save_config(config: Config, config_path: str) -> None:
         "ibkr": asdict(config.ibkr),
         "sleeve_a": asdict(config.sleeve_a),
         "sleeve_b": asdict(config.sleeve_b),
+        "sleeve_dm": asdict(config.sleeve_dm),
         "sleeve_c": asdict(config.sleeve_c),
         "risk": asdict(config.risk),
         "execution": asdict(config.execution),

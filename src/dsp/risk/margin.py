@@ -169,14 +169,96 @@ class MarginMonitor:
         try:
             impact = await self.ibkr.what_if_order(order)
         except Exception as e:
-            logger.error(f"What-if margin check failed: {e}")
-            # Conservative: reject if we can't check
+            # Permanent fallback: IBKR whatIfOrder can intermittently fail or return
+            # malformed results (e.g., []), especially during heavy load or when
+            # TWS order presets reject the request. A hard reject would freeze
+            # the system even when margin headroom is obviously ample.
+            #
+            # We fall back to a conservative estimate using the order notional:
+            # - If the order reduces existing exposure, allow it (risk reducing).
+            # - Otherwise estimate maint margin change using worst-case Reg-T style
+            #   heuristics and enforce the hard cap.
+            logger.error("What-if margin check failed for %s: %s", order.symbol, e)
+
+            # Try to detect whether this order is risk-reducing (closing/covering).
+            reduces_exposure = False
+            try:
+                positions = await self.ibkr.get_positions()
+                current_qty = int(positions.get(order.symbol).quantity) if positions.get(order.symbol) else 0
+                if order.side == "BUY":
+                    reduces_exposure = current_qty < 0 and order.quantity <= abs(current_qty)
+                elif order.side == "SELL":
+                    reduces_exposure = current_qty > 0 and order.quantity <= current_qty
+            except Exception as pos_err:
+                logger.warning("Position lookup failed during margin fallback for %s: %s", order.symbol, pos_err)
+
+            if reduces_exposure:
+                return OrderMarginCheck(
+                    order=order,
+                    approved=True,
+                    reason=f"What-if failed; allowing risk-reducing order (positions) [{e}]",
+                    current_utilization=current.utilization_pct,
+                    projected_utilization=current.utilization_pct,
+                    margin_impact=None,
+                )
+
+            # Conservative maint margin estimate based on order notional.
+            est_price = float(order.limit_price) if order.limit_price is not None else 0.0
+            est_notional = float(order.quantity) * est_price
+            if est_notional <= 0:
+                return OrderMarginCheck(
+                    order=order,
+                    approved=False,
+                    reason=f"Margin check failed and could not estimate notional (missing price): {e}",
+                    current_utilization=current.utilization_pct,
+                    projected_utilization=current.utilization_pct,
+                    margin_impact=None,
+                )
+
+            # Heuristic maint margin rates:
+            # - Long buys: assume 50% maint margin of notional (conservative vs typical 25%).
+            # - Short sells: assume 150% maint margin of notional (Reg-T style).
+            side = (order.side or "").upper()
+            maint_rate = 0.50 if side == "BUY" else 1.50
+            est_maint_change = maint_rate * est_notional
+
+            projected_margin = current.margin_used + est_maint_change
+            projected_utilization = projected_margin / current.nlv if current.nlv > 0 else 1.0
+            approved = projected_utilization <= self.hard_cap
+
+            if approved:
+                reason = (
+                    "What-if failed; conservative margin estimate ok: "
+                    f"{projected_utilization:.1%} (rate={maint_rate:.0%})"
+                )
+            else:
+                reason = (
+                    "What-if failed; would breach cap by conservative estimate: "
+                    f"{projected_utilization:.1%} (rate={maint_rate:.0%})"
+                )
+                self.audit.log_risk_event(
+                    "MARGIN_BLOCK_FALLBACK",
+                    {
+                        "symbol": order.symbol,
+                        "side": order.side,
+                        "quantity": order.quantity,
+                        "est_price": est_price,
+                        "est_notional": est_notional,
+                        "maint_rate": maint_rate,
+                        "current_util": current.utilization_pct,
+                        "projected_util": projected_utilization,
+                        "hard_cap": self.hard_cap,
+                        "error": str(e),
+                    },
+                )
+
             return OrderMarginCheck(
                 order=order,
-                approved=False,
-                reason=f"Margin check failed: {e}",
+                approved=approved,
+                reason=reason,
                 current_utilization=current.utilization_pct,
-                projected_utilization=current.utilization_pct,
+                projected_utilization=projected_utilization,
+                margin_impact=None,
             )
 
         # Calculate projected utilization

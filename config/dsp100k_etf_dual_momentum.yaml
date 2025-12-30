@@ -1,0 +1,88 @@
+# DSP-100K Configuration (ETF Dual Momentum only)
+# Strict-mode compatible.
+
+general:
+  nlv_target: 100000
+  cash_buffer: 0.10
+  margin_cap: 0.60
+  risk_scale: 1.0
+  allow_external_positions: false
+
+  # Allocate all deployable capital to Dual Momentum (remaining cash is buffer).
+  sleeve_a_nav_pct: 0.00
+  sleeve_b_nav_pct: 0.00
+  sleeve_dm_nav_pct: 0.90
+
+ibkr:
+  host: "127.0.0.1"
+  port: 7497
+  client_id: 100
+  timeout_s: 30
+  historical_duration: "2 Y"
+  historical_bar_size: "1 day"
+
+risk:
+  vol_target: 0.07
+  vol_cap: 0.08
+  sleeve_a_vol_target: 0.05
+  sleeve_b_vol_target: 0.035
+
+  dd_warning: 0.06
+  dd_hard_stop: 0.10
+
+  margin_cap: 0.60
+
+  sleeve_correlation_limit: 0.60
+  sleeve_correlation_window: 30
+
+sleeve_a:
+  enabled: false
+
+sleeve_b:
+  enabled: false
+
+sleeve_dm:
+  enabled: true
+
+  risky_universe:
+    - SPY
+    - EFA
+    - EEM
+    - IEF
+    - TLT
+    - TIP
+    - GLD
+    - PDBC
+    - UUP
+  cash_symbol: SHY
+
+  top_k: 3
+  min_momentum: 0.0
+  momentum_window_days: 252
+  momentum_skip_days: 21
+
+  vol_target: 0.08
+  vol_lookback_days: 63
+  max_leverage: 1.5
+
+  rebalance_frequency: monthly
+  lookback_days: 420
+  min_order_notional: 100.0
+
+sleeve_c:
+  enabled: false
+
+execution:
+  window_start: "09:35"
+  window_end: "10:15"
+  order_timeout_s: 120
+  max_slippage_bps: 50
+  retry_count: 3
+
+transaction_costs:
+  stock_slippage_bps: 10.0
+  stock_commission_per_share: 0.005
+  etf_slippage_bps: 5.0
+  option_commission_per_contract: 0.65
+  option_friction_pct: 0.05
+

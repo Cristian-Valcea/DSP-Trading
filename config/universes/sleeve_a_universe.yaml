@@ -1,0 +1,207 @@
+sleeve_a_universe:
+  source: wikipedia:S%26P_100
+  generated_at: '2025-12-30T19:59:29Z'
+  count: 101
+  symbols:
+  - symbol: AAPL
+    sector: Information Technology
+  - symbol: ABBV
+    sector: Health Care
+  - symbol: ABT
+    sector: Health Care
+  - symbol: ACN
+    sector: Information Technology
+  - symbol: ADBE
+    sector: Information Technology
+  - symbol: AIG
+    sector: Financials
+  - symbol: AMD
+    sector: Information Technology
+  - symbol: AMGN
+    sector: Health Care
+  - symbol: AMT
+    sector: Real Estate
+  - symbol: AMZN
+    sector: Consumer Discretionary
+  - symbol: AVGO
+    sector: Information Technology
+  - symbol: AXP
+    sector: Financials
+  - symbol: BA
+    sector: Industrials
+  - symbol: BAC
+    sector: Financials
+  - symbol: BK
+    sector: Financials
+  - symbol: BKNG
+    sector: Consumer Discretionary
+  - symbol: BLK
+    sector: Financials
+  - symbol: BMY
+    sector: Health Care
+  - symbol: BRK.B
+    sector: Financials
+  - symbol: C
+    sector: Financials
+  - symbol: CAT
+    sector: Industrials
+  - symbol: CL
+    sector: Consumer Staples
+  - symbol: CMCSA
+    sector: Communication Services
+  - symbol: COF
+    sector: Financials
+  - symbol: COP
+    sector: Energy
+  - symbol: COST
+    sector: Consumer Staples
+  - symbol: CRM
+    sector: Information Technology
+  - symbol: CSCO
+    sector: Information Technology
+  - symbol: CVS
+    sector: Health Care
+  - symbol: CVX
+    sector: Energy
+  - symbol: DE
+    sector: Industrials
+  - symbol: DHR
+    sector: Health Care
+  - symbol: DIS
+    sector: Communication Services
+  - symbol: DUK
+    sector: Utilities
+  - symbol: EMR
+    sector: Industrials
+  - symbol: FDX
+    sector: Industrials
+  - symbol: GD
+    sector: Industrials
+  - symbol: GE
+    sector: Industrials
+  - symbol: GILD
+    sector: Health Care
+  - symbol: GM
+    sector: Consumer Discretionary
+  - symbol: GOOG
+    sector: Communication Services
+  - symbol: GOOGL
+    sector: Communication Services
+  - symbol: GS
+    sector: Financials
+  - symbol: HD
+    sector: Consumer Discretionary
+  - symbol: HON
+    sector: Industrials
+  - symbol: IBM
+    sector: Information Technology
+  - symbol: INTC
+    sector: Information Technology
+  - symbol: INTU
+    sector: Information Technology
+  - symbol: ISRG
+    sector: Health Care
+  - symbol: JNJ
+    sector: Health Care
+  - symbol: JPM
+    sector: Financials
+  - symbol: KO
+    sector: Consumer Staples
+  - symbol: LIN
+    sector: Materials
+  - symbol: LLY
+    sector: Health Care
+  - symbol: LMT
+    sector: Industrials
+  - symbol: LOW
+    sector: Consumer Discretionary
+  - symbol: MA
+    sector: Financials
+  - symbol: MCD
+    sector: Consumer Discretionary
+  - symbol: MDLZ
+    sector: Consumer Staples
+  - symbol: MDT
+    sector: Health Care
+  - symbol: MET
+    sector: Financials
+  - symbol: META
+    sector: Communication Services
+  - symbol: MMM
+    sector: Industrials
+  - symbol: MO
+    sector: Consumer Staples
+  - symbol: MRK
+    sector: Health Care
+  - symbol: MS
+    sector: Financials
+  - symbol: MSFT
+    sector: Information Technology
+  - symbol: NEE
+    sector: Utilities
+  - symbol: NFLX
+    sector: Communication Services
+  - symbol: NKE
+    sector: Consumer Discretionary
+  - symbol: NOW
+    sector: Information Technology
+  - symbol: NVDA
+    sector: Information Technology
+  - symbol: ORCL
+    sector: Information Technology
+  - symbol: PEP
+    sector: Consumer Staples
+  - symbol: PFE
+    sector: Health Care
+  - symbol: PG
+    sector: Consumer Staples
+  - symbol: PLTR
+    sector: Information Technology
+  - symbol: PM
+    sector: Consumer Staples
+  - symbol: PYPL
+    sector: Financials
+  - symbol: QCOM
+    sector: Information Technology
+  - symbol: RTX
+    sector: Industrials
+  - symbol: SBUX
+    sector: Consumer Discretionary
+  - symbol: SCHW
+    sector: Financials
+  - symbol: SO
+    sector: Utilities
+  - symbol: SPG
+    sector: Real Estate
+  - symbol: T
+    sector: Communication Services
+  - symbol: TGT
+    sector: Consumer Discretionary
+  - symbol: TMO
+    sector: Health Care
+  - symbol: TMUS
+    sector: Communication Services
+  - symbol: TSLA
+    sector: Consumer Discretionary
+  - symbol: TXN
+    sector: Information Technology
+  - symbol: UBER
+    sector: Industrials
+  - symbol: UNH
+    sector: Health Care
+  - symbol: UNP
+    sector: Industrials
+  - symbol: UPS
+    sector: Industrials
+  - symbol: USB
+    sector: Financials
+  - symbol: V
+    sector: Financials
+  - symbol: VZ
+    sector: Communication Services
+  - symbol: WFC
+    sector: Financials
+  - symbol: WMT
+    sector: Consumer Staples
+  - symbol: XOM
+    sector: Energy

@@ -8,9 +8,12 @@ DSP-100K implements a systematic approach to portfolio management with three ind
 
 | Sleeve | Strategy | Allocation | Volatility Target |
 |--------|----------|------------|-------------------|
-| **Sleeve A** | Equity L/S (12-1 Momentum) | 30% NAV | 5% |
+| **Sleeve A** | Equity Momentum (Long-Only) + SPY Hedge | Configurable (default 60% NAV) | 5% cap |
 | **Sleeve B** | Cross-Asset Trend ETFs | 30% NAV | 3.5% |
+| **Sleeve DM** | ETF Dual Momentum (asset-class rotation) | Configurable | 8% target (conservative estimator) |
 | **Sleeve C** | SPY Put-Spread Hedge | 1.25% annual budget | N/A |
+
+Note: **Sleeve B** and **Sleeve DM** are mutually exclusive in production to avoid overlapping ETF exposure.
 
 ### Key Features
 
@@ -44,6 +47,14 @@ Copy and modify the default configuration:
 
 ```bash
 cp config/dsp100k.yaml config/my_config.yaml
+```
+
+Or use the ready-to-run Dual Momentum config:
+
+```bash
+dsp --config config/dsp100k_etf_dual_momentum.yaml validate
+dsp --config config/dsp100k_etf_dual_momentum.yaml plan
+dsp --config config/dsp100k_etf_dual_momentum.yaml run
 ```
 
 Key configuration sections:
@@ -126,6 +137,15 @@ dsp100k/
 
 ## Sleeve Strategies
 
+### Sleeve A: Equity Momentum + SPY Hedge (v1.0)
+
+Large-cap long-only 12-1 momentum with a SPY short hedge to reduce (not neutralize) equity beta:
+- **Universe**: Static, versioned YAML with sectors at `config/universes/sleeve_a_universe.yaml`
+- **Signal**: 12-month return skipping the most recent month (12-1 convention)
+- **Selection**: Top `n_long` names by momentum (monthly)
+- **Caps**: 4% single-name cap, 20% sector gross cap
+- **Hedge**: SPY short capped at 20% of sleeve NAV to reduce beta (default beta limit 0.60)
+
 ### Sleeve B: Cross-Asset Trend
 
 Non-equity ETF trend-following with multi-horizon signals:
@@ -133,6 +153,14 @@ Non-equity ETF trend-following with multi-horizon signals:
 - **Universe**: TLT, GLD, USO, UUP, etc. (no equity ETFs)
 - **Sizing**: Inverse-volatility weighting to 3.5% vol target
 - **Caps**: 15% single-name maximum
+
+### Sleeve DM: ETF Dual Momentum (Asset-Class Rotation)
+
+Monthly rotation across a diversified ETF universe (no single-stock survivorship issues):
+- **Signal**: 12-month return skipping the most recent month (12-1 convention)
+- **Selection**: Hold top `K` assets with momentum > 0, else hold `cash_symbol` (e.g., SHY)
+- **Sizing**: Equal weight across selected assets, then scale by a conservative vol estimate to the target
+- **Rebalance**: First NYSE trading day of month (execution at the configured window)
 
 ### Sleeve C: Put-Spread Hedge
 

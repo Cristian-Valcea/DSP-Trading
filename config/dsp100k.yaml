@@ -10,6 +10,9 @@ general:
   margin_cap: 0.60            # 60% margin cap
   risk_scale: 1.0             # 0.25 for small-size live
   allow_external_positions: false  # Fail closed if account has FUT/OPT/etc.
+  sleeve_a_nav_pct: 0.60
+  sleeve_b_nav_pct: 0.30
+  sleeve_dm_nav_pct: 0.00
 
 # IBKR Connection Settings
 ibkr:
@@ -39,21 +42,22 @@ risk:
   sleeve_correlation_limit: 0.60  # A-B correlation limit
   sleeve_correlation_window: 30   # days
 
-# Sleeve A Configuration (Equity L/S - Disabled for Phase 1)
+# Sleeve A Configuration (Long-only momentum + SPY hedge)
 sleeve_a:
   enabled: false
   vol_target: 0.05            # 5% volatility
-  n_long: 6                   # Top 6 momentum longs
-  n_short: 6                  # Bottom 6 momentum shorts
-  max_weight_per_name: 0.04   # 4% of NLV per position
-  max_sector_gross: 0.30      # 30% max per sector
-  rebalance_frequency: "weekly"
+  n_long: 20                  # Top 20 momentum longs
+  n_short: 0                  # Unused in v1.0 (no single-name shorts)
+  max_weight_per_name: 0.04   # 4% of sleeve NAV per position
+  max_sector_gross: 0.20      # 20% max per sector (gross)
+  rebalance_frequency: "monthly"
   trade_band: 0.0025          # Don't trade if change < 0.25%
+  hedge_trade_band: 0.05      # Don't adjust SPY hedge unless delta >= 5% of sleeve NAV
 
   # Risk controls
   short_squeeze_gap: 0.20     # 20% gap triggers cover
   max_loss_per_name: 0.0075   # 0.75% of NLV
-  beta_limit: 0.10            # |β| ≤ 0.10
+  beta_limit: 0.60            # Reduce beta to <= 0.60 net (not market-neutral)
   spy_hedge_cap: 0.20         # 20% of NLV
 
   # Universe filters
@@ -107,6 +111,39 @@ sleeve_b:
   # Kill criteria
   spy_correlation_limit: 0.70
   spy_correlation_days: 60
+
+# Sleeve DM Configuration (ETF Dual Momentum - asset class rotation)
+sleeve_dm:
+  enabled: false
+
+  # Universe (risky assets + cash ETF)
+  risky_universe:
+    - SPY
+    - EFA
+    - EEM
+    - IEF
+    - TLT
+    - TIP
+    - GLD
+    - PDBC
+    - UUP
+  cash_symbol: SHY
+
+  # Signal: 12-1 momentum (skip-month)
+  top_k: 3
+  min_momentum: 0.0
+  momentum_window_days: 252
+  momentum_skip_days: 21
+
+  # Vol targeting (conservative estimator, matches backtest)
+  vol_target: 0.08
+  vol_lookback_days: 63
+  max_leverage: 1.5
+
+  # Execution / sizing
+  rebalance_frequency: monthly
+  lookback_days: 420
+  min_order_notional: 100.0
 
 # Sleeve C Configuration (Put Spread Hedge)
 sleeve_c:

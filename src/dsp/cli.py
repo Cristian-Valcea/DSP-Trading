@@ -97,10 +97,20 @@ def run(ctx: click.Context, force: bool) -> None:
                 table.add_row("Date", str(result.as_of_date))
                 table.add_row("Status", "SUCCESS" if result.success else "FAILED")
 
+                if result.sleeve_a_report:
+                    table.add_row(
+                        "Sleeve A Orders",
+                        f"{result.sleeve_a_report.orders_filled}/{result.sleeve_a_report.total_orders}",
+                    )
                 if result.sleeve_b_report:
                     table.add_row(
                         "Sleeve B Orders",
                         f"{result.sleeve_b_report.orders_filled}/{result.sleeve_b_report.total_orders}",
+                    )
+                if result.sleeve_dm_report:
+                    table.add_row(
+                        "Sleeve DM Orders",
+                        f"{result.sleeve_dm_report.orders_filled}/{result.sleeve_dm_report.total_orders}",
                     )
                 if result.sleeve_c_report:
                     table.add_row(
@@ -556,7 +566,7 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
                 more = "" if len(external_positions) <= 10 else f" …(+{len(external_positions) - 10} more)"
                 console.print()
                 console.print(
-                    f"[yellow]⚠ External positions detected (non-STK): {len(external_positions)} "
+                    f"[yellow]⚠ External/unmanaged positions detected: {len(external_positions)} "
                     f"(blocking run={external_blocking})[/yellow]"
                 )
                 console.print(f"  {preview}{more}")
@@ -568,6 +578,7 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
                 return {
                     "status": "halted",
                     "reason": "Trading halted - risk breach",
+                    "dry_run": True,
                     "external_positions": {
                         "count": len(external_positions),
                         "blocking": external_blocking,
@@ -590,7 +601,16 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
                         "effective_scale_factor": risk_status.scale_factor * manual_scale,
                         "double_strike_active": risk_status.double_strike_active,
                     },
-                    "orders": [],
+                    "sleeve_a": {"enabled": config.sleeve_a.enabled, "order_count": 0, "orders": []},
+                    "sleeve_b": {"enabled": config.sleeve_b.enabled, "order_count": 0, "orders": []},
+                    "sleeve_dm": {"enabled": config.sleeve_dm.enabled, "order_count": 0, "orders": []},
+                    "sleeve_c": {
+                        "enabled": config.sleeve_c.enabled,
+                        "auto_disabled": not orchestrator._sleeve_c_enabled,
+                        "order_count": 0,
+                        "orders": [],
+                    },
+                    "estimated_turnover": 0.0,
                     "generated_at": datetime.now().isoformat(),
                 }
 
@@ -598,7 +618,55 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
             console.print("[yellow]Generating execution plan...[/yellow]")
             today = orchestrator.calendar.get_latest_complete_session()
 
-            daily_plan = await orchestrator._generate_plan(today, summary, risk_status)
+            try:
+                daily_plan = await orchestrator._generate_plan(today, summary, risk_status)
+            except Exception as e:
+                console.print(f"[bold red]✗ Plan generation failed:[/bold red] {e}")
+                return {
+                    "status": "error",
+                    "dry_run": True,
+                    "as_of_date": str(today),
+                    "generated_at": datetime.now().isoformat(),
+                    "error": str(e),
+                    "account": {
+                        "nlv": summary.nlv,
+                        "buying_power": getattr(summary, "buying_power", 0),
+                        "currency": getattr(summary, "currency", "USD"),
+                    },
+                    "external_positions": {
+                        "count": len(external_positions),
+                        "blocking": external_blocking,
+                        "positions": [
+                            {
+                                "symbol": p.symbol,
+                                "sec_type": p.sec_type,
+                                "quantity": p.quantity,
+                                "market_value": p.market_value,
+                                "currency": p.currency,
+                            }
+                            for p in external_positions.values()
+                        ],
+                    },
+                    "risk_status": {
+                        "level": risk_status.level.value,
+                        "scale_factor": risk_status.scale_factor * manual_scale,
+                        "risk_manager_scale_factor": risk_status.scale_factor,
+                        "manual_scale_factor": manual_scale,
+                        "effective_scale_factor": risk_status.scale_factor * manual_scale,
+                        "double_strike_active": risk_status.double_strike_active,
+                        "drawdown_pct": risk_status.drawdown.drawdown_pct if risk_status.drawdown else 0,
+                    },
+                    "sleeve_a": {"enabled": config.sleeve_a.enabled, "order_count": 0, "orders": []},
+                    "sleeve_b": {"enabled": config.sleeve_b.enabled, "order_count": 0, "orders": []},
+                    "sleeve_dm": {"enabled": config.sleeve_dm.enabled, "order_count": 0, "orders": []},
+                    "sleeve_c": {
+                        "enabled": config.sleeve_c.enabled,
+                        "auto_disabled": not orchestrator._sleeve_c_enabled,
+                        "order_count": 0,
+                        "orders": [],
+                    },
+                    "estimated_turnover": 0.0,
+                }
 
             # Build output structure
             plan_output = {
@@ -634,10 +702,20 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
                     "double_strike_active": risk_status.double_strike_active,
                     "drawdown_pct": risk_status.drawdown.drawdown_pct if risk_status.drawdown else 0,
                 },
+                "sleeve_a": {
+                    "enabled": config.sleeve_a.enabled,
+                    "order_count": len(daily_plan.sleeve_a_orders),
+                    "orders": daily_plan.sleeve_a_orders,
+                },
                 "sleeve_b": {
                     "enabled": config.sleeve_b.enabled,
                     "order_count": len(daily_plan.sleeve_b_orders),
                     "orders": daily_plan.sleeve_b_orders,
+                },
+                "sleeve_dm": {
+                    "enabled": config.sleeve_dm.enabled,
+                    "order_count": len(daily_plan.sleeve_dm_orders),
+                    "orders": daily_plan.sleeve_dm_orders,
                 },
                 "sleeve_c": {
                     "enabled": config.sleeve_c.enabled,
@@ -668,12 +746,28 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
     table.add_column("Status", style="green")
     table.add_column("Orders")
 
+    # Sleeve A
+    sleeve_a = plan_data["sleeve_a"]
+    table.add_row(
+        "Sleeve A",
+        "[green]Enabled[/green]" if sleeve_a["enabled"] else "[dim]Disabled[/dim]",
+        str(sleeve_a["order_count"]),
+    )
+
     # Sleeve B
     sleeve_b = plan_data["sleeve_b"]
     table.add_row(
         "Sleeve B",
         "[green]Enabled[/green]" if sleeve_b["enabled"] else "[dim]Disabled[/dim]",
         str(sleeve_b["order_count"]),
+    )
+
+    # Sleeve DM
+    sleeve_dm = plan_data["sleeve_dm"]
+    table.add_row(
+        "Sleeve DM",
+        "[green]Enabled[/green]" if sleeve_dm["enabled"] else "[dim]Disabled[/dim]",
+        str(sleeve_dm["order_count"]),
     )
 
     # Sleeve C
@@ -686,10 +780,32 @@ def plan(ctx: click.Context, output: Optional[str], force: bool) -> None:
     console.print(table)
 
     # Show order details
+    if sleeve_a["orders"]:
+        console.print()
+        console.print("[bold]Sleeve A Orders:[/bold]")
+        for order in sleeve_a["orders"]:
+            side = order.get("side", "?")
+            qty = order.get("quantity", 0)
+            symbol = order.get("symbol", "?")
+            reason = order.get("reason", "")
+            side_color = "green" if side == "BUY" else "red"
+            console.print(f"  [{side_color}]{side}[/{side_color}] {qty} {symbol} - {reason}")
+
     if sleeve_b["orders"]:
         console.print()
         console.print("[bold]Sleeve B Orders:[/bold]")
         for order in sleeve_b["orders"]:
+            side = order.get("side", "?")
+            qty = order.get("quantity", 0)
+            symbol = order.get("symbol", "?")
+            reason = order.get("reason", "")
+            side_color = "green" if side == "BUY" else "red"
+            console.print(f"  [{side_color}]{side}[/{side_color}] {qty} {symbol} - {reason}")
+
+    if sleeve_dm["orders"]:
+        console.print()
+        console.print("[bold]Sleeve DM Orders:[/bold]")
+        for order in sleeve_dm["orders"]:
             side = order.get("side", "?")
             qty = order.get("quantity", 0)
             symbol = order.get("symbol", "?")
