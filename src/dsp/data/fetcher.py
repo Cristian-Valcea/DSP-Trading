@@ -487,11 +487,13 @@ class UniverseManager:
     """
 
     # Equity ETFs that are NOT allowed in Sleeve B
+    # NOTE: REITs (VNQ, VNQI) are classified as equity instruments
     EQUITY_ETFS = {
         "SPY", "QQQ", "IWM", "DIA", "VTI",
         "VOO", "IVV", "VT", "VXUS", "VEA",
         "VWO", "EFA", "EEM", "IEMG", "VGK",
         "VPL", "IJH", "IJR", "MDY", "IWB",
+        "VNQ", "VNQI",  # REITs are equity instruments
     }
 
     # Default Sleeve B universe (non-equity ETFs only)
@@ -512,9 +514,7 @@ class UniverseManager:
         "DBA",   # Agriculture
         "DBB",   # Base Metals
 
-        # Real Assets
-        "VNQ",   # Real Estate
-        "VNQI",  # International Real Estate
+        # NOTE: VNQ/VNQI EXCLUDED - REITs are equity instruments
 
         # Currencies
         "UUP",   # US Dollar

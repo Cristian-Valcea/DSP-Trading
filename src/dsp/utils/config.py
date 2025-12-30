@@ -62,12 +62,25 @@ class SleeveBConfig:
     rebalance_frequency: str = "weekly"
     turnover_cap: float = 0.50  # 50% weekly cap
     deadband: float = 0.25  # Score deadband
-    max_weight_per_etf: float = 0.15  # 15% of NLV
+    single_name_cap: float = 0.15  # 15% max per ETF (alias for max_weight_per_etf)
+    rebal_threshold: float = 0.05  # 5% threshold to trigger rebalance
 
     # Signal weights (multi-horizon)
     weight_1m: float = 0.25
     weight_3m: float = 0.50
     weight_12m: float = 0.25
+
+    # Universe - list of non-equity ETF symbols
+    universe: List[str] = field(default_factory=lambda: [
+        # Bonds
+        "TLT", "IEF", "LQD", "HYG", "EMB", "TIP",
+        # Commodities
+        "GLD", "SLV", "USO", "UNG", "DBA", "DBB",
+        # Currencies
+        "UUP", "FXE", "FXY", "FXB",
+        # Volatility
+        "VIXY",
+    ])
 
     # Kill criteria
     spy_correlation_limit: float = 0.70
@@ -79,9 +92,9 @@ class SleeveCConfig:
     """Sleeve C (SPY Hedge) configuration."""
     enabled: bool = True
     annual_budget_pct: float = 0.0125  # 1.25% of NLV
-    target_dte_min: int = 90
-    target_dte_max: int = 120
-    roll_dte_trigger: int = 45
+    target_dte_min: int = 30  # Minimum DTE for new spreads
+    target_dte_max: int = 45  # Maximum DTE for new spreads
+    roll_dte_trigger: int = 10  # Roll when DTE falls below this
 
     # Delta targets
     long_delta_target: float = -0.25  # ~25 delta put
@@ -89,12 +102,28 @@ class SleeveCConfig:
     delta_drift_min: float = -0.35
     delta_drift_max: float = -0.15
 
+    # Structure
+    underlying: str = "SPY"
+    max_spreads: int = 5
+
 
 @dataclass
 class RiskConfig:
     """Portfolio-level risk configuration."""
-    drawdown_warning: float = 0.06  # 6% triggers scale-down
-    drawdown_hard_stop: float = 0.10  # 10% triggers flatten
+    # Volatility targeting
+    vol_target: float = 0.07  # 7% portfolio volatility target
+    vol_cap: float = 0.08  # 8% hard cap
+    sleeve_a_vol_target: float = 0.05  # 5% for Sleeve A
+    sleeve_b_vol_target: float = 0.035  # 3.5% for Sleeve B
+
+    # Drawdown controls
+    dd_warning: float = 0.06  # 6% triggers scale-down / strike
+    dd_hard_stop: float = 0.10  # 10% triggers flatten to cash
+
+    # Margin controls
+    margin_cap: float = 0.60  # 60% margin utilization cap
+
+    # Correlation limits
     sleeve_correlation_limit: float = 0.60  # A-B correlation limit
     sleeve_correlation_window: int = 30  # days
 

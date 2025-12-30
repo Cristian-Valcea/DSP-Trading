@@ -52,6 +52,7 @@ sleeve_b:
     12m_skip: 0.25        # 12-month return skip most recent month (25%)
 
   # Universe - non-equity ETFs only
+  # NOTE: VNQ/VNQI are EXCLUDED because REITs are equity instruments
   universe:
     # Bonds
     - TLT   # 20+ Year Treasury
@@ -69,10 +70,6 @@ sleeve_b:
     - DBA   # Agriculture
     - DBB   # Base Metals
 
-    # Real Assets
-    - VNQ   # Real Estate
-    - VNQI  # International Real Estate
-
     # Currencies
     - UUP   # US Dollar
     - FXE   # Euro
@@ -81,6 +78,9 @@ sleeve_b:
 
     # Volatility
     - VIXY  # VIX Short-Term
+
+  # Rebalance settings
+  rebal_threshold: 0.05  # 5% threshold to trigger rebalance
 
 # Sleeve C Configuration (Put Spread Hedge)
 sleeve_c:
