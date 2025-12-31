@@ -24,6 +24,9 @@ from datetime import date, datetime, time
 from typing import Dict, List, Optional, Tuple
 
 from ..data.fetcher import DataFetcher
+from ..data.minute_bar import DailyMinuteBars, MinuteBar as DataMinuteBar
+from ..data.polygon_fetcher import PolygonConfig, PolygonFetcher
+from ..data.data_quality import DataQualityMonitor, is_tradable
 from ..utils.config import SleeveIMConfig
 from ..utils.logging import get_audit_logger
 
@@ -167,19 +170,34 @@ class SleeveIM:
         # Risk state
         self._risk_state = SleeveIMRiskState()
 
-        # Polygon API key (loaded from env)
+        # Polygon API key and fetcher (loaded from env)
         self._polygon_key: Optional[str] = None
+        self._polygon_fetcher: Optional[PolygonFetcher] = None
         if config.polygon_api_key_env:
             self._polygon_key = os.getenv(config.polygon_api_key_env)
+            if self._polygon_key:
+                try:
+                    polygon_config = PolygonConfig(
+                        api_key=self._polygon_key,
+                        cache_dir=config.cache_dir or "data/sleeve_im/minute_bars",
+                    )
+                    self._polygon_fetcher = PolygonFetcher(polygon_config)
+                    logger.info("Sleeve IM: PolygonFetcher initialized")
+                except Exception as e:
+                    logger.error("Sleeve IM: Failed to init PolygonFetcher: %s", e)
+
+        # Data quality monitor
+        self._quality_monitor = DataQualityMonitor()
 
         # Model and scaler (loaded lazily)
         self._model = None
         self._scaler = None
 
         logger.info(
-            "Sleeve IM initialized: universe=%d symbols, exposure=%.1f%%",
+            "Sleeve IM initialized: universe=%d symbols, exposure=%.1f%%, polygon=%s",
             len(self.universe),
             config.target_gross_exposure * 100,
+            "enabled" if self._polygon_fetcher else "disabled",
         )
 
     @property
@@ -207,7 +225,7 @@ class SleeveIM:
         self,
         *,
         as_of_date: date,
-        minute_bars: Optional[Dict[str, List[MinuteBar]]] = None,
+        minute_bars: Optional[Dict[str, DailyMinuteBars]] = None,
     ) -> List[SleeveIMSignal]:
         """
         Generate trading signals for the day.
@@ -225,10 +243,37 @@ class SleeveIM:
             logger.info("Sleeve IM: Disabled, returning empty signals")
             return []
 
-        # TODO: Phase 2 - Implement Polygon data fetching
+        # Fetch minute bars via Polygon if not provided
         if minute_bars is None:
-            logger.warning("Sleeve IM: minute_bars not provided, skipping")
+            minute_bars = await self._fetch_minute_bars(as_of_date)
+
+        if not minute_bars:
+            logger.warning("Sleeve IM: No minute bars available for %s", as_of_date)
             return []
+
+        # Check data quality for all symbols
+        tradable_symbols = []
+        for symbol, daily_bars in minute_bars.items():
+            is_ok, report = self._quality_monitor.check(daily_bars)
+            if is_ok:
+                tradable_symbols.append(symbol)
+            else:
+                logger.warning(
+                    "Sleeve IM: %s failed quality check: %s",
+                    symbol,
+                    ", ".join(report.flags[:3]),
+                )
+
+        if not tradable_symbols:
+            logger.warning("Sleeve IM: No symbols passed quality check for %s", as_of_date)
+            return []
+
+        logger.info(
+            "Sleeve IM: %d/%d symbols passed quality check for %s",
+            len(tradable_symbols),
+            len(minute_bars),
+            as_of_date,
+        )
 
         # TODO: Phase 3 - Implement feature computation
         # TODO: Phase 4 - Implement model inference
@@ -237,7 +282,7 @@ class SleeveIM:
         signal_time = time(10, 31)
 
         for symbol in self.universe:
-            # Placeholder: random signal for skeleton
+            # Placeholder: neutral signal for skeleton
             # Real implementation will use ML model
             signals.append(
                 SleeveIMSignal(
@@ -257,6 +302,45 @@ class SleeveIM:
         )
 
         return signals
+
+    async def _fetch_minute_bars(
+        self,
+        trading_date: date,
+    ) -> Dict[str, DailyMinuteBars]:
+        """
+        Fetch minute bars for all universe symbols via Polygon.
+
+        Args:
+            trading_date: The trading date
+
+        Returns:
+            Dict mapping symbol to DailyMinuteBars
+        """
+        if self._polygon_fetcher is None:
+            logger.warning("Sleeve IM: PolygonFetcher not available")
+            return {}
+
+        try:
+            async with self._polygon_fetcher as fetcher:
+                bars_by_symbol = await fetcher.get_multiple_symbols(
+                    symbols=self.universe,
+                    trading_date=trading_date,
+                    start_time=time(1, 30),  # Feature window start
+                    end_time=time(10, 30),   # Feature window end
+                )
+
+            logger.info(
+                "Sleeve IM: Fetched minute bars for %d/%d symbols on %s",
+                len(bars_by_symbol),
+                len(self.universe),
+                trading_date,
+            )
+
+            return bars_by_symbol
+
+        except Exception as e:
+            logger.error("Sleeve IM: Failed to fetch minute bars: %s", e)
+            return {}
 
     # ========================================================================
     # Position Sizing (11:25 ET)
