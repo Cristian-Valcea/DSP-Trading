@@ -678,9 +678,18 @@ class DailyOrchestrator:
             # For now, we generate signals and adjustment unconditionally;
             # the scheduler will call this at the right time.
             im_prices = await self._get_current_prices(self._sleeve_im.symbols)
+
+            # Step 1: Generate signals (normally done at 10:31 ET)
+            im_signals = await self._sleeve_im.generate_signals(
+                as_of_date=as_of_date,
+                minute_bars=None,  # TODO: Pass real minute bars when available
+            )
+
+            # Step 2: Generate adjustment based on signals (normally done at 11:25 ET)
             im_adjustment = await self._sleeve_im.generate_adjustment(
                 sleeve_nav=sleeve_im_nav * scale_factor,
                 prices=im_prices,
+                signals=im_signals,
                 as_of_date=as_of_date,
             )
             if im_adjustment.rebalance_needed:
