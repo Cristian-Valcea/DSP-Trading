@@ -156,6 +156,58 @@ class SleeveCConfig:
 
 
 @dataclass
+class SleeveIMConfig:
+    """Sleeve IM (Intraday ML Long/Short) configuration."""
+    enabled: bool = False
+
+    # Portfolio construction
+    top_k: int = 3                          # Per-side: 3 long + 3 short
+    edge_threshold: float = 0.02            # Trade if p >= 0.52 (long) or p <= 0.48 (short)
+    target_gross_exposure: float = 0.00     # Start in shadow mode (0% exposure)
+    dollar_neutral: bool = True
+    max_net_exposure_pct_gross: float = 0.10  # Net <= 10% of gross
+
+    # Time windows (ET)
+    feature_window_start: str = "01:30"
+    feature_window_end: str = "10:30"
+    entry_time: str = "11:30"
+    moc_submit_time: str = "15:45"
+
+    # Risk limits
+    max_single_name_pct: float = 0.03       # 3% of total NAV
+    max_sleeve_gross_pct: float = 0.15      # 15% of total NAV
+    drawdown_warning: float = 0.10          # 10% DD -> reduce exposure
+    drawdown_hard_stop: float = 0.15        # 15% DD -> halt
+    daily_loss_limit: float = 0.01          # 1% daily loss -> no new trades
+    per_name_loss_limit: float = 0.02       # 2% per-name loss -> exit
+
+    # Execution
+    entry_slippage_cap_bps: int = 20
+    order_timeout_seconds: int = 60
+
+    # Data quality
+    max_synthetic_bar_pct: float = 0.70
+    min_premarket_dollar_volume: float = 500_000
+    min_adv_dollar: float = 50_000_000
+    min_market_cap: float = 10_000_000_000
+
+    # Model paths
+    model_path: str = "models/sleeve_im/model_v1.pt"
+    scaler_path: str = "models/sleeve_im/scaler_v1.pkl"
+
+    # Universe (most liquid premarket names)
+    universe: List[str] = field(default_factory=lambda: [
+        # Magnificent 7
+        "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA",
+        # Benchmark ETFs (for context features)
+        "SPY", "QQQ",
+    ])
+
+    # Polygon API
+    polygon_api_key_env: str = "POLYGON_API_KEY"  # Env var name
+
+
+@dataclass
 class RiskConfig:
     """Portfolio-level risk configuration."""
     # Volatility targeting
@@ -207,6 +259,7 @@ class GeneralConfig:
     sleeve_a_nav_pct: float = 0.60
     sleeve_b_nav_pct: float = 0.30
     sleeve_dm_nav_pct: float = 0.0
+    sleeve_im_nav_pct: float = 0.0  # Intraday ML sleeve allocation
 
 
 @dataclass
@@ -217,6 +270,7 @@ class Config:
     sleeve_a: SleeveAConfig = field(default_factory=SleeveAConfig)
     sleeve_b: SleeveBConfig = field(default_factory=SleeveBConfig)
     sleeve_dm: SleeveDMConfig = field(default_factory=SleeveDMConfig)
+    sleeve_im: SleeveIMConfig = field(default_factory=SleeveIMConfig)
     sleeve_c: SleeveCConfig = field(default_factory=SleeveCConfig)
     risk: RiskConfig = field(default_factory=RiskConfig)
     execution: ExecutionConfig = field(default_factory=ExecutionConfig)
@@ -263,6 +317,12 @@ def _apply_env_overrides(config: Config) -> Config:
         config.sleeve_c.enabled = os.getenv("DSP_SLEEVE_C_ENABLED").lower() == "true"
     if os.getenv("DSP_SLEEVE_DM_ENABLED"):
         config.sleeve_dm.enabled = os.getenv("DSP_SLEEVE_DM_ENABLED").lower() == "true"
+    if os.getenv("DSP_SLEEVE_IM_ENABLED"):
+        config.sleeve_im.enabled = os.getenv("DSP_SLEEVE_IM_ENABLED").lower() == "true"
+
+    # Sleeve IM specific overrides
+    if os.getenv("DSP_SLEEVE_IM_EXPOSURE"):
+        config.sleeve_im.target_gross_exposure = float(os.getenv("DSP_SLEEVE_IM_EXPOSURE"))
 
     return config
 
@@ -376,6 +436,7 @@ def load_config(
         "sleeve_a",
         "sleeve_b",
         "sleeve_dm",
+        "sleeve_im",
         "sleeve_c",
         "risk",
         "execution",
@@ -397,6 +458,7 @@ def load_config(
         sleeve_a=_dataclass_from_dict(SleeveAConfig, config_data.get("sleeve_a"), section="sleeve_a", strict=strict_mode),
         sleeve_b=_dataclass_from_dict(SleeveBConfig, config_data.get("sleeve_b"), section="sleeve_b", strict=strict_mode),
         sleeve_dm=_dataclass_from_dict(SleeveDMConfig, config_data.get("sleeve_dm"), section="sleeve_dm", strict=strict_mode),
+        sleeve_im=_dataclass_from_dict(SleeveIMConfig, config_data.get("sleeve_im"), section="sleeve_im", strict=strict_mode),
         sleeve_c=_dataclass_from_dict(SleeveCConfig, config_data.get("sleeve_c"), section="sleeve_c", strict=strict_mode),
         risk=_dataclass_from_dict(RiskConfig, config_data.get("risk"), section="risk", strict=strict_mode),
         execution=_dataclass_from_dict(ExecutionConfig, config_data.get("execution"), section="execution", strict=strict_mode),
@@ -454,6 +516,7 @@ def save_config(config: Config, config_path: str) -> None:
         "sleeve_a": asdict(config.sleeve_a),
         "sleeve_b": asdict(config.sleeve_b),
         "sleeve_dm": asdict(config.sleeve_dm),
+        "sleeve_im": asdict(config.sleeve_im),
         "sleeve_c": asdict(config.sleeve_c),
         "risk": asdict(config.risk),
         "execution": asdict(config.execution),

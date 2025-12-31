@@ -23,7 +23,7 @@ from ..data.fetcher import DataFetcher
 from ..ibkr import IBKRClient, AccountSummary, Position
 from ..risk import RiskManager, RiskStatus, RiskAlert
 from ..risk.margin import MarginMonitor
-from ..sleeves import SleeveA, SleeveB, SleeveC, SleeveDM
+from ..sleeves import SleeveA, SleeveB, SleeveC, SleeveDM, SleeveIM
 from ..utils.config import DSPConfig
 from ..utils.logging import get_audit_logger, setup_logging
 from ..utils.time import MarketCalendar, get_ny_time, is_market_open
@@ -49,6 +49,7 @@ class DailyPlan:
     sleeve_a_orders: List[Dict]
     sleeve_b_orders: List[Dict]
     sleeve_dm_orders: List[Dict]
+    sleeve_im_orders: List[Dict]
     sleeve_c_orders: List[Dict]
     risk_status: RiskStatus
     scale_factor: float
@@ -64,6 +65,7 @@ class ExecutionResult:
     sleeve_a_report: Optional[BatchExecutionReport]
     sleeve_b_report: Optional[BatchExecutionReport]
     sleeve_dm_report: Optional[BatchExecutionReport]
+    sleeve_im_report: Optional[BatchExecutionReport]
     sleeve_c_report: Optional[BatchExecutionReport]
     risk_status: RiskStatus
     total_commission: float
@@ -106,6 +108,7 @@ class DailyOrchestrator:
         self._sleeve_a: Optional[SleeveA] = None
         self._sleeve_b: Optional[SleeveB] = None
         self._sleeve_dm: Optional[SleeveDM] = None
+        self._sleeve_im: Optional[SleeveIM] = None
         self._sleeve_c: Optional[SleeveC] = None
         self._cache: Optional[DataCache] = None
 
@@ -179,6 +182,20 @@ class DailyOrchestrator:
             else:
                 self._sleeve_dm = None
 
+            # Sleeve IM (Intraday ML Long/Short) - operates on separate intraday schedule
+            # NOTE: Sleeve IM has its own execution windows (entry at 11:30 ET, MOC exit at 15:45 ET)
+            # and requires Polygon.io minute data. It runs in shadow mode by default (exposure=0).
+            if self.config.sleeve_im.enabled:
+                self._sleeve_im = SleeveIM(self.config.sleeve_im, self._fetcher)
+                logger.info(
+                    "✅ Sleeve IM initialized: top_k=%d, exposure=%.2f, dollar_neutral=%s",
+                    self.config.sleeve_im.top_k,
+                    self.config.sleeve_im.target_gross_exposure,
+                    self.config.sleeve_im.dollar_neutral,
+                )
+            else:
+                self._sleeve_im = None
+
             # Sleeve C (options) - AUTO-DISABLED until options execution implemented
             # The executor only supports STK/ETF; Sleeve C emits OPT orders that would
             # silently fail. Hard-disable it here to prevent false sense of hedging.
@@ -229,6 +246,8 @@ class DailyOrchestrator:
             managed_symbols |= set(self._sleeve_b.symbols)
         if self._sleeve_dm is not None and self.config.sleeve_dm.enabled:
             managed_symbols |= set(self._sleeve_dm.symbols)
+        if self._sleeve_im is not None and self.config.sleeve_im.enabled:
+            managed_symbols |= set(self._sleeve_im.symbols)
 
         self._external_positions = {}
         for symbol, pos in self._positions.items():
@@ -287,6 +306,13 @@ class DailyOrchestrator:
             }
             self._sleeve_dm.set_positions(sleeve_dm_positions)
 
+        if self._sleeve_im is not None:
+            sleeve_im_positions = {
+                s: int(p.quantity) for s, p in self._positions.items()
+                if s in set(self._sleeve_im.symbols)
+            }
+            self._sleeve_im.set_positions(sleeve_im_positions)
+
         logger.info(f"Synced {len(self._positions)} positions from IBKR")
 
     async def run_daily(
@@ -316,6 +342,7 @@ class DailyOrchestrator:
                 sleeve_a_report=None,
                 sleeve_b_report=None,
                 sleeve_dm_report=None,
+                sleeve_im_report=None,
                 sleeve_c_report=None,
                 risk_status=await self._risk.get_status(),
                 total_commission=0,
@@ -350,6 +377,7 @@ class DailyOrchestrator:
                     sleeve_a_report=None,
                     sleeve_b_report=None,
                     sleeve_dm_report=None,
+                    sleeve_im_report=None,
                     sleeve_c_report=None,
                     risk_status=await self._risk.get_status(today),
                     total_commission=0,
@@ -374,6 +402,7 @@ class DailyOrchestrator:
                     sleeve_a_report=None,
                     sleeve_b_report=None,
                     sleeve_dm_report=None,
+                    sleeve_im_report=None,
                     sleeve_c_report=None,
                     risk_status=risk_status,
                     total_commission=0,
@@ -384,10 +413,11 @@ class DailyOrchestrator:
             # 3. Generate daily plan
             plan = await self._generate_plan(today, summary, risk_status)
             logger.info(
-                "Generated plan: Sleeve A=%d orders, Sleeve B=%d orders, Sleeve DM=%d orders",
+                "Generated plan: Sleeve A=%d orders, Sleeve B=%d orders, Sleeve DM=%d orders, Sleeve IM=%d orders",
                 len(plan.sleeve_a_orders),
                 len(plan.sleeve_b_orders),
                 len(plan.sleeve_dm_orders),
+                len(plan.sleeve_im_orders),
             )
             logger.info(
                 "Scale factor (effective): %.2f (risk_mgr=%.2f, manual=%.2f)",
@@ -436,6 +466,22 @@ class DailyOrchestrator:
                     sleeve_dm_report.total_orders,
                 )
 
+            # 5c. Execute Sleeve IM (Intraday ML)
+            # NOTE: Sleeve IM has separate entry/exit windows (11:30 ET and 15:45 ET MOC).
+            # The daily orchestrator handles entry orders; MOC exits need separate scheduler.
+            sleeve_im_report = None
+            if plan.sleeve_im_orders:
+                logger.info("Executing Sleeve IM orders...")
+                sleeve_im_report = await self._executor.execute_orders(
+                    plan.sleeve_im_orders,
+                    force_execution=force,
+                )
+                logger.info(
+                    "Sleeve IM: %d/%d filled",
+                    sleeve_im_report.orders_filled,
+                    sleeve_im_report.total_orders,
+                )
+
             # 6. Execute Sleeve C (hedges)
             sleeve_c_report = None
             if plan.sleeve_c_orders:
@@ -474,6 +520,12 @@ class DailyOrchestrator:
                     total_slippage += sleeve_dm_report.average_slippage_bps * sleeve_dm_report.orders_filled
                     fill_count += sleeve_dm_report.orders_filled
 
+            if sleeve_im_report:
+                total_commission += sleeve_im_report.total_commission
+                if sleeve_im_report.orders_filled > 0:
+                    total_slippage += sleeve_im_report.average_slippage_bps * sleeve_im_report.orders_filled
+                    fill_count += sleeve_im_report.orders_filled
+
             if sleeve_c_report:
                 total_commission += sleeve_c_report.total_commission
                 if sleeve_c_report.orders_filled > 0:
@@ -490,6 +542,7 @@ class DailyOrchestrator:
                     "sleeve_a_fills": sleeve_a_report.orders_filled if sleeve_a_report else 0,
                     "sleeve_b_fills": sleeve_b_report.orders_filled if sleeve_b_report else 0,
                     "sleeve_dm_fills": sleeve_dm_report.orders_filled if sleeve_dm_report else 0,
+                    "sleeve_im_fills": sleeve_im_report.orders_filled if sleeve_im_report else 0,
                     "sleeve_c_fills": sleeve_c_report.orders_filled if sleeve_c_report else 0,
                     "total_commission": total_commission,
                     "avg_slippage_bps": avg_slippage,
@@ -503,6 +556,7 @@ class DailyOrchestrator:
                 sleeve_a_report=sleeve_a_report,
                 sleeve_b_report=sleeve_b_report,
                 sleeve_dm_report=sleeve_dm_report,
+                sleeve_im_report=sleeve_im_report,
                 sleeve_c_report=sleeve_c_report,
                 risk_status=risk_status,
                 total_commission=total_commission,
@@ -532,6 +586,7 @@ class DailyOrchestrator:
                 sleeve_a_report=None,
                 sleeve_b_report=None,
                 sleeve_dm_report=None,
+                sleeve_im_report=None,
                 sleeve_c_report=None,
                 risk_status=await self._risk.get_status(),
                 total_commission=0,
@@ -554,16 +609,18 @@ class DailyOrchestrator:
         sleeve_a_nav = total_nav * float(self.config.general.sleeve_a_nav_pct)
         sleeve_b_nav = total_nav * float(self.config.general.sleeve_b_nav_pct)
         sleeve_dm_nav = total_nav * float(self.config.general.sleeve_dm_nav_pct)
+        sleeve_im_nav = total_nav * float(self.config.general.sleeve_im_nav_pct)
 
         if (
-            sleeve_a_nav + sleeve_b_nav + sleeve_dm_nav
+            sleeve_a_nav + sleeve_b_nav + sleeve_dm_nav + sleeve_im_nav
             > total_nav * (1.0 - float(self.config.general.cash_buffer) + 1e-6)
         ):
             logger.warning(
-                "Allocations exceed cash buffer: sleeve_a_nav_pct=%.2f sleeve_b_nav_pct=%.2f sleeve_dm_nav_pct=%.2f cash_buffer=%.2f",
+                "Allocations exceed cash buffer: sleeve_a_nav_pct=%.2f sleeve_b_nav_pct=%.2f sleeve_dm_nav_pct=%.2f sleeve_im_nav_pct=%.2f cash_buffer=%.2f",
                 float(self.config.general.sleeve_a_nav_pct),
                 float(self.config.general.sleeve_b_nav_pct),
                 float(self.config.general.sleeve_dm_nav_pct),
+                float(self.config.general.sleeve_im_nav_pct),
                 float(self.config.general.cash_buffer),
             )
 
@@ -612,6 +669,29 @@ class DailyOrchestrator:
             if dm_adjustment.rebalance_needed:
                 sleeve_dm_orders = self._sleeve_dm.get_target_orders(dm_adjustment)
 
+        # Generate Sleeve IM (Intraday ML Long/Short) adjustment
+        # NOTE: Sleeve IM operates on different schedule (signals at 10:31 ET, entry at 11:30 ET).
+        # This daily orchestrator run handles entry orders. MOC exits are handled separately.
+        sleeve_im_orders: List[Dict] = []
+        if self._sleeve_im is not None and self.config.sleeve_im.enabled:
+            # Check if we're in the entry window (11:25-11:35 ET approximately)
+            # For now, we generate signals and adjustment unconditionally;
+            # the scheduler will call this at the right time.
+            im_prices = await self._get_current_prices(self._sleeve_im.symbols)
+            im_adjustment = await self._sleeve_im.generate_adjustment(
+                sleeve_nav=sleeve_im_nav * scale_factor,
+                prices=im_prices,
+                as_of_date=as_of_date,
+            )
+            if im_adjustment.rebalance_needed:
+                sleeve_im_orders = self._sleeve_im.get_target_orders(im_adjustment)
+                logger.info(
+                    "Sleeve IM: %d longs, %d shorts planned (gross=%.2f%%)",
+                    len([o for o in sleeve_im_orders if o.get("side") == "BUY"]),
+                    len([o for o in sleeve_im_orders if o.get("side") == "SELL"]),
+                    im_adjustment.target_gross_exposure * 100 if hasattr(im_adjustment, 'target_gross_exposure') else 0,
+                )
+
         # Generate Sleeve C orders (hedges) - DISABLED until options execution works
         sleeve_c_orders = []
         if self._sleeve_c_enabled:
@@ -637,6 +717,7 @@ class DailyOrchestrator:
             sleeve_a_orders=sleeve_a_orders,
             sleeve_b_orders=sleeve_b_orders,
             sleeve_dm_orders=sleeve_dm_orders,
+            sleeve_im_orders=sleeve_im_orders,
             sleeve_c_orders=sleeve_c_orders,
             risk_status=risk_status,
             scale_factor=scale_factor,
