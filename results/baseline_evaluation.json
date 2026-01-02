@@ -1,0 +1,117 @@
+{
+  "config": {
+    "data_dir": "/Users/Shared/wsl-export/wsl-home/data/dqn_dev_test",
+    "episodes": 20,
+    "seed": 42,
+    "symbols": [
+      "AAPL",
+      "AMZN",
+      "GOOGL",
+      "META",
+      "MSFT",
+      "NVDA",
+      "QQQ",
+      "SPY",
+      "TSLA"
+    ],
+    "num_dates": 128,
+    "trading_minutes": 209
+  },
+  "results": {
+    "always_flat": {
+      "policy": "always_flat",
+      "num_episodes": 20,
+      "total_return": 0.0,
+      "mean_episode_return": 0.0,
+      "std_episode_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "max_drawdown": 0.0,
+      "mean_episode_length": 209.0,
+      "mean_trades_per_episode": 0.0,
+      "total_trades": 0,
+      "mean_reward_per_step": 0.0,
+      "std_reward_per_step": 0.0,
+      "episode_returns": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "random": {
+      "policy": "random",
+      "num_episodes": 20,
+      "total_return": -24.164592478809908,
+      "mean_episode_return": -1.2082296239404955,
+      "std_episode_return": 0.014732930537227108,
+      "sharpe_ratio": -1301.848985249865,
+      "max_drawdown": 22.962377162229455,
+      "mean_episode_length": 209.0,
+      "mean_trades_per_episode": 1291.0,
+      "total_trades": 25820,
+      "mean_reward_per_step": -0.005781002985361236,
+      "std_reward_per_step": 0.0019291349892820845,
+      "episode_returns": [
+        -1.202215316580454,
+        -1.2063674123560133,
+        -1.208418640968927,
+        -1.2147536009138706,
+        -1.1946473600170695,
+        -1.2037601964094238,
+        -1.2199367184714278,
+        -1.2027424400811926,
+        -1.1894314042949194,
+        -1.2053796927639524,
+        -1.2200907998149946,
+        -1.1756861723579537,
+        -1.2152700545936712,
+        -1.225749643665705,
+        -1.1962754053442783,
+        -1.2182560781648961,
+        -1.2217215435529143,
+        -1.2415399929163269,
+        -1.214116592135771,
+        -1.1882334134061499
+      ]
+    }
+  },
+  "kill_tests": {
+    "tests": {
+      "flat_sharpe_zero": {
+        "test": "FLAT policy Sharpe \u2248 0 (no look-ahead bias)",
+        "condition": "abs(sharpe) < 0.1",
+        "value": 0.0,
+        "total_return": 0.0,
+        "status": "PASS",
+        "message": "No look-ahead bias detected"
+      },
+      "random_negative": {
+        "test": "Random policy Sharpe < 0 (transaction costs work)",
+        "condition": "sharpe < 0 AND total_return < 0",
+        "sharpe": -1301.848985249865,
+        "total_return": -24.164592478809908,
+        "status": "PASS",
+        "message": "Transaction costs correctly dominate random trading"
+      }
+    },
+    "overall_status": "PASS",
+    "timestamp": "2026-01-02T16:58:52.672141"
+  },
+  "timestamp": "2026-01-02T16:58:52.672221"
+}
