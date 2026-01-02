@@ -103,7 +103,12 @@ class StateBuilder:
         self.data: dict[str, pd.DataFrame] = {}
         self.precomputed_features: dict[str, np.ndarray] = {}
 
-    def reset(self, data_dict: dict[str, pd.DataFrame], premarket_data: Optional[dict] = None):
+    def reset(
+        self,
+        data_dict: dict[str, pd.DataFrame],
+        premarket_data: Optional[dict] = None,
+        prior_close_by_symbol: Optional[dict[str, float]] = None,
+    ):
         """
         Reset state builder with new day's data.
 
@@ -111,18 +116,27 @@ class StateBuilder:
             data_dict: Dictionary mapping symbol -> DataFrame with columns:
                        [timestamp, open, high, low, close, volume]
             premarket_data: Optional dict with premarket return/volume per symbol
+            prior_close_by_symbol: Optional dict mapping symbol -> prior session close
         """
         self.data = data_dict
         self.premarket_data = premarket_data or {}
+        self.prior_close_by_symbol = prior_close_by_symbol or {}
 
         # Precompute all features for each symbol
         for symbol in self.symbols:
             if symbol in data_dict:
                 self.precomputed_features[symbol] = self._precompute_symbol_features(
-                    symbol, data_dict[symbol]
+                    symbol,
+                    data_dict[symbol],
+                    prior_close=self.prior_close_by_symbol.get(symbol),
                 )
 
-    def _precompute_symbol_features(self, symbol: str, df: pd.DataFrame) -> np.ndarray:
+    def _precompute_symbol_features(
+        self,
+        symbol: str,
+        df: pd.DataFrame,
+        prior_close: Optional[float] = None,
+    ) -> np.ndarray:
         """
         Precompute all features for a symbol's day of data.
 
@@ -209,9 +223,8 @@ class StateBuilder:
 
         # 6. Overnight gap
         first_open = open_[0]
-        yesterday_close = prev_close[0]  # Should be passed in, using prev_close[0] as proxy
-        if yesterday_close > 0:
-            features[:, 17] = (first_open - yesterday_close) / yesterday_close
+        if prior_close is not None and prior_close > 0:
+            features[:, 17] = (first_open - prior_close) / prior_close
         else:
             features[:, 17] = 0
 
