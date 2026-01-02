@@ -131,7 +131,12 @@ def main():
     parser.add_argument("--symbols", nargs="+", default=SYMBOLS, help="Symbols to backfill")
     parser.add_argument("--output-dir", default=None, help="Output directory")
     parser.add_argument("--dry-run", action="store_true", help="Preview without fetching")
-    parser.add_argument("--delay", type=float, default=0.25, help="Delay between API calls (seconds)")
+    parser.add_argument(
+        "--delay",
+        type=float,
+        default=12.0,
+        help="Delay between API calls in seconds (default 12s for Polygon Starter 5 req/min limit)",
+    )
     args = parser.parse_args()
 
     # Resolve output directory
@@ -161,8 +166,11 @@ def main():
     if args.dry_run:
         print("🔍 DRY RUN - would fetch:")
         total_calls = len(args.symbols) * len(trading_dates)
+        est_minutes = total_calls * args.delay / 60
+        est_hours = est_minutes / 60
         print(f"   {total_calls} API calls ({len(args.symbols)} symbols × {len(trading_dates)} dates)")
-        print(f"   Estimated time: {total_calls * args.delay / 60:.1f} minutes")
+        print(f"   Estimated time: {est_minutes:.1f} min ({est_hours:.1f} hours) at {args.delay}s delay")
+        print(f"   Note: Polygon Starter plan = 5 req/min, use --delay 12 (default)")
         return 0
 
     # Create output directory

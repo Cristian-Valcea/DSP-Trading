@@ -235,12 +235,15 @@ class DQNTrainer:
 
         while not done:
             # Select action
+            # Gate 2.7b: Pass current positions for switch margin (churn control)
+            current_positions = env.positions if hasattr(env, "positions") else None
             actions, q_values, entropy = self.agent.select_action(
                 rolling_window=obs["rolling_window"],
                 portfolio_state=obs["portfolio_state"],
                 apply_constraint=True,
                 explore=training,           # greedy eval when training=False
                 count_env_step=training,    # don't decay epsilon on eval episodes
+                current_positions=current_positions,  # Gate 2.7b: for switch margin
             )
 
             stats.action_entropy += entropy
