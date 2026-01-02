@@ -325,7 +325,7 @@ class SleeveIM:
                 bars_by_symbol = await fetcher.get_multiple_symbols(
                     symbols=self.universe,
                     trading_date=trading_date,
-                    start_time=time(1, 30),  # Feature window start
+                    start_time=time(4, 0),   # Feature window start (premarket open)
                     end_time=time(10, 30),   # Feature window end
                 )
 

@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import random
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -271,6 +272,9 @@ def main():
     )
 
     args = parser.parse_args()
+
+    np.random.seed(args.seed)
+    random.seed(args.seed)
 
     # Resolve paths
     script_dir = Path(__file__).parent

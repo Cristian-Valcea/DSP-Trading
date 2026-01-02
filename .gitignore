@@ -78,3 +78,18 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Training artifacts
+checkpoints/
+checkpoints_*/
+logs_*/
+logs/tensorboard/
+logs/training_*.json
+*.pt
+!models/**/*.pt
+training_output.log
+
+# Data artifacts (generated during training/backtest)
+data/data_quality_report.json
+data/sleeve_im/
+scripts/dqn/results/

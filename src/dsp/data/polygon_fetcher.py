@@ -23,11 +23,19 @@ import json
 import logging
 import os
 from dataclasses import dataclass
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import aiohttp
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
+
+# US Eastern timezone for all Polygon timestamps
+ET = ZoneInfo("America/New_York")
 
 from .minute_bar import (
     DailyMinuteBars,
@@ -332,17 +340,17 @@ class PolygonFetcher:
         Args:
             symbol: Stock symbol
             trading_date: Trading date
-            start_time: Start time (default 01:30 ET)
-            end_time: End time (default 10:30 ET)
+            start_time: Start time in ET (default 01:30 ET)
+            end_time: End time in ET (default 10:30 ET)
 
         Returns:
             List of raw minute bars
         """
-        # Build datetime range
-        start_dt = datetime.combine(trading_date, start_time)
-        end_dt = datetime.combine(trading_date, end_time)
+        # Build datetime range in ET timezone (Polygon uses ET for US equities)
+        start_dt = datetime.combine(trading_date, start_time, tzinfo=ET)
+        end_dt = datetime.combine(trading_date, end_time, tzinfo=ET)
 
-        # Convert to timestamps (milliseconds for Polygon API)
+        # Convert to UTC timestamps (milliseconds for Polygon API)
         start_ts = int(start_dt.timestamp() * 1000)
         end_ts = int(end_dt.timestamp() * 1000)
 
@@ -369,7 +377,9 @@ class PolygonFetcher:
             # t: timestamp (ms), o: open, h: high, l: low, c: close
             # v: volume, n: number of trades, vw: volume weighted avg price
             ts_ms = item.get("t", 0)
-            ts = datetime.fromtimestamp(ts_ms / 1000)
+            # Convert UTC timestamp to ET, then make naive for consistency
+            ts_utc = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
+            ts = ts_utc.astimezone(ET).replace(tzinfo=None)
 
             bars.append(
                 RawMinuteBar(
