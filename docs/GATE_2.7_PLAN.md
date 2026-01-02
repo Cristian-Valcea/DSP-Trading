@@ -1,8 +1,18 @@
 # Gate 2.7 Plan: Training Mechanics Fix + Churn Control
 
 **Date**: 2026-01-02
-**Status**: PLANNING
+**Status**: IMPLEMENTATION
 **Goal**: Fix under-training bug and add proper churn control before concluding "no edge"
+
+---
+
+## User Decisions (Confirmed)
+
+| Decision | Choice |
+|----------|--------|
+| Training mechanics | **1 gradient update per env step** (most standard) |
+| Premarket storage | **New `data/dqn_premarket_cache/`**, teach env to read both locations |
+| Phase 2.7d status | **ALREADY DONE** (env passes true prior close; StateBuilder uses it) |
 
 ---
 

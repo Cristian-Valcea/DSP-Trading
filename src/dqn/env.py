@@ -19,6 +19,8 @@ import pandas as pd
 from pathlib import Path
 from typing import Optional
 import random
+import json
+from datetime import datetime, time
 
 from dsp100k.src.dqn.state_builder import StateBuilder
 from dsp100k.src.dqn.reward import (
@@ -62,7 +64,8 @@ class DQNTradingEnv(gym.Env):
         turnover_cost: float = 0.0010,
         start_minute: int = 61,    # 10:31 ET = minute 61 of RTH
         end_minute: int = 270,      # 14:00 ET = minute 270 of RTH
-        apply_constraint: bool = True,
+        apply_constraint: bool = False,  # Agent handles top-K constraint
+        premarket_cache_dir: str | None = None,
         render_mode: str | None = None,
     ):
         """
@@ -78,7 +81,7 @@ class DQNTradingEnv(gym.Env):
             turnover_cost: Transaction cost per unit turnover (default: 10 bps)
             start_minute: First decision minute in RTH (default: 61 = 10:31 ET)
             end_minute: Last decision minute in RTH (default: 270 = 14:00 ET)
-            apply_constraint: Whether to apply top-K constraint (default: True)
+            apply_constraint: Whether to apply top-K constraint (default: False - agent handles it)
             render_mode: Rendering mode (default: None)
         """
         super().__init__()
@@ -95,6 +98,7 @@ class DQNTradingEnv(gym.Env):
         self.end_minute = end_minute
         self.apply_constraint = apply_constraint
         self.render_mode = render_mode
+        self.premarket_cache_dir = self._resolve_premarket_cache_dir(premarket_cache_dir)
 
         # State builder for feature computation
         self.state_builder = StateBuilder(symbols=self.symbols)
@@ -152,22 +156,151 @@ class DQNTradingEnv(gym.Env):
 
     def _load_day_data(self, date_str: str) -> dict[str, pd.DataFrame]:
         """Load data for all symbols for a specific date."""
+        return self._load_day_data_with_prior_close(date_str)[0]
+
+    def _load_day_data_with_prior_close(
+        self,
+        date_str: str,
+        prior_date_str: str | None = None,
+    ) -> tuple[dict[str, pd.DataFrame], dict[str, float]]:
+        """
+        Load data for all symbols for a specific date, plus prior session close.
+
+        Args:
+            date_str: Trading date (YYYY-MM-DD)
+            prior_date_str: Prior trading date (YYYY-MM-DD) for overnight gap; if None, gap=0
+        """
         data = {}
+        prior_close_by_symbol: dict[str, float] = {}
+
+        date_obj = pd.Timestamp(date_str).date()
+        prior_date_obj = pd.Timestamp(prior_date_str).date() if prior_date_str else None
 
         for symbol in self.symbols:
             for pattern in [f"{symbol.lower()}_*.parquet", f"{symbol}_*.parquet"]:
                 for filepath in self.data_dir.glob(pattern):
                     df = pd.read_parquet(filepath)
                     df["timestamp"] = pd.to_datetime(df["timestamp"])
-                    day_df = df[df["timestamp"].dt.date.astype(str) == date_str].copy()
+                    day_df = df[df["timestamp"].dt.date == date_obj].copy()
 
                     if not day_df.empty:
                         # Sort by timestamp and reset index
                         day_df = day_df.sort_values("timestamp").reset_index(drop=True)
                         data[symbol] = day_df
+
+                    if prior_date_obj is not None:
+                        prev_df = df[df["timestamp"].dt.date == prior_date_obj]
+                        if not prev_df.empty:
+                            prev_df = prev_df.sort_values("timestamp")
+                            prior_close_by_symbol[symbol] = float(prev_df.iloc[-1]["close"])
                     break
 
-        return data
+        return data, prior_close_by_symbol
+
+    def _resolve_premarket_cache_dirs(self, premarket_cache_dir: str | None) -> list[Path]:
+        """
+        Resolve premarket cache directories (may be multiple locations).
+
+        Returns list of existing cache directories to search.
+        Priority: explicit path > dqn_premarket_cache > sleeve_im (Gate 2.7c)
+        """
+        candidates: list[Path] = []
+        project_root = Path(__file__).resolve().parents[2]  # .../dsp100k
+
+        # Explicit path (absolute or relative)
+        if premarket_cache_dir:
+            candidates.append(Path(premarket_cache_dir))
+
+        # Gate 2.7c: New DQN-specific premarket cache (for 2021-2022 backfill)
+        candidates.append(project_root / "data" / "dqn_premarket_cache")
+        candidates.append(Path.cwd() / "dsp100k" / "data" / "dqn_premarket_cache")
+        candidates.append(Path.cwd() / "data" / "dqn_premarket_cache")
+
+        # Sleeve IM cache (existing 2023+ data)
+        candidates.append(project_root / "data" / "sleeve_im" / "minute_bars")
+        candidates.append(Path.cwd() / "dsp100k" / "data" / "sleeve_im" / "minute_bars")
+        candidates.append(Path.cwd() / "data" / "sleeve_im" / "minute_bars")
+
+        return [p for p in candidates if p.exists() and p.is_dir()]
+
+    def _resolve_premarket_cache_dir(self, premarket_cache_dir: str | None) -> Path | None:
+        """Resolve premarket cache directory (backward compatibility)."""
+        dirs = self._resolve_premarket_cache_dirs(premarket_cache_dir)
+        return dirs[0] if dirs else None
+
+    def _load_premarket_summary(
+        self,
+        symbol: str,
+        date_str: str,
+        day_df: pd.DataFrame,
+    ) -> dict:
+        """
+        Build premarket summary features from premarket cache.
+
+        Searches multiple cache directories (Gate 2.7c: dqn_premarket_cache + sleeve_im).
+        Uses bars in [04:00, 09:30) ET.
+        """
+        # Search all cache directories for the file
+        cache_dirs = self._resolve_premarket_cache_dirs(None)
+        if not cache_dirs:
+            return {}
+
+        cache_path = None
+        for cache_dir in cache_dirs:
+            candidate = cache_dir / symbol.upper() / f"{date_str}.json"
+            if candidate.exists():
+                cache_path = candidate
+                break
+
+        if cache_path is None:
+            return {}
+
+        try:
+            with open(cache_path, "r") as f:
+                payload = json.load(f)
+        except Exception:
+            return {}
+
+        bars = payload.get("bars", [])
+        if not isinstance(bars, list) or len(bars) == 0:
+            return {}
+
+        pm_start = time(4, 0)
+        pm_end = time(9, 30)
+
+        pm_open = None
+        pm_close = None
+        pm_volume = 0
+
+        for bar in bars:
+            try:
+                ts = datetime.fromisoformat(bar["timestamp"])
+            except Exception:
+                continue
+            t = ts.time()
+            if t < pm_start or t >= pm_end:
+                continue
+
+            if pm_open is None:
+                pm_open = float(bar.get("open") or bar.get("close") or 0.0)
+            pm_close = float(bar.get("close") or pm_close or 0.0)
+            pm_volume += int(bar.get("volume") or 0)
+
+        if pm_open is None or pm_close is None or pm_open <= 0:
+            pm_return = 0.0
+        else:
+            pm_return = pm_close / pm_open - 1.0
+
+        # Scale premarket volume against first-hour RTH volume (09:30-10:30)
+        ts = pd.to_datetime(day_df["timestamp"])
+        rth_mask = (ts.dt.time >= time(9, 30)) & (ts.dt.time < time(10, 31))
+        rth_first_hour_vol = float(day_df.loc[rth_mask, "volume"].sum())
+        denom = rth_first_hour_vol if rth_first_hour_vol > 0 else 1.0
+
+        return {
+            "return": float(pm_return),
+            "volume_ratio": float(pm_volume / denom),
+        }
 
     def reset(
         self,
@@ -193,16 +326,38 @@ class DQNTradingEnv(gym.Env):
         else:
             self.current_date = random.choice(self.available_dates)
 
+        # Determine prior trading date (within this split) for overnight gap
+        prior_date_str = None
+        try:
+            idx = self.available_dates.index(self.current_date)
+            if idx > 0:
+                prior_date_str = self.available_dates[idx - 1]
+        except ValueError:
+            prior_date_str = None
+
         # Load day's data
-        self.day_data = self._load_day_data(self.current_date)
+        self.day_data, prior_close_by_symbol = self._load_day_data_with_prior_close(
+            self.current_date, prior_date_str=prior_date_str
+        )
 
         if not self.day_data:
             # If no data, try another date
             self.available_dates.remove(self.current_date)
             return self.reset(seed=seed)
 
+        # Build premarket summary features (if cache exists)
+        premarket_data: dict[str, dict] = {}
+        for symbol, df in self.day_data.items():
+            summary = self._load_premarket_summary(symbol, self.current_date, df)
+            if summary:
+                premarket_data[symbol] = summary
+
         # Initialize state builder
-        self.state_builder.reset(self.day_data)
+        self.state_builder.reset(
+            self.day_data,
+            premarket_data=premarket_data,
+            prior_close_by_symbol=prior_close_by_symbol,
+        )
 
         # Reset episode state
         self.current_minute = self.start_minute
