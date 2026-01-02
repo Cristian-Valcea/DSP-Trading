@@ -43,7 +43,7 @@ Both kill tests passed, confirming the environment is ready for DQN training.
 | Trades/Episode | 1291.0 | High | ✅ |
 
 **Interpretation**: The random policy loses money consistently due to:
-- High turnover (1291 trades/episode × 209 minutes = ~6.2 trades/minute)
+- High turnover (1291 trades/episode ÷ 209 minutes = ~6.2 position-changes/minute)
 - 10 bps transaction cost per unit turnover
 - Large negative Sharpe confirms costs dominate random entry/exit
 
@@ -107,9 +107,11 @@ Both kill tests passed, confirming the environment is ready for DQN training.
 | **train** | 2021-12-20 → 2023-12-31 | ~510 | ~1,787K |
 | **val** | 2024-01-01 → 2024-06-30 | ~124 | ~435K |
 | **dev_test** | 2024-07-01 → 2024-12-31 | **128** | **~444K** |
-| **holdout** | 2025-01-01 → 2025-12-19 | ~243 | ~846K |
+| **holdout** | 2025-01-01 → 2025-12-19 | ~240-243 | ~846K |
 
 **Kill tests run on**: dev_test (128 trading days, 2024-H2)
+
+**Coverage caveat**: Per `data/split_manifest.json`, some symbols end earlier in 2025 (META/SPY/TSLA end 2025-12-16 → 240 days). The multi-symbol environment uses the intersection of dates across symbols.
 
 ---
 

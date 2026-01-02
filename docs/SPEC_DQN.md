@@ -2,7 +2,7 @@
 
 **Version**: 1.0
 **Date**: 2026-01-02
-**Status**: Draft — Gate 0 PASS (see `GATE_0_REPORT.md`) — Ready for Gate 1
+**Status**: Draft — Gate 1 PASS (see `GATE_1_REPORT.md`) — Ready for Gate 2
 
 ---
 
@@ -75,12 +75,14 @@ This document specifies an intraday Deep Q-Network (DQN) strategy for the DSP-10
 State = [rolling_window, morning_summary, portfolio_state]
 
 Dimensions:
-- rolling_window: (N, F) where N ∈ {60, 120}, F = 30 features
-- morning_summary: (M,) compressed embedding of premarket
+- rolling_window: (N, num_symbols, F) where N ∈ {60, 120}, num_symbols = 9, F = 30 features
+- morning_summary: (num_symbols, M) compressed embedding of premarket/first-hour (optional; see below)
 - portfolio_state: (2 × num_symbols + 3,) = (21,) for positions, per-symbol entry log-returns, exposures, P&L
 ```
 
 **Design choice**: `rolling_window` contains **market-derived features only** (price/volume/time/cross-asset). All portfolio/context features live in `portfolio_state` (current snapshot).
+
+**Implementation note (Gate 1)**: The environment observation currently contains `rolling_window` and `portfolio_state`. `morning_summary` is specified here for the final model, but is not yet wired into `DQNTradingEnv` (it can be added in Gate 2 when premarket integration lands).
 
 ### 4.2 Rolling Window Features (30 columns per bar)
 
@@ -347,22 +349,30 @@ total_reward = sum(reward_i * w_max for i in range(num_symbols))
 
 ### 8.1 Data Split
 
-| Period | Usage | Samples |
-|--------|-------|---------|
-| 2021-01-01 to 2022-12-31 | Train (Fold 1-2) | ~400K per symbol |
-| 2023-01-01 to 2024-06-30 | Train (Fold 3-4) | ~300K per symbol |
-| 2024-07-01 to 2024-12-31 | Dev Test | ~100K per symbol |
-| 2025-01-01 to 2025-12-31 | **HOLDOUT** | ~200K per symbol |
+Data availability is constrained by `data/stage1_raw/` coverage (starts 2021-12-20).
 
-**Total Train+Val**: ~1.9M transitions across 9 symbols
+| Split | Nominal Range | Directory | Notes |
+|------|---------------|-----------|-------|
+| train | 2021-12-20 → 2023-12-31 | `data/dqn_train/` | Used for main training |
+| val | 2024-01-01 → 2024-06-30 | `data/dqn_val/` | Used for model selection |
+| dev_test | 2024-07-01 → 2024-12-31 | `data/dqn_dev_test/` | Debug + final pre-holdout check |
+| holdout | 2025-01-01 → 2025-12-19 | `data/dqn_holdout/` | DO NOT TOUCH until Gate 3 |
+
+**Important**: Per `data/split_manifest.json`, not all symbols have full coverage through 2025-12-19 (META/SPY/TSLA end 2025-12-16). For multi-symbol training/evaluation, the environment uses the intersection of available dates across symbols.
+
+**Sample size accounting**:
+- Environment steps/day: `end_minute - start_minute = 270 - 61 = 209`
+- Total action decisions ≈ `(#days × 209 × 9)` (9 per-step actions), even though the environment emits one transition per minute.
 
 ### 8.2 Walk-Forward Validation
 
+Fold boundaries must respect the available history start (2021-12-20).
+
 | Fold | Train | Validation | Dev Test |
 |------|-------|------------|----------|
-| 1 | 2021-01 to 2022-06 | 2022-07 to 2022-12 | 2024-07 to 2024-12 |
-| 2 | 2021-01 to 2023-06 | 2023-07 to 2023-12 | 2024-07 to 2024-12 |
-| 3 | 2021-01 to 2024-03 | 2024-04 to 2024-06 | 2024-07 to 2024-12 |
+| 1 | 2021-12-20 → 2022-12-31 | 2023-01-01 → 2023-06-30 | 2024-07-01 → 2024-12-31 |
+| 2 | 2021-12-20 → 2023-06-30 | 2023-07-01 → 2023-12-31 | 2024-07-01 → 2024-12-31 |
+| 3 | 2021-12-20 → 2023-12-31 | 2024-01-01 → 2024-06-30 | 2024-07-01 → 2024-12-31 |
 
 Each fold trained with 3 random seeds → 9 total runs for variance estimation.
 

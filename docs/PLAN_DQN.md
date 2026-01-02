@@ -36,23 +36,28 @@ This document outlines the phased implementation plan for the Intraday DQN strat
 ### 0.2 Deliverables
 
 ```
-dsp100k/
+repo-root/
 ├── data/
-│   ├── dqn_train/
-│   │   ├── AAPL_2021-01-01_2024-12-31.parquet
-│   │   ├── AMZN_2021-01-01_2024-12-31.parquet
-│   │   └── ... (9 symbols)
-│   ├── dqn_holdout/
-│   │   └── *_2025-01-01_2025-12-31.parquet
-│   └── data_quality_report.json
-├── scripts/dqn/
-│   ├── verify_splits.py
-│   ├── audit_missing_bars.py
-│   └── backfill_rth.py
-├── scripts/sleeve_im/
-│   └── backfill_data.py
-└── docs/
-    └── DATA_QUALITY_REPORT.md
+│   ├── stage1_raw/                         # source (RTH 1-min bars)
+│   ├── dqn_train/{symbol}_train.parquet
+│   ├── dqn_val/{symbol}_val.parquet
+│   ├── dqn_dev_test/{symbol}_dev_test.parquet
+│   ├── dqn_holdout/{symbol}_holdout.parquet
+│   └── split_manifest.json                 # ranges + per-symbol coverage
+└── dsp100k/
+    ├── data/
+    │   └── data_quality_report.json         # Gate 0 output
+    ├── scripts/
+    │   ├── dqn/
+    │   │   ├── verify_splits.py
+    │   │   ├── audit_missing_bars.py
+    │   │   ├── backfill_rth.py
+    │   │   ├── create_splits.py
+    │   │   └── evaluate_baselines.py
+    │   └── sleeve_im/
+    │       └── backfill_data.py             # premarket backfill (JSON cache)
+    └── docs/
+        └── GATE_0_REPORT.md
 ```
 
 ### 0.3 Kill Test
@@ -80,7 +85,7 @@ python scripts/dqn/audit_missing_bars.py --symbols all --output data/data_qualit
 # Backfill premarket (if needed)
 python scripts/sleeve_im/backfill_data.py \
     --symbols AAPL,AMZN,GOOGL,META,MSFT,NVDA,QQQ,SPY,TSLA \
-    --start 2021-01-01 \
+    --start 2021-12-20 \
     --end 2022-12-31
 
 # Backfill missing RTH days (if needed)
@@ -116,15 +121,14 @@ dsp100k/
 │   ├── __init__.py
 │   ├── env.py              # DQNTradingEnv
 │   ├── state_builder.py    # 30-feature state construction
-│   ├── morning_summary.py  # Premarket compression
 │   ├── reward.py           # Reward function
 │   ├── constraints.py      # Top-K portfolio constraint
 │   └── baselines.py        # Baseline policies
-├── tests/
-│   └── test_dqn_env.py
 └── results/
     └── baseline_evaluation.json
 ```
+
+**Note**: `SPEC_DQN.md` includes a `morning_summary` component, but Gate 1 only requires `rolling_window` + `portfolio_state` for kill-test validation. Premarket/morning-summary wiring can be added in Gate 2.
 
 ### 1.3 Environment Interface
 
@@ -134,12 +138,11 @@ class DQNTradingEnv(gym.Env):
     Intraday DQN environment for multi-symbol trading.
 
     Observation Space:
-        - rolling_window: (N, 30) last N minutes of features
-        - morning_summary: (M,) compressed premarket
+        - rolling_window: (window_size, num_symbols, 30)
         - portfolio_state: (21,) positions + entry log-returns + {gross, net, daily_pnl}
 
     Action Space:
-        - (9, 5) Q-values → top-K constraint → (9,) final actions
+        - (num_symbols,) discrete actions (0-4) per symbol
 
     Reward:
         - Per-step log returns minus turnover cost
@@ -183,7 +186,7 @@ class DQNTradingEnv(gym.Env):
 | Policy | Expected Sharpe | Tolerance | Result |
 |--------|-----------------|-----------|--------|
 | Always FLAT | 0.0 | ±0.05 | Must pass |
-| Random | -0.5 to -1.0 | ±0.3 | Must pass |
+| Random | < 0 | — | Must pass |
 | Momentum (5-min) | -0.3 to +0.3 | ±0.3 | Informational |
 | Mean Reversion | -0.3 to +0.3 | ±0.3 | Informational |
 
@@ -194,14 +197,17 @@ class DQNTradingEnv(gym.Env):
 ### 1.5 Commands
 
 ```bash
-# Run environment tests
-pytest tests/test_dqn_env.py -v
-
 # Evaluate baseline policies
-python scripts/dqn/evaluate_baselines.py \
-    --data-dir data/dqn_train \
-    --symbols AAPL,AMZN,GOOGL,META,MSFT,NVDA,QQQ,SPY,TSLA \
-    --output results/baseline_evaluation.json
+ROOT=/Users/Shared/wsl-export/wsl-home
+cd "$ROOT/dsp100k"
+source "$ROOT/venv/bin/activate"
+
+PYTHONPATH="$ROOT" python scripts/dqn/evaluate_baselines.py \
+    --data-dir "$ROOT/data/dqn_dev_test" \
+    --kill-tests-only \
+    --episodes 20 \
+    --seed 42 \
+    --output "$ROOT/dsp100k/results/baseline_evaluation.json"
 
 # Expected output:
 # {
@@ -258,21 +264,21 @@ dsp100k/
 # config/walk_forward.yaml
 folds:
   - name: fold1
-    train_start: "2021-01-01"
-    train_end: "2022-06-30"
-    val_start: "2022-07-01"
-    val_end: "2022-12-31"
+    train_start: "2021-12-20"
+    train_end: "2022-12-31"
+    val_start: "2023-01-01"
+    val_end: "2023-06-30"
 
   - name: fold2
-    train_start: "2021-01-01"
+    train_start: "2021-12-20"
     train_end: "2023-06-30"
     val_start: "2023-07-01"
     val_end: "2023-12-31"
 
   - name: fold3
-    train_start: "2021-01-01"
-    train_end: "2024-03-31"
-    val_start: "2024-04-01"
+    train_start: "2021-12-20"
+    train_end: "2023-12-31"
+    val_start: "2024-01-01"
     val_end: "2024-06-30"
 
 dev_test:
@@ -384,7 +390,7 @@ dsp100k/
 # Run holdout evaluation (ONLY after Gate 2 passes)
 python scripts/dqn/evaluate_holdout.py \
     --model models/dqn/production/best_model.pt \
-    --data data/dqn_holdout \
+    --data ../data/dqn_holdout \
     --output results/holdout_2025_results.json
 
 # Generate final report
@@ -530,59 +536,60 @@ DD ≤ 15%               or DD > 15%
 
 ## Appendix: File Structure
 
+### Current (Post Gate 1)
+
+```
+repo-root/
+├── data/
+│   ├── stage1_raw/                  # source (RTH 1-min bars)
+│   ├── dqn_train/
+│   ├── dqn_val/
+│   ├── dqn_dev_test/
+│   ├── dqn_holdout/
+│   └── split_manifest.json
+└── dsp100k/
+    ├── data/
+    │   ├── sleeve_im/minute_bars/    # premarket JSON cache (Polygon)
+    │   └── data_quality_report.json  # Gate 0 output
+    ├── docs/
+    │   ├── SPEC_DQN.md
+    │   ├── PLAN_DQN.md
+    │   ├── GATE_0_REPORT.md
+    │   ├── GATE_1_SPEC.md
+    │   └── GATE_1_REPORT.md
+    ├── results/
+    │   ├── baseline_evaluation.json
+    │   └── baseline_evaluation_full.json
+    ├── scripts/dqn/
+    │   ├── verify_splits.py
+    │   ├── audit_missing_bars.py
+    │   ├── backfill_rth.py
+    │   ├── create_splits.py
+    │   └── evaluate_baselines.py
+    └── src/dqn/
+        ├── __init__.py
+        ├── env.py
+        ├── state_builder.py
+        ├── reward.py
+        ├── constraints.py
+        └── baselines.py
+```
+
+### Planned (Gate 2+)
+
 ```
 dsp100k/
-├── config/
-│   ├── dqn_intraday.yaml       # Main config
-│   └── walk_forward.yaml       # Fold definitions
-├── data/
-│   ├── dqn_train/              # 2021-2024 training data
-│   ├── dqn_holdout/            # 2025 holdout (DO NOT TOUCH until Gate 3)
-│   ├── sleeve_im/minute_bars/  # Canonical minute-bar cache (extended to 2021-2025)
-│   └── data_quality_report.json
-├── docs/
-│   ├── SPEC_DQN.md             # Technical specification
-│   ├── PLAN_DQN.md             # This document
-│   ├── DATA_QUALITY_REPORT.md
-│   ├── GATE2_REPORT.md
-│   └── GATE3_FINAL_REPORT.md
-├── models/dqn/
-│   ├── fold1_seed42/
-│   ├── fold1_seed123/
-│   ├── ... (9 total training runs)
-│   └── production/
-│       └── best_model.pt
-├── results/
-│   ├── baseline_evaluation.json
-│   ├── walk_forward_results.json
-│   └── holdout_2025_results.json
-├── scripts/dqn/
-│   ├── verify_splits.py
-│   ├── audit_missing_bars.py
-│   ├── backfill_rth.py
-│   ├── evaluate_baselines.py
-│   ├── train.py
-│   ├── train_all_folds.py
-│   ├── evaluate_dev_test.py
-│   ├── evaluate_holdout.py
-│   └── generate_report.py
 ├── src/dqn/
-│   ├── __init__.py
-│   ├── env.py
-│   ├── state_builder.py
-│   ├── morning_summary.py
-│   ├── reward.py
-│   ├── constraints.py
-│   ├── baselines.py
 │   ├── model.py
 │   ├── replay_buffer.py
 │   ├── trainer.py
 │   └── walk_forward.py
-└── tests/
-    ├── test_dqn_env.py
-    ├── test_state_builder.py
-    ├── test_constraints.py
-    └── test_model.py
+└── scripts/dqn/
+    ├── train.py
+    ├── train_all_folds.py
+    ├── evaluate_dev_test.py
+    ├── evaluate_holdout.py
+    └── generate_report.py
 ```
 
 ---

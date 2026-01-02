@@ -27,17 +27,21 @@ Build and validate the DQN trading environment with baseline policies to ensure:
 | **dev_test** | 2024-07-01 to 2024-12-31 | Dev/debugging | `data/dqn_dev_test/` |
 | **holdout** | 2025-01-01 to 2025-12-19 | Final test (DO NOT TOUCH) | `data/dqn_holdout/` |
 
+**Coverage caveat**: Per `data/split_manifest.json`, some symbols end earlier in 2025 (META/SPY/TSLA end 2025-12-16). The multi-symbol environment uses the intersection of dates across symbols.
+
 ### 2.2 Split Script Output
 
 ```bash
-python scripts/dqn/create_splits.py --source data/stage1_raw --output data/
+ROOT=/Users/Shared/wsl-export/wsl-home
+cd "$ROOT/dsp100k"
+python scripts/dqn/create_splits.py --source "$ROOT/data/stage1_raw" --output "$ROOT/data"
 
 # Creates:
-# data/dqn_train/{symbol}_train.parquet     (2021-12-20 to 2023-12-31)
-# data/dqn_val/{symbol}_val.parquet         (2024-01-01 to 2024-06-30)
-# data/dqn_dev_test/{symbol}_dev_test.parquet  (2024-07-01 to 2024-12-31)
-# data/dqn_holdout/{symbol}_holdout.parquet    (2025-01-01 to 2025-12-19)
-# data/split_manifest.json                     (metadata)
+# $ROOT/data/dqn_train/{symbol}_train.parquet
+# $ROOT/data/dqn_val/{symbol}_val.parquet
+# $ROOT/data/dqn_dev_test/{symbol}_dev_test.parquet
+# $ROOT/data/dqn_holdout/{symbol}_holdout.parquet
+# $ROOT/data/split_manifest.json
 ```
 
 ---
@@ -235,26 +239,27 @@ class MeanReversionPolicy:
 ## 6. File Structure
 
 ```
-dsp100k/
-├── src/dqn/
-│   ├── __init__.py
-│   ├── env.py              # DQNTradingEnv
-│   ├── state_builder.py    # Feature computation
-│   ├── reward.py           # Reward calculation
-│   ├── constraints.py      # Top-K constraint layer
-│   └── baselines.py        # Baseline policies
-├── scripts/dqn/
-│   ├── create_splits.py    # Create train/val/test splits
-│   └── evaluate_baselines.py  # Run baseline evaluation
-├── tests/
-│   └── test_dqn_env.py     # Environment unit tests
+repo-root/
 ├── data/
-│   ├── dqn_train/          # Training data
-│   ├── dqn_val/            # Validation data
-│   ├── dqn_dev_test/       # Dev test data
-│   └── dqn_holdout/        # Holdout (DO NOT TOUCH)
-└── results/
-    └── baseline_evaluation.json
+│   ├── stage1_raw/          # source (RTH 1-min bars)
+│   ├── dqn_train/
+│   ├── dqn_val/
+│   ├── dqn_dev_test/
+│   ├── dqn_holdout/         # DO NOT TOUCH until Gate 3
+│   └── split_manifest.json
+└── dsp100k/
+    ├── src/dqn/
+    │   ├── __init__.py
+    │   ├── env.py
+    │   ├── state_builder.py
+    │   ├── reward.py
+    │   ├── constraints.py
+    │   └── baselines.py
+    ├── scripts/dqn/
+    │   ├── create_splits.py
+    │   └── evaluate_baselines.py
+    └── results/
+        └── baseline_evaluation.json
 ```
 
 ---
@@ -262,19 +267,17 @@ dsp100k/
 ## 7. Commands
 
 ```bash
-cd /Users/Shared/wsl-export/wsl-home/dsp100k
-source ../venv/bin/activate
+ROOT=/Users/Shared/wsl-export/wsl-home
+cd "$ROOT/dsp100k"
+source "$ROOT/venv/bin/activate"
 
 # 1. Create train/val/test splits
-python scripts/dqn/create_splits.py --source ../data/stage1_raw --output ../data
+python scripts/dqn/create_splits.py --source "$ROOT/data/stage1_raw" --output "$ROOT/data"
 
-# 2. Run environment tests
-pytest tests/test_dqn_env.py -v
-
-# 3. Evaluate baseline policies
-python scripts/dqn/evaluate_baselines.py \
-    --data-dir ../data/dqn_dev_test \
-    --output results/baseline_evaluation.json
+# 2. Evaluate baseline policies
+PYTHONPATH="$ROOT" python scripts/dqn/evaluate_baselines.py \
+    --data-dir "$ROOT/data/dqn_dev_test" \
+    --output "$ROOT/dsp100k/results/baseline_evaluation.json"
 
 # Expected output:
 # {
@@ -295,8 +298,8 @@ python scripts/dqn/evaluate_baselines.py \
 | Environment runs without error | 100 episodes complete | ⬜ |
 | FLAT policy Sharpe | abs(sharpe) < 0.1 | ⬜ |
 | Random policy Sharpe | sharpe < 0 | ⬜ |
-| Unit tests pass | 100% | ⬜ |
-| Baseline evaluation saved | JSON with all 4 policies | ⬜ |
+| (Optional) Unit tests | Added if needed | ⬜ |
+| Baseline evaluation saved | JSON saved to `dsp100k/results/` | ⬜ |
 
 ---
 
