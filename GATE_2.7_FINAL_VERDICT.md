@@ -4,51 +4,44 @@
 
 **VERDICT: ❌ FAIL - DQN does not extract sufficient edge for profitable trading**
 
-The DQN approach to intraday trading on this data does not produce tradable alpha. Even at zero transaction costs, the models fail to beat a simple "stay flat" baseline.
+The DQN approach to intraday trading on this data does not produce tradable alpha. At zero transaction costs, models show marginal/negative CAGR. At realistic costs (10 bps), all models lose significantly.
 
 ---
 
-## Evidence Summary
+## Evidence Summary (Corrected)
 
-### DI=15 Model (Original - 26 decisions/day)
-| Metric | Value |
-|--------|-------|
-| Action Distribution | 100% FLAT |
-| Win Rate | 0% |
-| CAGR at 0 cost | 0.00% |
-| Turnover | 0.00 |
+### Cost Sensitivity Analysis
 
-**Interpretation**: Model learned that staying flat is optimal. This is the correct learned behavior when there's no exploitable edge.
+Evaluated on all dates in each split (VAL and DEV):
 
-### DI=60 Model (Hourly - 4 decisions/day)
-| Metric | Value |
-|--------|-------|
-| Action Distribution | 60% FLAT, 40% trading |
-| Win Rate | 14% |
-| CAGR at 0 cost | -9.49% |
-| Turnover | 11.44 |
-| Sharpe | -18.80 |
+#### DI=60 Model (`checkpoints/sweep_di60_v2/best_model.pt`)
+| Cost (bps) | CAGR (VAL) | CAGR (DEV) |
+|------------|------------|------------|
+| 0          | -0.86%     | +0.01%     |
+| 10         | -7.85%     | -7.09%     |
 
-**Interpretation**: Model trades but loses money even at zero cost. Trading is value-destructive - the 40% non-flat actions are net negative. Model would be better staying 100% flat.
+#### DI=15 Model (`checkpoints/sweep_di15_fixed_v3/best_model.pt`)
+| Cost (bps) | CAGR (VAL) | CAGR (DEV) |
+|------------|------------|------------|
+| 0          | -0.33%     | +0.18%     |
+| 10         | -4.85%     | -4.99%     |
+
+**Key Observations**:
+- At 0 cost: Both models hover around break-even (±0.3-0.9% CAGR)
+- At 10 bps: Both models lose ~5-8% annually
+- Break-even cost is approximately 0-1 bps (far below realistic 10 bps)
 
 ---
 
-## Cost Sensitivity Analysis
+## Interpretation
 
-### DI=60 (Best Model at Episode 3200)
-| Cost (bps) | Win Rate | CAGR | Sharpe |
-|------------|----------|------|--------|
-| 0 | 22% | -6.5% | -12.0 |
-| 1 | 0% | -38.1% | -47.0 |
-| 10 | 0% | -291% | -53.0 |
+### What the Numbers Mean
 
-### DI=15 (sweep_sm0.0)
-| Cost (bps) | Win Rate | CAGR | Sharpe |
-|------------|----------|------|--------|
-| 0 | 0% | 0.0% | N/A |
-| Any | 0% | 0.0% | N/A |
+1. **Near-zero edge at 0 cost**: The models extract essentially no alpha from the data. DEV shows slight positive, VAL shows slight negative - consistent with random noise around zero.
 
-**Break-even cost**: Both models have break-even cost < 0 bps (lose money at zero cost).
+2. **Cost-dominated at realistic levels**: At 10 bps one-way cost, both models lose 5-8% annually. The turnover required to express any signal is too expensive.
+
+3. **DI=15 vs DI=60**: DI=15 is slightly less bad at 10 bps (-4.85% vs -7.85%) due to lower turnover, but neither is viable.
 
 ---
 
@@ -57,18 +50,16 @@ The DQN approach to intraday trading on this data does not produce tradable alph
 ### Why DQN Fails Here
 
 1. **Insufficient Signal-to-Noise**: The underlying price movements at 1-minute resolution don't contain exploitable patterns that a DQN can learn
-   
+
 2. **Feature Limitations**: Current features (price ratios, returns, spreads) may not capture the microstructure information needed for edge
 
-3. **Time Horizon Mismatch**: DQN's discrete action space and short-term reward may not be suited for capturing slow-developing alpha
-
-4. **Data Quality**: Simulated/historical data may lack the real market microstructure information needed for edge
+3. **Edge << Costs**: Even if there's a tiny learnable structure, the edge per unit turnover is well under 1 bps - any realistic execution cost erases it
 
 ### What DOESN'T Explain the Failure
 
-- ❌ Transaction costs - model loses even at 0 cost
-- ❌ Wrong RL algorithm - both DI=15 and DI=60 fail, not an exploration/exploitation issue
-- ❌ Not enough training - 5000 episodes with proper epsilon decay, model converged
+- ❌ Wrong RL algorithm - the edge is ~0, switching to PPO won't help
+- ❌ Not enough training - models converged
+- ❌ Hyperparameter tuning - fundamental signal problem
 
 ---
 
@@ -76,11 +67,11 @@ The DQN approach to intraday trading on this data does not produce tradable alph
 
 > "the edge is tiny. Your best_model's break-even cost is well under ~1 bps one-way"
 
-**Confirmed**: Actually, break-even cost is **negative** - there is no positive edge to speak of.
+**Confirmed**: Break-even cost is approximately 0-1 bps. At realistic 10 bps costs, models lose 5-8% annually.
 
 > "if it still shows break‑even cost ≪ realistic costs, the right pivot is stronger features / longer‑horizon target / 'trade only on very high conviction', not a different RL algorithm"
 
-**Confirmed**: Changing from DI=15 to DI=60, or from DQN to PPO, will not fix "no edge exists in the data/features".
+**Confirmed**: Changing from DI=15 to DI=60, or from DQN to PPO, will not fix "edge too small vs costs".
 
 ---
 
@@ -88,7 +79,7 @@ The DQN approach to intraday trading on this data does not produce tradable alph
 
 ### Do NOT proceed with:
 - Different RL algorithms (PPO, A2C, SAC) - won't fix edge problem
-- More training - model has converged
+- More training - models have converged
 - Hyperparameter tuning - fundamental edge problem
 
 ### Consider instead:
@@ -101,19 +92,19 @@ The DQN approach to intraday trading on this data does not produce tradable alph
 
 ## Files & Artifacts
 
-- `checkpoints/sweep_di60_v2/best_model.pt` - Best DI=60 model (Sharpe -6.58)
-- `checkpoints/sweep_sm0.0/best_model.pt` - DI=15 model (100% FLAT)
-- `logs/sweep_di60_v2.log` - Training log
+- `checkpoints/sweep_di60_v2/best_model.pt` - Best DI=60 model (episode 3200)
+- `checkpoints/sweep_di15_fixed_v3/best_model.pt` - Best DI=15 model
+- `logs/sweep_di60_v2.log` - DI=60 training log
 - `scripts/dqn/evaluate_hierarchical.py` - Evaluation framework
 
 ---
 
 ## Gate 2.7 Decision
 
-| Criterion | Threshold | Result | Status |
-|-----------|-----------|--------|--------|
-| Val Sharpe | > 0 | -6.58 (best) | ❌ FAIL |
-| Break-even cost | > 5 bps | < 0 bps | ❌ FAIL |
-| Win rate at 10 bps | > 50% | 0-22% | ❌ FAIL |
+| Criterion | Threshold | DI=15 Result | DI=60 Result | Status |
+|-----------|-----------|--------------|--------------|--------|
+| CAGR @ 0 cost | > 0% | -0.33% (VAL) | -0.86% (VAL) | ❌ FAIL |
+| CAGR @ 10 bps | > 0% | -4.85% (VAL) | -7.85% (VAL) | ❌ FAIL |
+| Break-even cost | > 5 bps | ~0-1 bps | ~0-1 bps | ❌ FAIL |
 
-**Final Decision**: Gate 2.7 NOT PASSED. DQN intraday trading on this data is not viable.
+**Final Decision**: Gate 2.7 NOT PASSED. DQN intraday trading on this data is not viable at realistic transaction costs.
