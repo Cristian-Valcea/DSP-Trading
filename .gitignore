@@ -92,4 +92,5 @@ training_output.log
 # Data artifacts (generated during training/backtest)
 data/data_quality_report.json
 data/sleeve_im/
+data/dqn_premarket_cache/
 scripts/dqn/results/

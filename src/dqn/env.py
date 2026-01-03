@@ -98,7 +98,19 @@ class DQNTradingEnv(gym.Env):
         self.end_minute = end_minute
         self.apply_constraint = apply_constraint
         self.render_mode = render_mode
-        self.premarket_cache_dir = self._resolve_premarket_cache_dir(premarket_cache_dir)
+        self._premarket_cache_candidates = self._get_premarket_cache_candidates(premarket_cache_dir)
+        self._premarket_cache_dirs = [
+            p for p in self._premarket_cache_candidates if p.exists() and p.is_dir()
+        ]
+        self.premarket_cache_dir = self._premarket_cache_dirs[0] if self._premarket_cache_dirs else None
+        self._premarket_summary_cache: dict[tuple[str, str], dict] = {}
+
+        # In-memory symbol data cache (critical for training speed).
+        # Without this, each reset() reads 9 parquet files from disk.
+        self._symbol_data: dict[str, pd.DataFrame] = {}
+        self._symbol_day_slices: dict[str, dict[str, tuple[int, int]]] = {}
+        self._symbol_parquet_paths: dict[str, Path] = {}
+        self._prime_symbol_data_cache()
 
         # State builder for feature computation
         self.state_builder = StateBuilder(symbols=self.symbols)
@@ -135,24 +147,77 @@ class DQNTradingEnv(gym.Env):
         self.daily_pnl: float = 0.0
         self.day_data: dict[str, pd.DataFrame] = {}
 
-    def _load_available_dates(self) -> list[str]:
-        """Load list of available trading dates from data files."""
-        dates = set()
+    def _find_symbol_parquet(self, symbol: str) -> Path:
+        """Find the parquet file for a given symbol in this env's data_dir."""
+        patterns = [f"{symbol.lower()}_*.parquet", f"{symbol}_*.parquet"]
+        matches: list[Path] = []
+        for pattern in patterns:
+            matches.extend(sorted(self.data_dir.glob(pattern)))
+
+        if not matches:
+            raise FileNotFoundError(
+                f"No parquet found for symbol={symbol} in {self.data_dir}"
+            )
+
+        # Prefer the largest file if multiple matches exist.
+        matches.sort(key=lambda p: p.stat().st_size, reverse=True)
+        return matches[0]
+
+    def _prime_symbol_data_cache(self) -> None:
+        """
+        Load each symbol's parquet once and build per-day slice indices.
+
+        This is the single biggest speed win for training: reset() no longer
+        re-reads parquet files every episode.
+        """
+        wanted_cols = ["timestamp", "open", "high", "low", "close", "volume"]
 
         for symbol in self.symbols:
-            # Try different file patterns
-            for pattern in [f"{symbol.lower()}_*.parquet", f"{symbol}_*.parquet"]:
-                for filepath in self.data_dir.glob(pattern):
-                    df = pd.read_parquet(filepath)
-                    df["timestamp"] = pd.to_datetime(df["timestamp"])
-                    symbol_dates = df["timestamp"].dt.date.unique()
-                    if not dates:
-                        dates = set(str(d) for d in symbol_dates)
-                    else:
-                        dates &= set(str(d) for d in symbol_dates)
-                    break  # Found file for this symbol
+            path = self._find_symbol_parquet(symbol)
+            self._symbol_parquet_paths[symbol] = path
 
-        return sorted(list(dates))
+            try:
+                df = pd.read_parquet(path, columns=wanted_cols)
+            except Exception:
+                df = pd.read_parquet(path)
+
+            if "timestamp" not in df.columns:
+                raise ValueError(f"{path} missing required column 'timestamp'")
+
+            df["timestamp"] = pd.to_datetime(df["timestamp"])
+            df = df.sort_values("timestamp").reset_index(drop=True)
+
+            # Build date -> slice(start, end) mapping using numpy datetime64[D]
+            ts = df["timestamp"].to_numpy(dtype="datetime64[ns]")
+            if ts.size == 0:
+                raise ValueError(f"{path} contains no rows")
+            dates = ts.astype("datetime64[D]")
+
+            change_idx = np.nonzero(dates[1:] != dates[:-1])[0] + 1
+            starts = np.concatenate(([0], change_idx))
+            ends = np.concatenate((change_idx, [len(df)]))
+            date_keys = dates[starts].astype(str)
+
+            slices: dict[str, tuple[int, int]] = {}
+            for i in range(len(starts)):
+                slices[str(date_keys[i])] = (int(starts[i]), int(ends[i]))
+
+            self._symbol_data[symbol] = df
+            self._symbol_day_slices[symbol] = slices
+
+    def _load_available_dates(self) -> list[str]:
+        """Load list of available trading dates from data files."""
+        dates: set[str] | None = None
+
+        for symbol in self.symbols:
+            symbol_slices = self._symbol_day_slices.get(symbol)
+            if not symbol_slices:
+                continue
+
+            symbol_dates = set(symbol_slices.keys())
+            dates = symbol_dates if dates is None else (dates & symbol_dates)
+
+        return sorted(dates) if dates else []
 
     def _load_day_data(self, date_str: str) -> dict[str, pd.DataFrame]:
         """Load data for all symbols for a specific date."""
@@ -170,30 +235,27 @@ class DQNTradingEnv(gym.Env):
             date_str: Trading date (YYYY-MM-DD)
             prior_date_str: Prior trading date (YYYY-MM-DD) for overnight gap; if None, gap=0
         """
-        data = {}
+        data: dict[str, pd.DataFrame] = {}
         prior_close_by_symbol: dict[str, float] = {}
 
-        date_obj = pd.Timestamp(date_str).date()
-        prior_date_obj = pd.Timestamp(prior_date_str).date() if prior_date_str else None
-
         for symbol in self.symbols:
-            for pattern in [f"{symbol.lower()}_*.parquet", f"{symbol}_*.parquet"]:
-                for filepath in self.data_dir.glob(pattern):
-                    df = pd.read_parquet(filepath)
-                    df["timestamp"] = pd.to_datetime(df["timestamp"])
-                    day_df = df[df["timestamp"].dt.date == date_obj].copy()
+            df = self._symbol_data.get(symbol)
+            slices = self._symbol_day_slices.get(symbol)
+            if df is None or slices is None:
+                continue
 
-                    if not day_df.empty:
-                        # Sort by timestamp and reset index
-                        day_df = day_df.sort_values("timestamp").reset_index(drop=True)
-                        data[symbol] = day_df
+            if date_str not in slices:
+                continue
 
-                    if prior_date_obj is not None:
-                        prev_df = df[df["timestamp"].dt.date == prior_date_obj]
-                        if not prev_df.empty:
-                            prev_df = prev_df.sort_values("timestamp")
-                            prior_close_by_symbol[symbol] = float(prev_df.iloc[-1]["close"])
-                    break
+            start, end = slices[date_str]
+            day_df = df.iloc[start:end].reset_index(drop=True)
+            if not day_df.empty:
+                data[symbol] = day_df
+
+            if prior_date_str and prior_date_str in slices:
+                p_start, p_end = slices[prior_date_str]
+                if p_end > p_start:
+                    prior_close_by_symbol[symbol] = float(df.iloc[p_end - 1]["close"])
 
         return data, prior_close_by_symbol
 
@@ -204,6 +266,11 @@ class DQNTradingEnv(gym.Env):
         Returns list of existing cache directories to search.
         Priority: explicit path > dqn_premarket_cache > sleeve_im (Gate 2.7c)
         """
+        candidates = self._get_premarket_cache_candidates(premarket_cache_dir)
+        return [p for p in candidates if p.exists() and p.is_dir()]
+
+    def _get_premarket_cache_candidates(self, premarket_cache_dir: str | None) -> list[Path]:
+        """Return candidate premarket cache directories (may not exist yet)."""
         candidates: list[Path] = []
         project_root = Path(__file__).resolve().parents[2]  # .../dsp100k
 
@@ -221,7 +288,7 @@ class DQNTradingEnv(gym.Env):
         candidates.append(Path.cwd() / "dsp100k" / "data" / "sleeve_im" / "minute_bars")
         candidates.append(Path.cwd() / "data" / "sleeve_im" / "minute_bars")
 
-        return [p for p in candidates if p.exists() and p.is_dir()]
+        return candidates
 
     def _resolve_premarket_cache_dir(self, premarket_cache_dir: str | None) -> Path | None:
         """Resolve premarket cache directory (backward compatibility)."""
@@ -240,8 +307,13 @@ class DQNTradingEnv(gym.Env):
         Searches multiple cache directories (Gate 2.7c: dqn_premarket_cache + sleeve_im).
         Uses bars in [04:00, 09:30) ET.
         """
+        cache_key = (symbol.upper(), date_str)
+        cached = self._premarket_summary_cache.get(cache_key)
+        if cached is not None:
+            return cached
+
         # Search all cache directories for the file
-        cache_dirs = self._resolve_premarket_cache_dirs(None)
+        cache_dirs = self._premarket_cache_candidates
         if not cache_dirs:
             return {}
 
@@ -297,10 +369,12 @@ class DQNTradingEnv(gym.Env):
         rth_first_hour_vol = float(day_df.loc[rth_mask, "volume"].sum())
         denom = rth_first_hour_vol if rth_first_hour_vol > 0 else 1.0
 
-        return {
+        summary = {
             "return": float(pm_return),
             "volume_ratio": float(pm_volume / denom),
         }
+        self._premarket_summary_cache[cache_key] = summary
+        return summary
 
     def reset(
         self,
