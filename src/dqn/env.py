@@ -64,6 +64,7 @@ class DQNTradingEnv(gym.Env):
         turnover_cost: float = 0.0010,
         start_minute: int = 61,    # 10:31 ET = minute 61 of RTH
         end_minute: int = 270,      # 14:00 ET = minute 270 of RTH
+        decision_interval: int = 1,  # Minutes between decisions (1=every bar, 10=every 10 bars)
         apply_constraint: bool = False,  # Agent handles top-K constraint
         premarket_cache_dir: str | None = None,
         render_mode: str | None = None,
@@ -81,6 +82,9 @@ class DQNTradingEnv(gym.Env):
             turnover_cost: Transaction cost per unit turnover (default: 10 bps)
             start_minute: First decision minute in RTH (default: 61 = 10:31 ET)
             end_minute: Last decision minute in RTH (default: 270 = 14:00 ET)
+            decision_interval: Minutes between decisions (default: 1 = every bar)
+                Set to 10/15/20 to reduce turnover by making fewer decisions per day.
+                Positions are held constant between decision points.
             apply_constraint: Whether to apply top-K constraint (default: False - agent handles it)
             render_mode: Rendering mode (default: None)
         """
@@ -96,6 +100,7 @@ class DQNTradingEnv(gym.Env):
         self.turnover_cost = turnover_cost
         self.start_minute = start_minute
         self.end_minute = end_minute
+        self.decision_interval = max(1, decision_interval)  # Minimum 1 minute
         self.apply_constraint = apply_constraint
         self.render_mode = render_mode
         self._premarket_cache_candidates = self._get_premarket_cache_candidates(premarket_cache_dir)
@@ -450,14 +455,18 @@ class DQNTradingEnv(gym.Env):
 
     def step(self, action: np.ndarray) -> tuple[dict, float, bool, bool, dict]:
         """
-        Execute trading action and advance one minute.
+        Execute trading action and advance by decision_interval minutes.
+
+        With decision_interval > 1, positions are held constant between decisions,
+        and reward accumulates over the interval. This reduces turnover by making
+        fewer decisions per day.
 
         Args:
             action: (num_symbols,) array of actions (0-4)
 
         Returns:
             observation: Next state
-            reward: Portfolio reward
+            reward: Portfolio reward (accumulated over interval)
             terminated: True if episode over (end of day)
             truncated: Always False
             info: Additional info
@@ -474,47 +483,55 @@ class DQNTradingEnv(gym.Env):
         # Convert actions to positions
         new_positions = actions_to_positions(action)
 
-        # Get current prices
-        prices = self._get_current_prices()
-        prev_prices = self._get_prices_at_minute(self.current_minute - 1)
+        # BUG FIX #2: Get prices at CURRENT minute (decision point), not minute-1
+        # This prevents look-ahead bias where new position sees returns before decision
+        start_minute = self.current_minute
+        start_prices = self._get_prices_at_minute(start_minute)
 
-        # Compute log returns
-        log_returns = np.zeros(self.num_symbols, dtype=np.float32)
-        for i in range(self.num_symbols):
-            if prev_prices[i] > 0 and prices[i] > 0:
-                log_returns[i] = np.log(prices[i] / prev_prices[i])
-
-        # Compute reward using PREVIOUS positions (no look-ahead)
-        reward = compute_portfolio_reward(
-            positions_prev=self.positions,
-            positions_curr=new_positions,
-            log_returns=log_returns,
-            turnover_cost=self.turnover_cost,
-        )
+        # BUG FIX #1: Scale turnover cost by w_max to match PnL units
+        # Previously costs were ~60× too large because PnL was scaled but costs weren't
+        turnover = np.sum(np.abs(new_positions - self.positions))
+        turnover_cost_total = turnover * self.turnover_cost * self.w_max
 
         # Update entry prices for new positions
+        decision_prices = self._get_current_prices()
         for i in range(self.num_symbols):
             if self.positions[i] == 0 and new_positions[i] != 0:
                 # Opening new position
-                self.entry_prices[i] = prices[i]
+                self.entry_prices[i] = decision_prices[i]
             elif new_positions[i] == 0:
                 # Closing position
                 self.entry_prices[i] = 0
 
-        # Update positions
+        # Update positions at decision point
         self.positions = new_positions.astype(np.float32)
-        self.daily_pnl += reward
 
-        # Advance time
-        self.current_minute += 1
+        # Advance time by decision_interval (or until end of day)
+        end_minute = min(self.current_minute + self.decision_interval, self.end_minute)
+
+        # Get prices at end of interval
+        end_prices = self._get_prices_at_minute(end_minute - 1)
+
+        # Compute log returns over the FULL interval
+        log_returns = np.zeros(self.num_symbols, dtype=np.float32)
+        for i in range(self.num_symbols):
+            if start_prices[i] > 0 and end_prices[i] > 0:
+                log_returns[i] = np.log(end_prices[i] / start_prices[i])
+
+        # Compute reward: position PnL over interval minus turnover cost
+        position_pnl = np.sum(self.positions * log_returns) * self.w_max
+        reward = position_pnl - turnover_cost_total
+
+        self.daily_pnl += reward
+        self.current_minute = end_minute
 
         # Check if episode is done
         terminated = self.current_minute >= self.end_minute
 
         # Force flatten at end of day
         if terminated:
-            # Compute final flatten cost
-            flatten_cost = np.sum(np.abs(self.positions)) * self.turnover_cost
+            # BUG FIX #1: Scale flatten cost by w_max to match PnL units
+            flatten_cost = np.sum(np.abs(self.positions)) * self.turnover_cost * self.w_max
             self.daily_pnl -= flatten_cost
             reward -= flatten_cost
             self.positions = np.zeros(self.num_symbols, dtype=np.float32)
@@ -526,6 +543,7 @@ class DQNTradingEnv(gym.Env):
             "positions": self.positions.copy(),
             "daily_pnl": self.daily_pnl,
             "action": action.tolist(),
+            "interval_minutes": end_minute - start_minute,
         }
 
         return obs, reward, terminated, False, info
@@ -594,6 +612,12 @@ class DQNTradingEnv(gym.Env):
     def num_trading_minutes(self) -> int:
         """Number of trading minutes per episode."""
         return self.end_minute - self.start_minute
+
+    @property
+    def num_decision_points(self) -> int:
+        """Number of decision points (steps) per episode."""
+        total_minutes = self.end_minute - self.start_minute
+        return (total_minutes + self.decision_interval - 1) // self.decision_interval
 
 
 def make_env(
