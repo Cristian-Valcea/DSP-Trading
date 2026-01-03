@@ -92,11 +92,11 @@ def compute_hierarchical_metrics(
     Compute all metrics needed for hierarchical model selection.
 
     Args:
-        episode_pnls: Array of daily PnL values (in "position units")
+        episode_pnls: Array of daily PnL values (ALREADY scaled by w_max in env.py)
         episode_turnovers: Array of daily turnover values (sum of |position changes|)
         step_gross_exposures: Array of gross exposure at each step (for activity)
         action_counts: Dict mapping action -> count
-        w_max: Weight multiplier to convert position units to returns
+        w_max: Weight multiplier for turnover calculation only (PnL already scaled)
 
     Returns:
         HierarchicalMetrics with all computed values
@@ -104,9 +104,9 @@ def compute_hierarchical_metrics(
     num_episodes = len(episode_pnls)
     total_steps = len(step_gross_exposures)
 
-    # Convert PnL to log-returns (NN_OBJECTIVE.md §Reward as implemented)
-    # r_d = w_max * daily_pnl_d
-    daily_returns = episode_pnls * w_max
+    # BUG FIX #4: episode_pnls is ALREADY in log-return units (env.py scales by w_max)
+    # Previously: double-scaling made CAGR/DD ~60× too small
+    daily_returns = episode_pnls  # No additional w_max multiplication needed
 
     # CAGR proxy (NN_OBJECTIVE.md §Profit / CAGR proxy)
     # CAGR_proxy = exp(252 * mean(r_d)) - 1
