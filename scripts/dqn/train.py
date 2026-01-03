@@ -106,6 +106,12 @@ def parse_args():
         default=5000,
         help="Checkpoint frequency (episodes)",
     )
+    parser.add_argument(
+        "--patience",
+        type=int,
+        default=10,
+        help="Early stopping patience (eval cycles without improvement). Set high (e.g., 50) to disable early stopping.",
+    )
 
     # Agent parameters
     parser.add_argument(
@@ -175,6 +181,12 @@ def parse_args():
         type=int,
         default=60,
         help="Rolling window size",
+    )
+    parser.add_argument(
+        "--decision-interval",
+        type=int,
+        default=1,
+        help="Minutes between decisions (1=every bar, 10/15/20 to reduce turnover)",
     )
 
     # Policy / action filtering
@@ -288,6 +300,7 @@ def main():
         window_size=args.window_size,
         k_per_side=args.k_per_side,
         turnover_cost=args.turnover_cost,
+        decision_interval=args.decision_interval,
         apply_constraint=False,  # Agent handles top-K constraint
     )
 
@@ -297,6 +310,7 @@ def main():
         window_size=args.window_size,
         k_per_side=args.k_per_side,
         turnover_cost=args.turnover_cost,
+        decision_interval=args.decision_interval,
         apply_constraint=False,  # Agent handles top-K constraint
     )
 
@@ -304,6 +318,7 @@ def main():
     print(f"  Val dates: {len(val_env.available_dates)}")
     print(f"  Symbols: {train_env.symbols}")
     print(f"  Trading window: {train_env.start_minute} - {train_env.end_minute} (RTH minutes)")
+    print(f"  Decision interval: {args.decision_interval} min ({train_env.num_decision_points} decisions/day)")
 
     # Create agent
     print("\nCreating DQN agent...")
@@ -349,6 +364,7 @@ def main():
         checkpoint_freq=args.checkpoint_freq,
         checkpoint_dir=str(checkpoint_dir),
         log_dir=str(log_dir),
+        patience=args.patience,
         verbose=args.verbose,
     )
 
@@ -378,6 +394,7 @@ def main():
     print(f"  Target update: every {args.target_update:,} steps")
     print(f"  Conviction threshold: {args.conviction_threshold}")
     print(f"  Switch margin: {args.switch_margin}")
+    print(f"  Decision interval: {args.decision_interval} min")
 
     # Start training
     print("\n" + "=" * 60)
