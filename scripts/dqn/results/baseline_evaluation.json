@@ -1,7 +1,7 @@
 {
   "config": {
     "data_dir": "/Users/Shared/wsl-export/wsl-home/data/dqn_dev_test",
-    "episodes": 20,
+    "episodes": 10,
     "seed": 42,
     "symbols": [
       "AAPL",
@@ -20,7 +20,7 @@
   "results": {
     "always_flat": {
       "policy": "always_flat",
-      "num_episodes": 20,
+      "num_episodes": 10,
       "total_return": 0.0,
       "mean_episode_return": 0.0,
       "std_episode_return": 0.0,
@@ -41,53 +41,33 @@
         0.0,
         0.0,
         0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
         0.0
       ]
     },
     "random": {
       "policy": "random",
-      "num_episodes": 20,
-      "total_return": -24.094892765832128,
-      "mean_episode_return": -1.2047446382916065,
-      "std_episode_return": 0.016022597767689575,
-      "sharpe_ratio": -1193.6097076664034,
-      "max_drawdown": 22.892028026936515,
+      "num_episodes": 10,
+      "total_return": -12.052629812718434,
+      "mean_episode_return": -1.2052629812718434,
+      "std_episode_return": 0.009855575102124522,
+      "sharpe_ratio": -1941.3333548786184,
+      "max_drawdown": 10.830257852480868,
       "mean_episode_length": 209.0,
       "mean_trades_per_episode": 1291.0,
-      "total_trades": 25820,
-      "mean_reward_per_step": -0.005764328412878513,
-      "std_reward_per_step": 0.0019976785343401985,
+      "total_trades": 12910,
+      "mean_reward_per_step": -0.0057668085228317996,
+      "std_reward_per_step": 0.0020464588754177957,
       "episode_returns": [
-        -1.2028647388956106,
-        -1.225749643665705,
-        -1.2037601964094238,
-        -1.2453139527296002,
-        -1.1968331247252992,
-        -1.1817698834515344,
-        -1.2182359452849425,
-        -1.1843533375871236,
-        -1.2177204781338389,
-        -1.1860551238964774,
-        -1.2084594191805962,
-        -1.1996207665893168,
-        -1.1844156787789306,
-        -1.2090061241290018,
-        -1.2003768862805133,
-        -1.214255867366728,
-        -1.2116617753344885,
-        -1.1867877718041886,
-        -1.2220988418284093,
-        -1.1955532097604025
+        -1.2223719602375673,
+        -1.1929851181976519,
+        -1.1994426854057612,
+        -1.1903286438190837,
+        -1.2028153076249566,
+        -1.2111079889736915,
+        -1.2058903717480236,
+        -1.2102723669650404,
+        -1.1991794244617158,
+        -1.2182359452849425
       ]
     }
   },
@@ -104,14 +84,14 @@
       "random_negative": {
         "test": "Random policy Sharpe < 0 (transaction costs work)",
         "condition": "sharpe < 0 AND total_return < 0",
-        "sharpe": -1193.6097076664034,
-        "total_return": -24.094892765832128,
+        "sharpe": -1941.3333548786184,
+        "total_return": -12.052629812718434,
         "status": "PASS",
         "message": "Transaction costs correctly dominate random trading"
       }
     },
     "overall_status": "PASS",
-    "timestamp": "2026-01-02T17:06:25.901578"
+    "timestamp": "2026-01-03T18:09:36.522433"
   },
-  "timestamp": "2026-01-02T17:06:25.901746"
+  "timestamp": "2026-01-03T18:09:36.522554"
 }

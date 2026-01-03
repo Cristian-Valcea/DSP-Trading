@@ -1,0 +1,78 @@
+# Success Criteria for DQN Model Selection
+# Based on NN_OBJECTIVE.md - Hierarchical Evaluation Framework
+#
+# Philosophy: "Profit first, risk as constraints"
+# 1. Primary: maximize CAGR proxy
+# 2. Hard gates: reject models violating constraints
+# 3. Tie-breaker: Sharpe only for close candidates
+
+# Primary selection metric
+primary_metric: 'cagr_proxy'
+
+# Tie-breaker (used when CAGR within tolerance)
+tie_breaker_metric: 'sharpe_ratio'
+
+# CAGR tolerance for tie-breaking (if |CAGR_A - CAGR_B| < tolerance, use Sharpe)
+cagr_tolerance: 0.01
+
+# W_max for scaling rewards to returns
+# Default: target_gross / (2 * k_per_side) = 0.10 / (2 * 3) = 0.0167
+w_max: 0.0167
+
+# Hard gates (all must pass for model to be considered)
+hard_gates:
+
+  # Maximum drawdown constraint
+  # Prevents models that take excessive risk
+  max_drawdown_pct:
+    direction: 'max'  # value must be <= threshold
+    threshold: 15.0   # 15% max drawdown allowed
+
+  # Annual turnover constraint
+  # Prevents high-frequency noise trading
+  # 250 = portfolio turns over ~once per day
+  annual_turnover:
+    direction: 'max'  # value must be <= threshold
+    threshold: 250.0
+
+  # Minimum activity constraint
+  # CRITICAL: Prevents trivial "always FLAT" optimum
+  # If activity < 5%, model is just avoiding costs by doing nothing
+  activity_pct:
+    direction: 'min'  # value must be >= threshold
+    threshold: 5.0    # At least 5% of steps with exposure
+
+  # Sharpe sanity gate
+  # Basic sanity check - don't accept negative risk-adjusted returns
+  # Note: This is a gate, NOT the selection criterion
+  sharpe_ratio:
+    direction: 'min'  # value must be >= threshold
+    threshold: 0.0    # Must have non-negative Sharpe
+
+# Environment configuration (for reference)
+environment:
+  trading_window:
+    start_minute: 61   # 10:31 ET
+    end_minute: 270    # 14:00 ET
+  target_gross: 0.10
+  k_per_side: 3
+  turnover_cost: 0.001  # 10 bps one-way
+
+# Notes on metrics computation:
+#
+# CAGR Proxy:
+#   r_d = w_max * daily_pnl_d  (convert to log-return)
+#   CAGR_proxy = exp(252 * mean(r_d)) - 1
+#
+# Max Drawdown:
+#   E_0 = 1
+#   E_{d+1} = E_d * exp(r_d)
+#   MaxDD = max peak-to-trough decline in E
+#
+# Annual Turnover:
+#   turnover_d = sum_t sum_i |w_{i,t} - w_{i,t-1}|
+#   annual_turnover = 252 * mean(turnover_d)
+#
+# Activity:
+#   activity_pct = 100 * mean_t[ gross_t > 0 ]
+#   where gross_t = sum_i |w_{i,t}|
