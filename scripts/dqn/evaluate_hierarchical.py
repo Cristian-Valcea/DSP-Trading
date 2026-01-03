@@ -98,6 +98,12 @@ def parse_args():
         action="store_true",
         help="Print per-episode details",
     )
+    parser.add_argument(
+        "--decision-interval",
+        type=int,
+        default=1,
+        help="Decision interval in minutes (must match training, e.g., 15 for DI=15)",
+    )
 
     return parser.parse_args()
 
@@ -256,8 +262,10 @@ def main():
     env = DQNTradingEnv(
         data_dir=str(data_dir),
         apply_constraint=False,
+        decision_interval=args.decision_interval,
     )
     print(f"  Dates: {len(env.available_dates)}")
+    print(f"  Decision Interval: {args.decision_interval} minutes")
     print(f"  Symbols: {env.symbols}")
 
     # Evaluate each checkpoint

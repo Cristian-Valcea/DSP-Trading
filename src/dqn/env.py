@@ -510,7 +510,10 @@ class DQNTradingEnv(gym.Env):
         end_minute = min(self.current_minute + self.decision_interval, self.end_minute)
 
         # Get prices at end of interval
-        end_prices = self._get_prices_at_minute(end_minute - 1)
+        # BUG FIX #3: Use end_minute directly, not end_minute-1
+        # With decision_interval=1: start=61, end=62, we want returns from 61→62
+        # Previously: end_prices = minute 61, same as start → zero returns!
+        end_prices = self._get_prices_at_minute(end_minute)
 
         # Compute log returns over the FULL interval
         log_returns = np.zeros(self.num_symbols, dtype=np.float32)
