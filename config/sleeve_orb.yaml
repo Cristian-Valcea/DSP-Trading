@@ -1,0 +1,212 @@
+# Sleeve ORB Configuration - Opening Range Breakout (Futures)
+# Version: 1.6 (FROZEN - from SLEEVE_ORB_MINIMAL_SPEC.md)
+# Date: 2026-01-06
+
+# =============================================================================
+# UNIVERSE & SESSION
+# =============================================================================
+
+universe:
+  symbols:
+    - MES  # Micro S&P 500 Futures
+    - MNQ  # Micro Nasdaq 100 Futures
+  session: RTH  # Regular Trading Hours only (09:30-16:00 ET)
+  timezone: America/New_York
+
+# Contract specifications
+contracts:
+  MES:
+    point_value: 5.0      # $5 per index point
+    tick_size: 0.25       # 0.25 pts
+    tick_value: 1.25      # $1.25 per tick
+    commission_rt: 1.24   # Round-trip commission (IBKR Tiered)
+  MNQ:
+    point_value: 2.0      # $2 per index point
+    tick_size: 0.25       # 0.25 pts
+    tick_value: 0.50      # $0.50 per tick
+    commission_rt: 1.24   # Round-trip commission (IBKR Tiered)
+
+# =============================================================================
+# OPENING RANGE PARAMETERS (FROZEN)
+# =============================================================================
+
+opening_range:
+  start_time: "09:30"     # OR start (inclusive)
+  end_time: "10:00"       # OR end (exclusive) - first entry bar is 10:00
+  minutes: 30             # 30 one-minute bars [09:30, 10:00)
+
+# Entry
+entry:
+  buffer_ticks: 2         # 2 ticks buffer above/below OR
+  window_start: "10:00"   # First eligible entry bar
+  window_end: "14:00"     # Last entry allowed (cancel unfilled orders after)
+  max_trades_per_day: 1   # Per symbol
+
+# =============================================================================
+# RISK & SIZING (FROZEN)
+# =============================================================================
+
+risk:
+  # Position sizing
+  risk_per_trade_bps: 20  # 0.20% of sleeve NAV per trade
+  skip_if_qty_zero: true  # Do NOT force min(1) - skip trade if can't size
+
+  # Stop loss
+  stop_multiplier: 1.0    # 1.0 × OR_Width
+  stop_atr_floor: 0.20    # Minimum 20% of ATR_d (RTH-only)
+
+  # Profit target
+  target_multiplier: 2.0  # 2.0 × stop distance (2R)
+
+# ATR calculation (RTH-only)
+atr:
+  period: 14              # 14-period ATR
+  use_rth_only: true      # Exclude overnight gaps from True Range
+
+# =============================================================================
+# FILTERS (FROZEN)
+# =============================================================================
+
+filters:
+  # Compression filter (skip if OR too narrow)
+  compression:
+    enabled: true
+    threshold: 0.20       # Skip if OR_Width < 20% of avg OR_Width (20-day)
+
+  # Exhaustion filter (skip if OR too wide)
+  exhaustion:
+    enabled: true
+    threshold: 2.0        # Skip if OR_Width > 200% of avg OR_Width (20-day)
+
+  # News filter (skip on high-impact event days)
+  news:
+    enabled: true
+    skip_dates_file: "data/orb/skip_dates.csv"
+
+# OR width average lookback
+or_width_avg_period: 20   # 20 trading days for OR width average
+
+# =============================================================================
+# EXIT MANAGEMENT (FROZEN)
+# =============================================================================
+
+exits:
+  eod_flatten_time: "15:55"  # Hard flatten at 15:55 ET
+  fomc_flatten_time: "13:55" # Force flat before FOMC (14:00 ET)
+
+# =============================================================================
+# COST MODEL (FROZEN)
+# =============================================================================
+
+costs:
+  # Baseline slippage assumption
+  slippage_ticks_per_side: 1  # 1 tick entry + 1 tick exit
+
+  # Stress test (re-run kill tests at higher slippage)
+  stress_slippage_ticks_per_side: 2
+
+# =============================================================================
+# BACKTEST RULES (FROZEN)
+# =============================================================================
+
+backtest:
+  # Pessimistic same-bar resolution
+  pessimistic_resolution: true  # If stop AND target hit same bar, assume STOP first
+
+  # Gap-through handling
+  gap_through_fills_at_open: true  # Gap through stop -> fill at bar.open
+
+  # NAV update
+  nav_update_frequency: start_of_day  # Use prior RTH close for sizing
+
+# =============================================================================
+# WALK-FORWARD VALIDATION
+# =============================================================================
+
+walk_forward:
+  # Fixed folds (non-overlapping)
+  folds:
+    - fold_id: 1
+      train_start: "2022-01-03"
+      train_end: "2022-06-30"
+      test_start: "2022-07-01"
+      test_end: "2022-09-30"
+    - fold_id: 2
+      train_start: "2022-07-01"
+      train_end: "2022-12-30"
+      test_start: "2023-01-03"
+      test_end: "2023-03-31"
+    - fold_id: 3
+      train_start: "2023-01-03"
+      train_end: "2023-06-30"
+      test_start: "2023-07-03"
+      test_end: "2023-09-29"
+    - fold_id: 4
+      train_start: "2023-07-03"
+      train_end: "2023-12-29"
+      test_start: "2024-01-02"
+      test_end: "2024-03-28"
+    - fold_id: 5
+      train_start: "2024-01-02"
+      train_end: "2024-06-28"
+      test_start: "2024-07-01"
+      test_end: "2024-09-30"
+    - fold_id: 6
+      train_start: "2024-07-01"
+      train_end: "2024-12-31"
+      test_start: "2025-01-02"
+      test_end: "2025-03-31"
+
+# =============================================================================
+# KILL-TEST GATES
+# =============================================================================
+
+kill_test:
+  # OOS aggregate gates
+  min_net_pnl_dollars: 0.0
+  min_sharpe: 0.5
+  min_win_rate: 0.35
+  min_avg_trade_per_contract: 10.0
+  max_drawdown_pct: -0.15  # Must be >= -15%
+  max_spy_correlation: 0.7
+
+  # Walk-forward requirements
+  min_folds_pass: 4           # At least 4 of 6 folds must pass
+  min_trades_per_fold: 20     # Minimum trades to count as "pass"
+  max_fold_drawdown_pct: -0.20
+
+  # Multi-contract stability
+  require_both_symbols_profitable: true
+
+# =============================================================================
+# DATA SOURCES
+# =============================================================================
+
+data:
+  source: polygon  # Polygon.io (now Massive.com)
+  granularity: 1m  # 1-minute OHLC bars
+
+  # Polygon ticker format for micro futures:
+  # Base symbol + Month code + Year digit
+  # Month codes: H=Mar, M=Jun, U=Sep, Z=Dec (quarterly)
+  # Example: MESH5 = MES March 2025, MNQZ4 = MNQ December 2024
+  #
+  # We use futures_fetcher.py to build continuous series from per-contract data
+  tickers:
+    MES: "MES"  # Micro E-mini S&P 500
+    MNQ: "MNQ"  # Micro E-mini Nasdaq 100
+
+  # Roll parameters (used by futures_fetcher.py)
+  roll:
+    method: fixed_schedule      # Roll N days before last trading day
+    days_before_expiry: 5       # N=5 (roll before third Friday)
+    adjustment: additive        # Additive back-adjustment (preserves points)
+
+# =============================================================================
+# OUTPUT PATHS
+# =============================================================================
+
+output:
+  results_file: "data/orb/walk_forward_results.json"
+  trades_file: "data/orb/trades.csv"
+  equity_file: "data/orb/equity.parquet"
