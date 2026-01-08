@@ -40,7 +40,7 @@ We trade a small, diversified set across economic “buckets”:
 **Micro futures (Databento data):**
 - Equity indices: `MES` (S&P 500), `MNQ` (Nasdaq-100), `M2K` (Russell 2000), `MYM` (Dow)
 - Commodities: `MGC` (Gold), `MCL` (Crude Oil)
-- FX: `M6E` (EUR/USD), `M6J` (JPY/USD)
+- FX: `M6E` (EUR/USD), `M6B` (GBP/USD)
 
 **Bond exposure (ETFs, Polygon data):**
 - `TLT` (long-term US Treasuries), `IEF` (intermediate US Treasuries)
@@ -118,4 +118,3 @@ This is why we insist on pre-registered rules + walk-forward testing + stress as
 3) Budget decision for historical data (Databento) to cover the required instruments and window.
 
 Reference implementation spec: `dsp100k/docs/SLEEVE_TSMOM_MINIMAL_SPEC.md`
-

@@ -1,7 +1,7 @@
 # SLEEVE_TSMOM_MINIMAL_SPEC.md — Cross-Asset Time-Series Momentum (TSMOM)
 **Status**: DRAFT — Pending data + kill-test validation  
-**Version**: 1.0 (pre-registered)  
-**Date**: 2026-01-07  
+**Version**: 1.1 (pre-registered)  
+**Date**: 2026-01-08  
 **Authors**: User + Reviewer + Codex consolidation
 
 ---
@@ -40,7 +40,7 @@ We run a **10-instrument** universe spanning **4 economic buckets**. Futures are
 
 **FX (2):**
 - `M6E` — Micro EUR/USD
-- `M6J` — Micro JPY/USD
+- `M6B` — Micro GBP/USD
 
 **Equity indices (1):**
 - `MYM` — Micro E-mini Dow
@@ -50,6 +50,9 @@ We run a **10-instrument** universe spanning **4 economic buckets**. Futures are
 ### 2.2 Rates (ETFs via Polygon)
 - `TLT` — iShares 20+ Year Treasury Bond ETF
 - `IEF` — iShares 7–10 Year Treasury Bond ETF
+
+### 2.4 Change note (v1.1)
+`M6J` was replaced with `M6B` due to incomplete `M6J` daily coverage in the available 2021–2026 Databento delivery. `M6B` provides complete coverage and preserves the intent (FX diversifier with micro sizing).
 
 ### 2.3 Universe invariants
 - No instrument additions/removals mid-validation.
