@@ -94,3 +94,15 @@ data/data_quality_report.json
 data/sleeve_im/
 data/dqn_premarket_cache/
 scripts/dqn/results/
+
+# Databento data files (large binary/compressed files)
+data/databento/
+!data/databento/.gitkeep
+
+# TSMOM data files (processed parquet files)
+data/tsmom/
+!data/tsmom/.gitkeep
+
+# ORB data files (processed parquet files)
+data/orb/
+!data/orb/.gitkeep
