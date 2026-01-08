@@ -81,16 +81,19 @@
 - MCL will be flat in early 2021 train period, fully active from July 2021 onward
 - No spec change needed
 
+### **6. Bond ETF Data Acquisition** ✅ COMPLETE
+- ✅ Acquired TLT daily data from Polygon.io (1,252 bars, 99.4% coverage)
+- ✅ Acquired IEF daily data from Polygon.io (1,252 bars, 99.4% coverage)
+- ✅ Date range: 2021-01-11 to 2026-01-05 (Polygon starts from first trading day with data)
+- ✅ Files: `data/tsmom/TLT_1d_2021-01-05_2026-01-05.parquet` (68K)
+- ✅ Files: `data/tsmom/IEF_1d_2021-01-05_2026-01-05.parquet` (64K)
+- ✅ Script: `scripts/fetch_bond_etf_data.py` (async fetcher with Polygon.io API)
+
 ---
 
 ## ⏳ Pending Work
 
-### **1. Acquire Bond ETF Data** ← **NEXT IMMEDIATE TASK**
-- [ ] Fetch TLT + IEF daily data from Polygon.io (2021-2026)
-- [ ] Store in `data/tsmom/TLT_1d_2021-01-05_2026-01-05.parquet`
-- [ ] Store in `data/tsmom/IEF_1d_2021-01-05_2026-01-05.parquet`
-
-### **2. Implement TSMOM Backtester**
+### **1. Implement TSMOM Backtester** ← **NEXT IMMEDIATE TASK**
 - [ ] Create `src/dsp/backtest/tsmom_futures.py` (follow ORB template)
 - [ ] Implement signal calculation (252d lookback per spec Section 4)
 - [ ] Implement risk parity portfolio construction (spec Section 5)
@@ -98,12 +101,12 @@
 - [ ] Implement walk-forward validation (3 expanding folds, spec Section 8)
 - [ ] Implement kill criteria evaluation (spec Section 9)
 
-### **3. Run Baseline Backtest**
+### **2. Run Baseline Backtest**
 - [ ] Execute baseline: 1 tick/side futures + 2 bps/side ETFs
 - [ ] Execute stress: 2 ticks/side futures + 4 bps/side ETFs
 - [ ] Generate JSON outputs per spec Section 10 (fold metrics, PnL breakdown)
 
-### **4. Evaluate Kill Criteria**
+### **3. Evaluate Kill Criteria**
 - [ ] Check primary gates (Sharpe ≥0.5, PnL >0, DD ≥-20%, 2/3 folds pass)
 - [ ] Check stress gates (PnL >0, Sharpe ≥0.3, DD ≥-25%)
 - [ ] Check concentration gates (no >60% single instrument, no >70% single bucket)
@@ -130,8 +133,8 @@ dsp100k/
 │       ├── MCL_1d_2021-07-11_2026-01-04.parquet ✅
 │       ├── M6E_1d_2021-01-05_2026-01-04.parquet ✅
 │       ├── M6B_1d_2021-01-05_2026-01-04.parquet ✅ NEW
-│       ├── TLT_1d_2021-01-05_2026-01-05.parquet # (TO BE CREATED)
-│       └── IEF_1d_2021-01-05_2026-01-05.parquet # (TO BE CREATED)
+│       ├── TLT_1d_2021-01-05_2026-01-05.parquet ✅ (1,252 bars)
+│       └── IEF_1d_2021-01-05_2026-01-05.parquet ✅ (1,252 bars)
 ├── docs/
 │   ├── SLEEVE_TSMOM_MINIMAL_SPEC.md            # ✅ v1.1 (M6B replacement)
 │   ├── SLEEVE_TSMOM_PRESENTATION.md            # ✅ Updated with M6B
@@ -139,6 +142,8 @@ dsp100k/
 │   ├── TSMOM_SESSION_RECAP_2026-01-08.md       # ✅ Resolution timeline
 │   ├── TSMOM_STATUS_SUMMARY.md                 # ✅ This file
 │   └── DOWNLOADED_DATA_MARKET.md               # ✅ Updated with both batches
+├── scripts/
+│   └── fetch_bond_etf_data.py                  # ✅ Bond ETF fetcher (Polygon.io)
 └── src/dsp/
     ├── backtest/
     │   ├── orb_futures.py                      # ✅ ORB template reference
@@ -174,18 +179,13 @@ dsp100k/
 
 ## 🎯 Next Immediate Actions
 
-### **1. Acquire TLT + IEF Bond Data** ← **NEXT STEP**
-- Fetch daily data from Polygon.io API (2021-01-05 → 2026-01-05)
-- Store as parquet files in `data/tsmom/`
-- Use adjusted close for total return proxy (if available)
-- Validate complete 5-year coverage before proceeding
-
-### **2. Implement TSMOM Backtester**
+### **1. Implement TSMOM Backtester** ← **NEXT STEP**
 - Create `src/dsp/backtest/tsmom_futures.py` following ORB template
 - Reference: `src/dsp/backtest/orb_futures.py` for walk-forward framework
 - Implement per spec Sections 3-10 (signal, portfolio, roll, validation, gates)
+- Use data from `data/tsmom/` (8 futures + 2 ETFs, all ready)
 
-### **3. Execute Kill-Test Validation**
+### **2. Execute Kill-Test Validation**
 - Run baseline + stress backtests
 - Evaluate all gates (primary, stress, concentration)
 - Document results in `SLEEVE_TSMOM_KILL_TEST_RESULTS.md`
