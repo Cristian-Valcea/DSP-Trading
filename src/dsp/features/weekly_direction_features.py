@@ -52,7 +52,12 @@ class WeeklySample:
 def load_equity(symbol: str) -> pd.DataFrame:
     path = EQUITY_DIR / f"{symbol}_daily.parquet"
     df = pd.read_parquet(path)
-    df = df.tz_convert("UTC")
+    # Normalize to date-only index for joins
+    if df.index.tz is None:
+        df.index = pd.to_datetime(df.index).tz_localize("UTC")
+    else:
+        df.index = df.index.tz_convert("UTC")
+    df.index = df.index.normalize()  # Remove time component, keep UTC
     df = df.sort_index()
     return df
 
@@ -67,7 +72,7 @@ def load_gate_data() -> pd.DataFrame:
         .join(vx[["vx_f1"]], how="inner")
         .dropna()
     )
-    df.index = pd.to_datetime(df.index).tz_localize("UTC")
+    df.index = pd.to_datetime(df.index).tz_localize("UTC").normalize()
     return df
 
 
