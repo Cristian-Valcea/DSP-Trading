@@ -1,0 +1,317 @@
+[
+  {
+    "episode": 500,
+    "val_sharpe": -28.849878540950748,
+    "val_mean_reward": -0.00038399127882537596,
+    "val_win_rate": 0.02,
+    "val_mean_entropy": 1.216004862864252
+  },
+  {
+    "episode": 600,
+    "val_sharpe": -19.005605182474884,
+    "val_mean_reward": -0.00036814941010853504,
+    "val_win_rate": 0.12,
+    "val_mean_entropy": 0.8762432515890767
+  },
+  {
+    "episode": 700,
+    "val_sharpe": -19.78200322072597,
+    "val_mean_reward": -0.0004705557603432765,
+    "val_win_rate": 0.12,
+    "val_mean_entropy": 1.0981767522071564
+  },
+  {
+    "episode": 800,
+    "val_sharpe": -35.495379841456234,
+    "val_mean_reward": -0.00043070468601955135,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 1.151020875572989
+  },
+  {
+    "episode": 900,
+    "val_sharpe": -16.639715724595586,
+    "val_mean_reward": -0.00038291146651659683,
+    "val_win_rate": 0.12,
+    "val_mean_entropy": 0.9895492355703928
+  },
+  {
+    "episode": 1000,
+    "val_sharpe": -21.16470404137095,
+    "val_mean_reward": -0.0004281899046848057,
+    "val_win_rate": 0.08,
+    "val_mean_entropy": 0.9597852858764057
+  },
+  {
+    "episode": 1100,
+    "val_sharpe": -24.90626106275222,
+    "val_mean_reward": -0.00045580026627462515,
+    "val_win_rate": 0.06,
+    "val_mean_entropy": 1.107861629220249
+  },
+  {
+    "episode": 1200,
+    "val_sharpe": -25.04868264729866,
+    "val_mean_reward": -0.0005228945120856407,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 1.1076234626708847
+  },
+  {
+    "episode": 1300,
+    "val_sharpe": -21.68435951058432,
+    "val_mean_reward": -0.00041469322129507845,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 1.1009234436840782
+  },
+  {
+    "episode": 1400,
+    "val_sharpe": -19.013140278285828,
+    "val_mean_reward": -0.0003988705423517589,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 1.1236440576022955
+  },
+  {
+    "episode": 1500,
+    "val_sharpe": -14.758864831257657,
+    "val_mean_reward": -0.00023307880647467757,
+    "val_win_rate": 0.14,
+    "val_mean_entropy": 0.9591981067664125
+  },
+  {
+    "episode": 1600,
+    "val_sharpe": -25.63623279052249,
+    "val_mean_reward": -0.0004150479806851054,
+    "val_win_rate": 0.06,
+    "val_mean_entropy": 1.1628875057907728
+  },
+  {
+    "episode": 1700,
+    "val_sharpe": -26.453684802937484,
+    "val_mean_reward": -0.0004902421117618942,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 1.172875684416911
+  },
+  {
+    "episode": 1800,
+    "val_sharpe": -23.482622628873177,
+    "val_mean_reward": -0.0004942505893093888,
+    "val_win_rate": 0.08,
+    "val_mean_entropy": 1.0601809084972225
+  },
+  {
+    "episode": 1900,
+    "val_sharpe": -23.643178488257895,
+    "val_mean_reward": -0.0003954915494064871,
+    "val_win_rate": 0.08,
+    "val_mean_entropy": 1.2187963823785988
+  },
+  {
+    "episode": 2000,
+    "val_sharpe": -28.90485180866837,
+    "val_mean_reward": -0.00045189974793198654,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 1.0632424736998773
+  },
+  {
+    "episode": 2100,
+    "val_sharpe": -26.591140235188227,
+    "val_mean_reward": -0.0005114951847643522,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 1.0305752414172376
+  },
+  {
+    "episode": 2200,
+    "val_sharpe": -29.023352450168016,
+    "val_mean_reward": -0.000535090451454352,
+    "val_win_rate": 0.02,
+    "val_mean_entropy": 1.0451508624355728
+  },
+  {
+    "episode": 2300,
+    "val_sharpe": -23.76456731529904,
+    "val_mean_reward": -0.00039186612592958663,
+    "val_win_rate": 0.02,
+    "val_mean_entropy": 0.9897792093138288
+  },
+  {
+    "episode": 2400,
+    "val_sharpe": -19.034816987980623,
+    "val_mean_reward": -0.000328860277127744,
+    "val_win_rate": 0.1,
+    "val_mean_entropy": 1.056155547167907
+  },
+  {
+    "episode": 2500,
+    "val_sharpe": -19.182219966235735,
+    "val_mean_reward": -0.000220985225521119,
+    "val_win_rate": 0.12,
+    "val_mean_entropy": 0.714176011872891
+  },
+  {
+    "episode": 2600,
+    "val_sharpe": -20.608163319067263,
+    "val_mean_reward": -0.00039845558438790854,
+    "val_win_rate": 0.1,
+    "val_mean_entropy": 0.9045828364671782
+  },
+  {
+    "episode": 2700,
+    "val_sharpe": -19.40508041768087,
+    "val_mean_reward": -0.00020773994921304304,
+    "val_win_rate": 0.12,
+    "val_mean_entropy": 0.7209689865254366
+  },
+  {
+    "episode": 2800,
+    "val_sharpe": -15.580787992893086,
+    "val_mean_reward": -0.0003420726781803508,
+    "val_win_rate": 0.18,
+    "val_mean_entropy": 0.8595047688565509
+  },
+  {
+    "episode": 2900,
+    "val_sharpe": -24.674554013348448,
+    "val_mean_reward": -0.00023268418715766858,
+    "val_win_rate": 0.08,
+    "val_mean_entropy": 0.8903759579967853
+  },
+  {
+    "episode": 3000,
+    "val_sharpe": -15.589909577122208,
+    "val_mean_reward": -0.0002938070010493583,
+    "val_win_rate": 0.18,
+    "val_mean_entropy": 0.6876599802569399
+  },
+  {
+    "episode": 3100,
+    "val_sharpe": -12.417235507408263,
+    "val_mean_reward": -0.00014946489468709782,
+    "val_win_rate": 0.14,
+    "val_mean_entropy": 0.6488005437660732
+  },
+  {
+    "episode": 3200,
+    "val_sharpe": -6.584605817264785,
+    "val_mean_reward": -0.0002145440947435185,
+    "val_win_rate": 0.26,
+    "val_mean_entropy": 0.7165909845274199
+  },
+  {
+    "episode": 3300,
+    "val_sharpe": -11.255897099331985,
+    "val_mean_reward": -0.0002679009902327945,
+    "val_win_rate": 0.18,
+    "val_mean_entropy": 0.8743687655847416
+  },
+  {
+    "episode": 3400,
+    "val_sharpe": -23.41329014665695,
+    "val_mean_reward": -0.00039917782779905995,
+    "val_win_rate": 0.1,
+    "val_mean_entropy": 0.9739279395421323
+  },
+  {
+    "episode": 3500,
+    "val_sharpe": -20.39042257473503,
+    "val_mean_reward": -0.0003962443903608219,
+    "val_win_rate": 0.1,
+    "val_mean_entropy": 0.7682698901319739
+  },
+  {
+    "episode": 3600,
+    "val_sharpe": -9.26891916585361,
+    "val_mean_reward": -0.00034183991642339727,
+    "val_win_rate": 0.26,
+    "val_mean_entropy": 0.7242766983943134
+  },
+  {
+    "episode": 3700,
+    "val_sharpe": -27.020276980279984,
+    "val_mean_reward": -0.0004982031137453253,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 1.1094993317497566
+  },
+  {
+    "episode": 3800,
+    "val_sharpe": -18.90046629755983,
+    "val_mean_reward": -0.00028062485690755304,
+    "val_win_rate": 0.12,
+    "val_mean_entropy": 0.785296546156766
+  },
+  {
+    "episode": 3900,
+    "val_sharpe": -14.491067656598767,
+    "val_mean_reward": -0.00027136862849496237,
+    "val_win_rate": 0.2,
+    "val_mean_entropy": 0.6523339961975603
+  },
+  {
+    "episode": 4000,
+    "val_sharpe": -15.24691094667564,
+    "val_mean_reward": -0.00016192936084846493,
+    "val_win_rate": 0.16,
+    "val_mean_entropy": 0.39218432840689593
+  },
+  {
+    "episode": 4100,
+    "val_sharpe": -28.885397435486194,
+    "val_mean_reward": -0.000403999384250832,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 0.9390766943703494
+  },
+  {
+    "episode": 4200,
+    "val_sharpe": -23.640889850685003,
+    "val_mean_reward": -0.0003209869592397833,
+    "val_win_rate": 0.02,
+    "val_mean_entropy": 0.9550078979834582
+  },
+  {
+    "episode": 4300,
+    "val_sharpe": -25.048120871931097,
+    "val_mean_reward": -0.00046733102727484767,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 1.0332563754206097
+  },
+  {
+    "episode": 4400,
+    "val_sharpe": -16.823080684217906,
+    "val_mean_reward": -0.00038898536349818826,
+    "val_win_rate": 0.16,
+    "val_mean_entropy": 0.6558519895057777
+  },
+  {
+    "episode": 4500,
+    "val_sharpe": -27.18506965120985,
+    "val_mean_reward": -0.0004706064705552414,
+    "val_win_rate": 0.04,
+    "val_mean_entropy": 1.0366139989382641
+  },
+  {
+    "episode": 4600,
+    "val_sharpe": -20.860865226719987,
+    "val_mean_reward": -0.0002909917871852755,
+    "val_win_rate": 0.08,
+    "val_mean_entropy": 0.8028131671986763
+  },
+  {
+    "episode": 4700,
+    "val_sharpe": -17.967663860606542,
+    "val_mean_reward": -0.0003004961732938585,
+    "val_win_rate": 0.08,
+    "val_mean_entropy": 0.7471815477755258
+  },
+  {
+    "episode": 4800,
+    "val_sharpe": -20.049508457082382,
+    "val_mean_reward": -0.00020831616064487973,
+    "val_win_rate": 0.14,
+    "val_mean_entropy": 0.7332690766620457
+  },
+  {
+    "episode": 4900,
+    "val_sharpe": -24.00665318524136,
+    "val_mean_reward": -0.00029307630285197285,
+    "val_win_rate": 0.06,
+    "val_mean_entropy": 0.8178456187525898
+  }
+]

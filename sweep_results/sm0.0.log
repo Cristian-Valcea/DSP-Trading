@@ -1,0 +1,143 @@
+============================================================
+DQN Training - Gate 2A
+============================================================
+
+Paths:
+  Train data: /Users/Shared/wsl-export/wsl-home/data/dqn_train
+  Val data: /Users/Shared/wsl-export/wsl-home/data/dqn_val
+  Checkpoints: /Users/Shared/wsl-export/wsl-home/dsp100k/checkpoints/sweep_sm0.0
+  Logs: /Users/Shared/wsl-export/wsl-home/dsp100k/logs/sweep_sm0.0
+
+Loading modules...
+
+Creating environments...
+  Train dates: 509
+  Val dates: 124
+  Symbols: ['AAPL', 'AMZN', 'GOOGL', 'META', 'MSFT', 'NVDA', 'QQQ', 'SPY', 'TSLA']
+  Trading window: 61 - 270 (RTH minutes)
+
+Creating DQN agent...
+  Device: mps
+  Model parameters: 272,326
+  TensorBoard: /Users/Shared/wsl-export/wsl-home/dsp100k/logs/sweep_sm0.0/tensorboard
+
+Training parameters:
+  Episodes: 300
+  Warmup: 10
+  Eval frequency: 30
+  Batch size: 64
+  Buffer size: 500,000
+  Learning rate: 0.0003
+  Gamma: 0.99
+  Epsilon: 1.0 → 0.05 over 100,000 steps
+  Target update: every 1,000 steps
+  Conviction threshold: 0.0
+  Switch margin: 0.0
+
+============================================================
+Starting training...
+============================================================
+Starting DQN training for 300 episodes
+  Warmup: 10 episodes
+  Eval frequency: 30 episodes
+  Checkpoint frequency: 5000 episodes
+
+📊 Eval @ Episode 30:
+   Sharpe: -202.9715
+   Mean Reward: -0.230633
+   Win Rate: 0.00%
+   Entropy: 0.3758
+   Action Dist: {0: 0.8513024986709197, 1: 0.0063264221158958, 2: 0.006804891015417331, 3: 0.06767676767676768, 4: 0.06788942052099947}
+   ✅ New best model! Sharpe: -202.9715
+
+📊 Eval @ Episode 60:
+   Sharpe: -266.8534
+   Mean Reward: -0.498902
+   Win Rate: 0.00%
+   Entropy: 0.7429
+   Action Dist: {0: 0.6253588516746411, 1: 0.02046783625730994, 2: 0.020839978734715575, 3: 0.16640085061137694, 4: 0.1669324827219564}
+   Patience: 1/10
+
+📊 Eval @ Episode 90:
+   Sharpe: -227.9667
+   Mean Reward: -0.364068
+   Win Rate: 0.00%
+   Entropy: 0.5490
+   Action Dist: {0: 0.7542796384901648, 1: 0.024136097820308348, 2: 0.024401913875598084, 3: 0.09845826687931951, 4: 0.09872408293460926}
+   Patience: 2/10
+Episode 100/300 | Reward: -1.1659 | PnL: -1.165870 | Entropy: 1.23 | ε: 0.799 | Buffer: 21109 | Speed: 0.0 ep/s
+
+📊 Eval @ Episode 120:
+   Sharpe: -357.3210
+   Mean Reward: -0.375230
+   Win Rate: 0.00%
+   Entropy: 0.5683
+   Action Dist: {0: 0.7069112174375333, 1: 0.14614566719829877, 2: 0.14630515683147263, 3: 0.0002126528442317916, 4: 0.0004253056884635832}
+   Patience: 3/10
+
+📊 Eval @ Episode 150:
+   Sharpe: -7.9234
+   Mean Reward: -0.000381
+   Win Rate: 0.00%
+   Entropy: 0.0003
+   Action Dist: {0: 0.9998936735778841, 1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0001063264221158958}
+   ✅ New best model! Sharpe: -7.9234
+
+📊 Eval @ Episode 180:
+   Sharpe: -10.3047
+   Mean Reward: -0.001494
+   Win Rate: 0.00%
+   Entropy: 0.0018
+   Action Dist: {0: 0.9993620414673047, 1: 5.31632110579479e-05, 2: 0.0002126528442317916, 3: 0.0001594896331738437, 4: 0.0002126528442317916}
+   Patience: 1/10
+Episode 200/300 | Reward: -0.9610 | PnL: -0.961021 | Entropy: 0.99 | ε: 0.601 | Buffer: 42009 | Speed: 0.0 ep/s
+
+📊 Eval @ Episode 210:
+   Sharpe: -6.2195
+   Mean Reward: -0.000491
+   Win Rate: 0.00%
+   Entropy: 0.0010
+   Action Dist: {0: 0.9996810207336523, 1: 0.0001063264221158958, 2: 0.0002126528442317916, 3: 0.0, 4: 0.0}
+   ✅ New best model! Sharpe: -6.2195
+
+📊 Eval @ Episode 240:
+   Sharpe: -9.7658
+   Mean Reward: -0.000415
+   Win Rate: 0.00%
+   Entropy: 0.0005
+   Action Dist: {0: 0.9998405103668262, 1: 0.0, 2: 0.0001063264221158958, 3: 0.0, 4: 5.31632110579479e-05}
+   Patience: 1/10
+
+📊 Eval @ Episode 270:
+   Sharpe: -5.2915
+   Mean Reward: -0.000295
+   Win Rate: 0.00%
+   Entropy: 0.0003
+   Action Dist: {0: 0.9998405103668262, 1: 0.0, 2: 0.0, 3: 5.31632110579479e-05, 4: 0.0001063264221158958}
+   ✅ New best model! Sharpe: -5.2915
+
+Training complete!
+  Episodes: 300
+  Total steps: 83600
+  Time: 2.6 hours
+  Best val Sharpe: -5.2915
+
+============================================================
+Training Results
+============================================================
+  Episodes: 300
+  Total steps: 83,600
+  Time: 2.61 hours
+  Best val Sharpe: -5.2915
+
+Final metrics:
+    val_sharpe: 0.0000
+    val_mean_reward: 0.0000
+    val_win_rate: 0.0000
+
+============================================================
+Kill Test Results
+============================================================
+  ❌ FAIL: Val Sharpe = 0.0000 <= 0
+
+Results saved to: /Users/Shared/wsl-export/wsl-home/dsp100k/logs/sweep_sm0.0/training_results.json

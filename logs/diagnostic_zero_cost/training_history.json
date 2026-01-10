@@ -1,0 +1,16 @@
+[
+  {
+    "episode": 20,
+    "val_sharpe": -0.9978741271194576,
+    "val_mean_reward": -0.0013119007488882062,
+    "val_win_rate": 0.4,
+    "val_mean_entropy": 0.7276743933281608
+  },
+  {
+    "episode": 40,
+    "val_sharpe": 3.437241552113109,
+    "val_mean_reward": 0.003451814543154086,
+    "val_win_rate": 0.6,
+    "val_mean_entropy": 0.7175744292096856
+  }
+]

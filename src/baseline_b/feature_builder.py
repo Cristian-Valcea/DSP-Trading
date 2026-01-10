@@ -142,6 +142,7 @@ class FeatureBuilder:
         self,
         rth_day_data: dict[str, pd.DataFrame],
         symbol: str,
+        d: date,
         prior_close: Optional[float] = None
     ) -> Optional[np.ndarray]:
         """
@@ -150,6 +151,7 @@ class FeatureBuilder:
         Args:
             rth_day_data: Dict mapping symbol -> DataFrame for one day
             symbol: Target symbol
+            d: Trading date (for premarket lookup)
             prior_close: Prior session close (for overnight gap feature)
 
         Returns:
@@ -162,9 +164,9 @@ class FeatureBuilder:
         if len(day_df) < 61:  # Need at least 61 bars (0-60 inclusive)
             return None
 
-        # Prepare premarket summary for StateBuilder (coarse version)
-        # Note: We'll add detailed premarket separately
-        premarket_data = {}
+        # Prepare premarket summary for StateBuilder
+        # StateBuilder expects: {"SYMBOL": {"return": X, "volume_ratio": Y}}
+        premarket_data = self._compute_premarket_summary_for_statebuilder(symbol, d, prior_close)
 
         # Prepare prior close map
         prior_close_map = {symbol: prior_close} if prior_close else {}
@@ -185,6 +187,54 @@ class FeatureBuilder:
             return None
 
         return features_all[symbol_idx, :]
+
+    def _compute_premarket_summary_for_statebuilder(
+        self,
+        symbol: str,
+        d: date,
+        prior_close: Optional[float] = None
+    ) -> dict:
+        """
+        Compute coarse premarket summary for StateBuilder features #18-19.
+
+        StateBuilder expects:
+            premarket_data[symbol] = {"return": log_return, "volume_ratio": ratio}
+
+        - premarket_return (#18): log(P_0915 / prior_close) if available
+        - premarket_vol_ratio (#19): premarket_bar_count / 315 (normalized by max possible bars)
+
+        Returns:
+            Dict suitable for StateBuilder.reset(premarket_data=...)
+        """
+        pm_json = load_premarket_json(symbol, d)
+        if pm_json is None:
+            return {}
+
+        pm_df = parse_premarket_bars(pm_json)
+        if pm_df.empty:
+            return {}
+
+        # Compute premarket return: log(P_0915 / prior_close)
+        # Use price at 09:15 (last premarket price before RTH)
+        p_0915 = get_price_at_or_before(pm_df, time(9, 15))
+
+        premarket_return = 0.0
+        if p_0915 is not None and prior_close is not None and prior_close > 0:
+            premarket_return = np.log(p_0915 / prior_close)
+
+        # Compute premarket volume ratio
+        # Normalize by max possible bars (04:00-09:15 = 315 minutes = 315 bars max)
+        # This gives a proxy for premarket activity level
+        bar_count = len(pm_df)
+        max_possible_bars = 315  # 5h15m of premarket
+        premarket_vol_ratio = bar_count / max_possible_bars
+
+        return {
+            symbol: {
+                "return": premarket_return,
+                "volume_ratio": premarket_vol_ratio,
+            }
+        }
 
     def compute_symbol_onehot(self, symbol: str) -> np.ndarray:
         """
@@ -223,7 +273,7 @@ class FeatureBuilder:
         diagnostics = {"symbol": symbol, "date": str(d)}
 
         # 1. Base features (30-dim)
-        base_features = self.compute_base_features(rth_day_data, symbol, prior_close)
+        base_features = self.compute_base_features(rth_day_data, symbol, d, prior_close)
         if base_features is None:
             diagnostics["skip_reason"] = "insufficient_rth_data"
             return None, diagnostics

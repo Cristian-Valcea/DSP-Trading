@@ -1,0 +1,45 @@
+{
+  "data_dir": "/Users/Shared/wsl-export/wsl-home/data/dqn_dev_test",
+  "episodes": 50,
+  "criteria": {
+    "max_drawdown_pct": 15.0,
+    "max_annual_turnover": 250.0,
+    "min_activity_pct": 5.0,
+    "min_sharpe": 0.0
+  },
+  "candidates": [
+    {
+      "name": "/Users/Shared/wsl-export/wsl-home/dsp100k/checkpoints/sweep_di15_fixed/best_model.pt",
+      "cagr_proxy": -8.316017938547748e-05,
+      "sharpe_ratio": -9.925375083305147,
+      "activity_pct": 2.142857142857143,
+      "max_drawdown_pct": 0.0016265007522859262,
+      "annual_turnover": 2.609208,
+      "gates_passed": false,
+      "action_distribution": {
+        "0": 0.9952380952380953,
+        "1": 0.00031746031746031746,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0044444444444444444
+      }
+    },
+    {
+      "name": "/Users/Shared/wsl-export/wsl-home/dsp100k/checkpoints/sweep_di15_fixed/final_model.pt",
+      "cagr_proxy": -0.003293330916454673,
+      "sharpe_ratio": -31.022597798643048,
+      "activity_pct": 92.85714285714286,
+      "max_drawdown_pct": 0.0630224386511784,
+      "annual_turnover": 152.34408,
+      "gates_passed": false,
+      "action_distribution": {
+        "0": 0.5704761904761905,
+        "1": 0.017142857142857144,
+        "2": 0.09888888888888889,
+        "3": 0.0007936507936507937,
+        "4": 0.3126984126984127
+      }
+    }
+  ],
+  "best_model": null
+}

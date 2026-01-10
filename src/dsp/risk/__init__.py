@@ -2,6 +2,7 @@
 
 from .manager import RiskManager, RiskStatus, RiskAlert
 from .margin import MarginMonitor, MarginStatus
+from .vol_target_overlay import VolTargetOverlay, VolTargetOverlayConfig
 
 __all__ = [
     "RiskManager",
@@ -9,4 +10,6 @@ __all__ = [
     "RiskAlert",
     "MarginMonitor",
     "MarginStatus",
+    "VolTargetOverlay",
+    "VolTargetOverlayConfig",
 ]

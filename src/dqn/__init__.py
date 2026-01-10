@@ -15,11 +15,11 @@ Gate 2 (Training Pipeline):
 - trainer: Training loop with evaluation
 """
 
-from dsp100k.src.dqn.state_builder import StateBuilder
-from dsp100k.src.dqn.reward import compute_reward, compute_portfolio_reward
-from dsp100k.src.dqn.constraints import apply_topk_constraint
-from dsp100k.src.dqn.env import DQNTradingEnv, make_env
-from dsp100k.src.dqn.baselines import (
+from .state_builder import StateBuilder
+from .reward import compute_reward, compute_portfolio_reward
+from .constraints import apply_topk_constraint
+from .env import DQNTradingEnv, make_env
+from .baselines import (
     BasePolicy,
     FlatPolicy,
     RandomPolicy,
@@ -32,14 +32,14 @@ from dsp100k.src.dqn.baselines import (
 )
 
 # Gate 2: Training components
-from dsp100k.src.dqn.model import DuelingDQN, create_model
-from dsp100k.src.dqn.replay_buffer import (
+from .model import DuelingDQN, create_model
+from .replay_buffer import (
     PrioritizedReplayBuffer,
     UniformReplayBuffer,
     create_replay_buffer,
 )
-from dsp100k.src.dqn.agent import DQNAgent, create_agent
-from dsp100k.src.dqn.trainer import DQNTrainer, TrainingConfig, create_trainer
+from .agent import DQNAgent, create_agent
+from .trainer import DQNTrainer, TrainingConfig, create_trainer
 
 __all__ = [
     # State builder

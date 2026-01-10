@@ -1,0 +1,697 @@
+Symbol,SettlementMonth,SettlementYear,ProductType,SettlementDate,SettlementPrice,ProductDescription
+BX,11,2006,Standard,,787.73,Cboe S&P 500 BuyWrite Index Futures
+BX,12,2006,Standard,,800.38,Cboe S&P 500 BuyWrite Index Futures
+BX,1,2007,Standard,,809.7,Cboe S&P 500 BuyWrite Index Futures
+BX,2,2007,Standard,,822.62,Cboe S&P 500 BuyWrite Index Futures
+BX,3,2007,Standard,,800.64,Cboe S&P 500 BuyWrite Index Futures
+BX,4,2007,Standard,,814.44,Cboe S&P 500 BuyWrite Index Futures
+BX,5,2007,Standard,,824.32,Cboe S&P 500 BuyWrite Index Futures
+BX,6,2007,Standard,,837.51,Cboe S&P 500 BuyWrite Index Futures
+BX,7,2007,Standard,,854.28,Cboe S&P 500 BuyWrite Index Futures
+BX,8,2007,Standard,,811.67,Cboe S&P 500 BuyWrite Index Futures
+BX,9,2007,Standard,,832.66,Cboe S&P 500 BuyWrite Index Futures
+BX,10,2007,Standard,,847.77,Cboe S&P 500 BuyWrite Index Futures
+BX,11,2007,Standard,,828.54,Cboe S&P 500 BuyWrite Index Futures
+BX,12,2007,Standard,,851.22,Cboe S&P 500 BuyWrite Index Futures
+BX,1,2008,Standard,,786.53,Cboe S&P 500 BuyWrite Index Futures
+BX,2,2008,Standard,,810.98,Cboe S&P 500 BuyWrite Index Futures
+BX,3,2008,Standard,,808.94,Cboe S&P 500 BuyWrite Index Futures
+BX,4,2008,Standard,,840.66,Cboe S&P 500 BuyWrite Index Futures
+BX,5,2008,Standard,,858.82,Cboe S&P 500 BuyWrite Index Futures
+BX,6,2008,Standard,,824.17,Cboe S&P 500 BuyWrite Index Futures
+BX,7,2008,Standard,,797.03,Cboe S&P 500 BuyWrite Index Futures
+BX,8,2008,Standard,,815.84,Cboe S&P 500 BuyWrite Index Futures
+BX,9,2008,Standard,,825.01,Cboe S&P 500 BuyWrite Index Futures
+BX,10,2008,Standard,,618.34,Cboe S&P 500 BuyWrite Index Futures
+BX,11,2008,Standard,,552.49,Cboe S&P 500 BuyWrite Index Futures
+DV,6,2005,Standard,,115.65,Cboe DJIA Volatility Index Futures
+DV,8,2005,Standard,,124.21,Cboe DJIA Volatility Index Futures
+DV,10,2005,Standard,,159.11,Cboe DJIA Volatility Index Futures
+DV,11,2005,Standard,,108.14,Cboe DJIA Volatility Index Futures
+DV,12,2005,Standard,,100.18,Cboe DJIA Volatility Index Futures
+DV,1,2006,Standard,,104.63,Cboe DJIA Volatility Index Futures
+DV,2,2006,Standard,,122.59,Cboe DJIA Volatility Index Futures
+DV,3,2006,Standard,,110.79,Cboe DJIA Volatility Index Futures
+DV,4,2006,Standard,,112.14,Cboe DJIA Volatility Index Futures
+DV,5,2006,Standard,,124.1,Cboe DJIA Volatility Index Futures
+DV,6,2006,Standard,,151.66,Cboe DJIA Volatility Index Futures
+DV,7,2006,Standard,,159.29,Cboe DJIA Volatility Index Futures
+DV,8,2006,Standard,,130.99,Cboe DJIA Volatility Index Futures
+DV,9,2006,Standard,,112.18,Cboe DJIA Volatility Index Futures
+DV,10,2006,Standard,,104.62,Cboe DJIA Volatility Index Futures
+DV,11,2006,Standard,,104.69,Cboe DJIA Volatility Index Futures
+DV,12,2006,Standard,,104.72,Cboe DJIA Volatility Index Futures
+DV,1,2007,Standard,,106,Cboe DJIA Volatility Index Futures
+DV,2,2007,Standard,,100.42,Cboe DJIA Volatility Index Futures
+DV,3,2007,Standard,,128.26,Cboe DJIA Volatility Index Futures
+DV,4,2007,Standard,,11.31,Cboe DJIA Volatility Index Futures
+DV,5,2007,Standard,,14.13,Cboe DJIA Volatility Index Futures
+DV,6,2007,Standard,,11.6,Cboe DJIA Volatility Index Futures
+DV,7,2007,Standard,,15.72,Cboe DJIA Volatility Index Futures
+DV,8,2007,Standard,,23.29,Cboe DJIA Volatility Index Futures
+DV,9,2007,Standard,,18.79,Cboe DJIA Volatility Index Futures
+DV,10,2007,Standard,,17.78,Cboe DJIA Volatility Index Futures
+DV,11,2007,Standard,,24.86,Cboe DJIA Volatility Index Futures
+DV,12,2007,Standard,,21.16,Cboe DJIA Volatility Index Futures
+DV,1,2008,Standard,,22.37,Cboe DJIA Volatility Index Futures
+DV,2,2008,Standard,,23.18,Cboe DJIA Volatility Index Futures
+DV,3,2008,Standard,,23.43,Cboe DJIA Volatility Index Futures
+DV,4,2008,Standard,,21.25,Cboe DJIA Volatility Index Futures
+DV,5,2008,Standard,,16.22,Cboe DJIA Volatility Index Futures
+DV,6,2008,Standard,,20.68,Cboe DJIA Volatility Index Futures
+DV,7,2008,Standard,,27.22,Cboe DJIA Volatility Index Futures
+DV,8,2008,Standard,,20.98,Cboe DJIA Volatility Index Futures
+DV,9,2008,Standard,,30.6,Cboe DJIA Volatility Index Futures
+DV,10,2008,Standard,,58.4,Cboe DJIA Volatility Index Futures
+DV,11,2008,Standard,,67.42,Cboe DJIA Volatility Index Futures
+DV,12,2008,Standard,,48.52,Cboe DJIA Volatility Index Futures
+DV,1,2009,Standard,,48.26,Cboe DJIA Volatility Index Futures
+DV,2,2009,Standard,,43.51,Cboe DJIA Volatility Index Futures
+DV,3,2009,Standard,,37.68,Cboe DJIA Volatility Index Futures
+DV,4,2009,Standard,,34.76,Cboe DJIA Volatility Index Futures
+DV,5,2009,Standard,,24.94,Cboe DJIA Volatility Index Futures
+DV,6,2009,Standard,,29.12,Cboe DJIA Volatility Index Futures
+DV,7,2009,Standard,,21.43,Cboe DJIA Volatility Index Futures
+GV,5,2011,Standard,,18.79,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,6,2011,Standard,,15.32,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,7,2011,Standard,,17.82,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,8,2011,Standard,,25.54,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,9,2011,Standard,,30.47,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,10,2011,Standard,,29.44,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,11,2011,Standard,,26.21,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,12,2011,Standard,,20.91,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,1,2012,Standard,,22.27,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,2,2012,Standard,,18.69,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,3,2012,Standard,,18.26,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,4,2012,Standard,,17.92,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,5,2012,Standard,,20.32,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,6,2012,Standard,,21,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,7,2012,Standard,,17.98,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,8,2012,Standard,,16.88,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,9,2012,Standard,,18.52,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,10,2012,Standard,,15.54,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,11,2012,Standard,,12.96,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,12,2012,Standard,,14.63,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,1,2013,Standard,,13.83,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,2,2013,Standard,,14.09,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,3,2013,Standard,,14.84,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,4,2013,Standard,,28.5,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,5,2013,Standard,,27.09,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,6,2013,Standard,,22.47,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,7,2013,Standard,,22.71,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,8,2013,Standard,,24.01,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,9,2013,Standard,,25.66,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,10,2013,Standard,,26.48,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,11,2013,Standard,,20.97,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,12,2013,Standard,,22.04,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,1,2014,Standard,,15.81,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,2,2014,Standard,,16.12,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,3,2014,Standard,,18.18,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,4,2014,Standard,,15.87,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,5,2014,Standard,,13.57,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,6,2014,Standard,,12.59,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,7,2014,Standard,,13.92,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,8,2014,Standard,,13.44,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,9,2014,Standard,,14.41,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,10,2014,Standard,,16.54,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,11,2014,Standard,,23.84,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,12,2014,Standard,,22.31,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,1,2015,Standard,,23.87,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,2,2015,Standard,,19.97,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,3,2015,Standard,,20.79,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,4,2015,Standard,,15.38,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+GV,5,2015,Standard,,15.87,Cboe Gold ETF Volatility Index (GVZ) Security Futures
+OV,5,2012,Standard,,32.13,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,6,2012,Standard,,34.58,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,7,2012,Standard,,35.51,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,8,2012,Standard,,30.99,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,9,2012,Standard,,32.82,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,10,2012,Standard,,35.78,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,11,2012,Standard,,30.02,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,12,2012,Standard,,28.34,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,1,2013,Standard,,25.24,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,2,2013,Standard,,19.87,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,3,2013,Standard,,20.73,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,4,2013,Standard,,28.27,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,5,2013,Standard,,24.01,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,6,2013,Standard,,21.1,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,7,2013,Standard,,25.36,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,8,2013,Standard,,24.71,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,9,2013,Standard,,23.35,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,10,2013,Standard,,24.03,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,11,2013,Standard,,19.59,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,12,2013,Standard,,17.5,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,1,2014,Standard,,18.17,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,2,2014,Standard,,18.59,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,3,2014,Standard,,20.91,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,4,2014,Standard,,18.99,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,5,2014,Standard,,16.17,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,6,2014,Standard,,18.11,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,7,2014,Standard,,18.08,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,8,2014,Standard,,19.53,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,9,2014,Standard,,19.28,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,10,2014,Standard,,28.1,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,11,2014,Standard,,44.9,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,12,2014,Standard,,60.28,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,1,2015,Standard,,62.5,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,2,2015,Standard,,62.72,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,3,2015,Standard,,64.6,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,4,2015,Standard,,48.58,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+OV,5,2015,Standard,,34.5,Cboe Crude Oil ETF Volatility Index (OVX) Security Futures 
+RPXC,3,2012,Standard,,170.51,Radar Logic 28-Day Real Estate Index (RPX) Futures
+RPXC,9,2012,Standard,,194.17,Radar Logic 28-Day Real Estate Index (RPX) Futures
+RPXC,3,2013,Standard,,190.23,Radar Logic 28-Day Real Estate Index (RPX) Futures
+VA,6,2006,Standard,,105.93,S&P 500 Variance Futures 
+VA,9,2006,Standard,,115.23,S&P 500 Variance Futures 
+VA,12,2006,Standard,,102.24,S&P 500 Variance Futures 
+VA,3,2007,Standard,,111.62,S&P 500 Variance Futures 
+VA,6,2007,Standard,,105.35,S&P 500 Variance Futures 
+VA,9,2007,Standard,,171.58,S&P 500 Variance Futures 
+VA,12,2007,Standard,,248.32,S&P 500 Variance Futures 
+VA,3,2008,Standard,,352.62,S&P 500 Variance Futures 
+VA,6,2008,Standard,,401.15,S&P 500 Variance Futures 
+VA,9,2008,Standard,,533.61,S&P 500 Variance Futures 
+VA,12,2008,Standard,,1690.21,S&P 500 Variance Futures 
+VA,3,2009,Standard,,1907.09,S&P 500 Variance Futures 
+VA,9,2009,Standard,,1971.82,S&P 500 Variance Futures 
+VA,12,2009,Standard,,756.38,S&P 500 Variance Futures 
+VA,3,2010,Standard,,417.12,S&P 500 Variance Futures 
+VA,6,2010,Standard,,357.07,S&P 500 Variance Futures 
+VA,9,2010,Standard,,357.49,S&P 500 Variance Futures 
+VA,12,2010,Standard,,328.82,S&P 500 Variance Futures 
+VA,3,2011,Standard,,316.34,S&P 500 Variance Futures 
+VA,1,2013,Standard,,744.9587,S&P 500 Variance Futures 
+VA,2,2013,Standard,,786.55,S&P 500 Variance Futures 
+VA,3,2013,Standard,,680.463,S&P 500 Variance Futures 
+VA,6,2013,Standard,,762.88,S&P 500 Variance Futures 
+VA,7,2013,Standard,,750.1369,S&P 500 Variance Futures 
+VA,8,2013,Standard,,728.2484,S&P 500 Variance Futures 
+VA,9,2013,Standard,,576.0371,S&P 500 Variance Futures 
+VA,10,2013,Standard,,728.0788,S&P 500 Variance Futures 
+VA,11,2013,Standard,,862.3209,S&P 500 Variance Futures 
+VA,12,2013,Standard,,568.7305,S&P 500 Variance Futures 
+VA,1,2014,Standard,,691.65,S&P 500 Variance Futures 
+VA,2,2014,Standard,,883.62,S&P 500 Variance Futures 
+VA,3,2014,Standard,,680.37,S&P 500 Variance Futures 
+VA,4,2014,Standard,,892.79,S&P 500 Variance Futures 
+VA,5,2014,Standard,,901.8,S&P 500 Variance Futures 
+VA,6,2014,Standard,,641.09,S&P 500 Variance Futures 
+VA,7,2014,Standard,,814.13,S&P 500 Variance Futures 
+VA,8,2014,Standard,,837.38,S&P 500 Variance Futures 
+VA,9,2014,Standard,,733.54,S&P 500 Variance Futures 
+VA,10,2014,Standard,,946.52,S&P 500 Variance Futures 
+VA,11,2014,Standard,,944.47,S&P 500 Variance Futures 
+VA,12,2014,Standard,,579.89,S&P 500 Variance Futures 
+VA,1,2015,Standard,,920.34,S&P 500 Variance Futures 
+VA,2,2015,Standard,,708.79,S&P 500 Variance Futures 
+VA,3,2015,Standard,,793.5,S&P 500 Variance Futures 
+VA,4,2015,Standard,,797.03,S&P 500 Variance Futures 
+VA,5,2015,Standard,,691.56,S&P 500 Variance Futures 
+VA,6,2015,Standard,,837.04,S&P 500 Variance Futures 
+VA,7,2015,Standard,,819.8,S&P 500 Variance Futures 
+VA,8,2015,Standard,,839.17,S&P 500 Variance Futures 
+VA,9,2015,Standard,,903.22,S&P 500 Variance Futures 
+VA,10,2015,Standard,,1107.94,S&P 500 Variance Futures 
+VA,11,2015,Standard,,1135.1,S&P 500 Variance Futures 
+VA,12,2015,Standard,,530.22,S&P 500 Variance Futures 
+VA,1,2016,Standard,,962.41,S&P 500 Variance Futures 
+VA,2,2016,Standard,,966.3,S&P 500 Variance Futures 
+VA,3,2016,Standard,,894.67,S&P 500 Variance Futures 
+VA,4,2016,Standard,,778.84,S&P 500 Variance Futures 
+VA,5,2016,Standard,,494.46,S&P 500 Variance Futures 
+VA,6,2016,Standard,,844.27,S&P 500 Variance Futures 
+VA,7,2016,Standard,,810.71,S&P 500 Variance Futures 
+VA,8,2016,Standard,,821.56,S&P 500 Variance Futures 
+VA,9,2016,Standard,,662.55,S&P 500 Variance Futures 
+VA,10,2016,Standard,,729.12,S&P 500 Variance Futures 
+VA,11,2016,Standard,,820.02,S&P 500 Variance Futures 
+VA,12,2016,Standard,,719.83,S&P 500 Variance Futures 
+VA,1,2017,Standard,,649.16,S&P 500 Variance Futures 
+VA,2,2017,Standard,,777.8,S&P 500 Variance Futures 
+VA,3,2017,Standard,,656.75,S&P 500 Variance Futures 
+VA,4,2017,Standard,,777.22,S&P 500 Variance Futures 
+VA,5,2017,Standard,,802.7,S&P 500 Variance Futures 
+VA,6,2017,Standard,,742.6776,S&P 500 Variance Futures 
+VA,7,2017,Standard,,841.3689,S&P 500 Variance Futures 
+VA,8,2017,Standard,,827.4674,S&P 500 Variance Futures 
+VA,9,2017,Standard,,551.9393,S&P 500 Variance Futures 
+VA,10,2017,Standard,,861.1611,S&P 500 Variance Futures 
+VA,11,2017,Standard,,880.8894,S&P 500 Variance Futures 
+VA,12,2017,Standard,,659.4614,S&P 500 Variance Futures 
+VA,1,2018,Standard,,604.2962,S&P 500 Variance Futures 
+VA,2,2018,Standard,,1028.8556,S&P 500 Variance Futures 
+VM,1,2012,Standard,,23.64,Cboe Mini-VIX Futures
+VM,2,2012,Standard,,20.44,Cboe Mini-VIX Futures
+VM,3,2012,Standard,,14.55,Cboe Mini-VIX Futures
+VM,4,2012,Standard,,19.06,Cboe Mini-VIX Futures
+VM,5,2012,Standard,,21.46,Cboe Mini-VIX Futures
+VM,6,2012,Standard,,17.78,Cboe Mini-VIX Futures
+VM,7,2012,Standard,,16.76,Cboe Mini-VIX Futures
+VM,8,2012,Standard,,15.13,Cboe Mini-VIX Futures
+VM,9,2012,Standard,,14.03,Cboe Mini-VIX Futures
+VM,10,2012,Standard,,15.96,Cboe Mini-VIX Futures
+VM,11,2012,Standard,,15.05,Cboe Mini-VIX Futures
+VM,12,2012,Standard,,16.69,Cboe Mini-VIX Futures
+VM,1,2013,Standard,,13.69,Cboe Mini-VIX Futures
+VM,2,2013,Standard,,13.07,Cboe Mini-VIX Futures
+VM,3,2013,Standard,,12.64,Cboe Mini-VIX Futures
+VM,4,2013,Standard,,15.46,Cboe Mini-VIX Futures
+VM,5,2013,Standard,,13.17,Cboe Mini-VIX Futures
+VM,6,2013,Standard,,17.22,Cboe Mini-VIX Futures
+VM,7,2013,Standard,,14.43,Cboe Mini-VIX Futures
+VM,8,2013,Standard,,16.42,Cboe Mini-VIX Futures
+VM,9,2013,Standard,,14.77,Cboe Mini-VIX Futures
+VM,10,2013,Standard,,17.21,Cboe Mini-VIX Futures
+VM,11,2013,Standard,,14.12,Cboe Mini-VIX Futures
+VM,12,2013,Standard,,15.84,Cboe Mini-VIX Futures
+VM,1,2014,Standard,,12.36,Cboe Mini-VIX Futures
+VN,8,2007,Standard,,22.6,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,9,2007,Standard,,22.92,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,10,2007,Standard,,22.68,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,11,2007,Standard,,30.93,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,12,2007,Standard,,27.44,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,1,2008,Standard,,27.88,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,2,2008,Standard,,26.98,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,3,2008,Standard,,27.9,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,4,2008,Standard,,26.51,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,5,2008,Standard,,22.02,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,6,2008,Standard,,25.19,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,7,2008,Standard,,33.07,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,8,2008,Standard,,24.21,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,9,2008,Standard,,32.38,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,10,2008,Standard,,63.21,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,11,2008,Standard,,70.65,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,12,2008,Standard,,52.83,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,1,2009,Standard,,53.34,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,2,2009,Standard,,46.67,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,7,2012,Standard,,19.25,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,8,2012,Standard,,15.9,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,9,2012,Standard,,15.11,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,10,2012,Standard,,17.31,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,11,2012,Standard,,16.18,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,12,2012,Standard,,18.82,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,1,2013,Standard,,15.91,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,2,2013,Standard,,14.36,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,3,2013,Standard,,13.88,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,4,2013,Standard,,16.65,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,5,2013,Standard,,14.24,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,6,2013,Standard,,16.47,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,7,2013,Standard,,14.33,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,8,2013,Standard,,15.86,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,9,2013,Standard,,15.08,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,10,2013,Standard,,18.57,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,11,2013,Standard,,14.32,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,12,2013,Standard,,16.42,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,1,2014,Standard,,14.22,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,2,2014,Standard,,16.37,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,3,2014,Standard,,18.45,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,4,2014,Standard,,22.81,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,5,2014,Standard,,14.53,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,6,2014,Standard,,13.35,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,7,2014,Standard,,14.06,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,8,2014,Standard,,12.85,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,9,2014,Standard,,14.83,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,10,2014,Standard,,18.21,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,11,2014,Standard,,15.23,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,12,2014,Standard,,24.02,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,1,2015,Standard,,21.21,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,2,2015,Standard,,16.12,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,3,2015,Standard,,16.88,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,4,2015,Standard,,15.24,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,5,2015,Standard,,14.27,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VN,6,2015,Standard,,15.81,Cboe Nasdaq-100 Volatility Index (VXN)  Futures 
+VR,8,2007,Standard,,29.89,Russell 2000 Volatility Index Futures
+VR,9,2007,Standard,,26.3,Russell 2000 Volatility Index Futures
+VR,10,2007,Standard,,26.1,Russell 2000 Volatility Index Futures
+VR,11,2007,Standard,,31.4,Russell 2000 Volatility Index Futures
+VR,12,2007,Standard,,29.05,Russell 2000 Volatility Index Futures
+VR,1,2008,Standard,,30.69,Russell 2000 Volatility Index Futures
+VR,2,2008,Standard,,29.26,Russell 2000 Volatility Index Futures
+VR,3,2008,Standard,,30.55,Russell 2000 Volatility Index Futures
+VR,4,2008,Standard,,27.44,Russell 2000 Volatility Index Futures
+VR,5,2008,Standard,,21.53,Russell 2000 Volatility Index Futures
+VR,6,2008,Standard,,24.18,Russell 2000 Volatility Index Futures
+VR,7,2008,Standard,,32.99,Russell 2000 Volatility Index Futures
+VR,8,2008,Standard,,25.9,Russell 2000 Volatility Index Futures
+VR,9,2008,Standard,,33.89,Russell 2000 Volatility Index Futures
+VR,10,2008,Standard,,67.03,Russell 2000 Volatility Index Futures
+VR,11,2008,Standard,,74.32,Russell 2000 Volatility Index Futures
+VR,12,2008,Standard,,61.68,Russell 2000 Volatility Index Futures
+VR,1,2009,Standard,,57.57,Russell 2000 Volatility Index Futures
+VR,2,2009,Standard,,53.62,Russell 2000 Volatility Index Futures
+VR,3,2009,Standard,,49.08,Russell 2000 Volatility Index Futures
+VR,4,2009,Standard,,49.51,Russell 2000 Volatility Index Futures
+VR,5,2009,Standard,,38.8,Russell 2000 Volatility Index Futures
+VR,6,2009,Standard,,38.68,Russell 2000 Volatility Index Futures
+VR,7,2009,Standard,,31.02,Russell 2000 Volatility Index Futures
+VR,8,2009,Standard,,34.07,Russell 2000 Volatility Index Futures
+VR,9,2009,Standard,,30.28,Russell 2000 Volatility Index Futures
+VR,10,2009,Standard,,27.25,Russell 2000 Volatility Index Futures
+VR,11,2009,Standard,,29.87,Russell 2000 Volatility Index Futures
+VR,12,2009,Standard,,27.32,Russell 2000 Volatility Index Futures
+VR,1,2010,Standard,,23.16,Russell 2000 Volatility Index Futures
+VR,2,2010,Standard,,24.81,Russell 2000 Volatility Index Futures
+VSW,2,2014,Weekly,2/26/2014,13.55,Cboe Short Term Volatility Index Futures
+VSW,3,2014,Weekly,3/5/2014,13.28,Cboe Short Term Volatility Index Futures
+VSW,3,2014,Weekly,3/12/2014,15.26,Cboe Short Term Volatility Index Futures
+VSW,3,2014,Weekly,3/19/2014,14.18,Cboe Short Term Volatility Index Futures
+VSW,3,2014,Weekly,3/26/2014,13.26,Cboe Short Term Volatility Index Futures
+VSW,4,2014,Weekly,4/2/2014,12.37,Cboe Short Term Volatility Index Futures
+VSW,4,2014,Weekly,4/8/2014,16.12,Cboe Short Term Volatility Index Futures
+VSW,4,2014,Weekly,4/16/2014,14.82,Cboe Short Term Volatility Index Futures
+VSW,4,2014,Weekly,4/23/2014,12.95,Cboe Short Term Volatility Index Futures
+VSW,4,2014,Weekly,4/30/2014,14.36,Cboe Short Term Volatility Index Futures
+VSW,5,2014,Weekly,5/7/2014,12.28,Cboe Short Term Volatility Index Futures
+VSW,5,2014,Weekly,5/14/2014,10.86,Cboe Short Term Volatility Index Futures
+VSW,5,2014,Weekly,5/21/2014,11.01,Cboe Short Term Volatility Index Futures
+VSW,5,2014,Weekly,5/28/2014,11.21,Cboe Short Term Volatility Index Futures
+VSW,6,2014,Weekly,6/4/2014,11.49,Cboe Short Term Volatility Index Futures
+VSW,6,2014,Weekly,6/11/2014,10.61,Cboe Short Term Volatility Index Futures
+VSW,6,2014,Weekly,6/18/2014,12.94,Cboe Short Term Volatility Index Futures
+VSW,6,2014,Weekly,6/24/2014,10.49,Cboe Short Term Volatility Index Futures
+VSW,7,2014,Weekly,7/2/2014,9.89,Cboe Short Term Volatility Index Futures
+VSW,7,2014,Weekly,7/9/2014,11.07,Cboe Short Term Volatility Index Futures
+VSW,7,2014,Weekly,7/16/2014,9.61,Cboe Short Term Volatility Index Futures
+VSW,7,2014,Weekly,7/23/2014,11.61,Cboe Short Term Volatility Index Futures
+VSW,7,2014,Weekly,7/30/2014,12.75,Cboe Short Term Volatility Index Futures
+VSW,8,2014,Weekly,8/6/2014,18.46,Cboe Short Term Volatility Index Futures
+VSW,8,2014,Weekly,8/13/2014,13.74,Cboe Short Term Volatility Index Futures
+VSW,8,2014,Weekly,8/20/2014,11.73,Cboe Short Term Volatility Index Futures
+VSW,8,2014,Weekly,8/27/2014,9.78,Cboe Short Term Volatility Index Futures
+VSW,9,2014,Weekly,9/3/2014,9.51,Cboe Short Term Volatility Index Futures
+VSW,9,2014,Weekly,9/10/2014,14.21,Cboe Short Term Volatility Index Futures
+VSW,9,2014,Weekly,9/17/2014,12.7,Cboe Short Term Volatility Index Futures
+VSW,9,2014,Weekly,9/24/2014,15.34,Cboe Short Term Volatility Index Futures
+VSW,10,2014,Weekly,10/1/2014,17.2,Cboe Short Term Volatility Index Futures
+VSW,10,2014,Weekly,10/8/2014,18.14,Cboe Short Term Volatility Index Futures
+VSW,10,2014,Weekly,10/15/2014,31.29,Cboe Short Term Volatility Index Futures
+VSW,10,2014,Weekly,10/22/2014,16.98,Cboe Short Term Volatility Index Futures
+VSW,10,2014,Weekly,10/29/2014,15.39,Cboe Short Term Volatility Index Futures
+VSW,11,2014,Weekly,11/5/2014,13.5,Cboe Short Term Volatility Index Futures
+VSW,11,2014,Weekly,11/12/2014,12.66,Cboe Short Term Volatility Index Futures
+VSW,11,2014,Weekly,11/19/2014,10.95,Cboe Short Term Volatility Index Futures
+VSW,11,2014,Weekly,11/26/2014,11.59,Cboe Short Term Volatility Index Futures
+VSW,12,2014,Weekly,12/3/2014,12.86,Cboe Short Term Volatility Index Futures
+VSW,12,2014,Weekly,12/10/2014,16.97,Cboe Short Term Volatility Index Futures
+VSW,12,2014,Weekly,12/17/2014,23.67,Cboe Short Term Volatility Index Futures
+VSW,12,2014,Weekly,12/24/2014,10.38,Cboe Short Term Volatility Index Futures
+VSW,12,2014,Weekly,12/31/2014,14.14,Cboe Short Term Volatility Index Futures
+VSW,1,2014,Weekly,12/31/2014,14.14,Cboe Short Term Volatility Index Futures
+VSW,1,2015,Weekly,1/7/2015,19.35,Cboe Short Term Volatility Index Futures
+VSW,1,2015,Weekly,1/14/2015,23.64,Cboe Short Term Volatility Index Futures
+VSW,1,2015,Weekly,1/21/2015,22.77,Cboe Short Term Volatility Index Futures
+VSW,1,2015,Weekly,1/28/2015,17.08,Cboe Short Term Volatility Index Futures
+VSW,2,2015,Weekly,2/4/2015,17.3,Cboe Short Term Volatility Index Futures
+VSW,2,2015,Weekly,2/11/2015,15.21,Cboe Short Term Volatility Index Futures
+VSW,2,2015,Weekly,2/18/2015,14.11,Cboe Short Term Volatility Index Futures
+VSW,2,2015,Weekly,2/25/2015,11.18,Cboe Short Term Volatility Index Futures
+VSW,3,2015,Weekly,3/4/2015,12.43,Cboe Short Term Volatility Index Futures
+VSW,3,2015,Weekly,3/11/2015,16.41,Cboe Short Term Volatility Index Futures
+VSW,3,2015,Weekly,3/18/2015,17.42,Cboe Short Term Volatility Index Futures
+VSW,3,2015,Weekly,3/24/2015,12.05,Cboe Short Term Volatility Index Futures
+VSW,4,2014,Weekly,4/1/2015,15.16,Cboe Short Term Volatility Index Futures
+VSW,4,2015,Weekly,4/1/2015,15.16,Cboe Short Term Volatility Index Futures
+VSW,4,2015,Weekly,4/8/2015,13.75,Cboe Short Term Volatility Index Futures
+VSW,4,2015,Weekly,4/15/2015,11.85,Cboe Short Term Volatility Index Futures
+VSW,4,2015,Weekly,4/22/2015,12.56,Cboe Short Term Volatility Index Futures
+VSW,4,2015,Weekly,4/29/2015,13.68,Cboe Short Term Volatility Index Futures
+VSW,5,2015,Weekly,5/6/2015,14.23,Cboe Short Term Volatility Index Futures
+VSW,5,2015,Weekly,5/13/2015,13.33,Cboe Short Term Volatility Index Futures
+VSW,5,2015,Weekly,5/20/2015,11.04,Cboe Short Term Volatility Index Futures
+VSW,5,2015,Weekly,5/27/2015,13.6,Cboe Short Term Volatility Index Futures
+VSW,6,2015,Weekly,6/3/2015,13.2,Cboe Short Term Volatility Index Futures
+VSW,6,2015,Weekly,6/10/2015,14.75,Cboe Short Term Volatility Index Futures
+VSW,6,2015,Weekly,6/17/2015,16.28,Cboe Short Term Volatility Index Futures
+VT,9,2004,Standard,,107.61,Cboe S&P 500 3-Month Variance Futures
+VT,12,2004,Standard,,120.6,Cboe S&P 500 3-Month Variance Futures
+VT,3,2005,Standard,,94.04,Cboe S&P 500 3-Month Variance Futures
+VT,6,2005,Standard,,136.56,Cboe S&P 500 3-Month Variance Futures
+VT,9,2005,Standard,,81.14,Cboe S&P 500 3-Month Variance Futures
+VT,12,2005,Standard,,111.95,Cboe S&P 500 3-Month Variance Futures
+VT,3,2006,Standard,,93.63,Cboe S&P 500 3-Month Variance Futures
+VT,6,2006,Standard,,138.44,Cboe S&P 500 3-Month Variance Futures
+VT,9,2006,Standard,,121.65,Cboe S&P 500 3-Month Variance Futures
+VT,12,2006,Standard,,57.64,Cboe S&P 500 3-Month Variance Futures
+VT,3,2007,Standard,,132.11,Cboe S&P 500 3-Month Variance Futures
+VT,6,2007,Standard,,109.1,Cboe S&P 500 3-Month Variance Futures
+VT,9,2007,Standard,,368.56,Cboe S&P 500 3-Month Variance Futures
+VT,12,2007,Standard,,369.06,Cboe S&P 500 3-Month Variance Futures
+VT,3,2008,Standard,,578.38,Cboe S&P 500 3-Month Variance Futures
+VT,6,2008,Standard,,325.75,Cboe S&P 500 3-Month Variance Futures
+VT,9,2008,Standard,,884.28,Cboe S&P 500 3-Month Variance Futures
+VT,12,2008,Standard,,5053.11,Cboe S&P 500 3-Month Variance Futures
+VT,3,2009,Standard,,1472.39,Cboe S&P 500 3-Month Variance Futures
+VT,9,2009,Standard,,369.19,Cboe S&P 500 3-Month Variance Futures
+VT,12,2009,Standard,,284.62,Cboe S&P 500 3-Month Variance Futures
+VT,3,2010,Standard,,212.67,Cboe S&P 500 3-Month Variance Futures
+VT,6,2010,Standard,,561.51,Cboe S&P 500 3-Month Variance Futures
+VT,9,2010,Standard,,369.25,Cboe S&P 500 3-Month Variance Futures
+VT,12,2010,Standard,,168.53,Cboe S&P 500 3-Month Variance Futures
+VT,3,2011,Standard,,163.22,Cboe S&P 500 3-Month Variance Futures
+VT,6,2011,Standard,,137.32,Cboe S&P 500 3-Month Variance Futures
+VT,9,2011,Standard,,1013.84,Cboe S&P 500 3-Month Variance Futures
+VT,12,2011,Standard,,796.18,Cboe S&P 500 3-Month Variance Futures
+VT,3,2012,Standard,,150.85,Cboe S&P 500 3-Month Variance Futures
+VT,6,2012,Standard,,207.49,Cboe S&P 500 3-Month Variance Futures
+VT,9,2012,Standard,,174.94,Cboe S&P 500 3-Month Variance Futures
+VX,5,2004,Standard,,183.55,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,6,2004,Standard,,139.97,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,7,2004,Standard,,131.34,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,8,2004,Standard,,174.89,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,9,2004,Standard,,137.25,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,10,2004,Standard,,131.57,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,11,2004,Standard,,128.44,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,1,2005,Standard,,127.72,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,2,2005,Standard,,112.93,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,3,2005,Standard,,136.26,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,5,2005,Standard,,138.64,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,6,2005,Standard,,110.12,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,8,2005,Standard,,128.19,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,10,2005,Standard,,151.72,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,11,2005,Standard,,123.06,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,12,2005,Standard,,101.75,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,1,2006,Standard,,126.15,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,2,2006,Standard,,120.34,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,3,2006,Standard,,111.45,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,4,2006,Standard,,119.41,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,5,2006,Standard,,140.25,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,6,2006,Standard,,172.85,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,7,2006,Standard,,170.05,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,8,2006,Standard,,122.85,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,9,2006,Standard,,112.89,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,10,2006,Standard,,114.34,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,11,2006,Standard,,102.68,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,12,2006,Standard,,100.53,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,1,2007,Standard,,107.06,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,2,2007,Standard,,99.54,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,3,2007,Standard,,129.83,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,4,2007,Standard,,12.03,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,5,2007,Standard,,13.63,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,6,2007,Standard,,13.01,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,7,2007,Standard,,16.87,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,8,2007,Standard,,25.05,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,9,2007,Standard,,20.29,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,10,2007,Standard,,18.33,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,11,2007,Standard,,26.7,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,12,2007,Standard,,22.08,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,1,2008,Standard,,24.18,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,2,2008,Standard,,25.51,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,3,2008,Standard,,25.67,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,4,2008,Standard,,21.78,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,5,2008,Standard,,17.16,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,6,2008,Standard,,21.54,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,7,2008,Standard,,28.4,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,8,2008,Standard,,20.83,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,9,2008,Standard,,31.54,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,10,2008,Standard,,63.04,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,11,2008,Standard,,67.22,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,12,2008,Standard,,51.29,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,1,2009,Standard,,49.88,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,2,2009,Standard,,48.4,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,3,2009,Standard,,40.62,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,4,2009,Standard,,38.2,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,5,2009,Standard,,27.04,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,6,2009,Standard,,31.03,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,7,2009,Standard,,23.48,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,8,2009,Standard,,28.76,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,9,2009,Standard,,23.64,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,10,2009,Standard,,20.82,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,11,2009,Standard,,22.54,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,12,2009,Standard,,20.84,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,1,2010,Standard,,18.87,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,2,2010,Standard,,22.5,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,3,2010,Standard,,16.68,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,4,2010,Standard,,15.8,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,5,2010,Standard,,34.53,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,6,2010,Standard,,26.11,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,7,2010,Standard,,23.79,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,8,2010,Standard,,24.82,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,9,2010,Standard,,22.97,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,10,2010,Standard,,21.41,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,11,2010,Standard,,22.21,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,12,2010,Standard,,16.01,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,1,2011,Standard,,16.38,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,2,2011,Standard,,16.49,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,3,2011,Standard,,25.14,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,4,2011,Standard,,14.86,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,5,2011,Standard,,18.02,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,6,2011,Standard,,19.73,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,7,2011,Standard,,19.1,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,8,2011,Standard,,32.73,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,9,2011,Standard,,33.72,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,10,2011,Standard,,33.15,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,11,2011,Standard,,33.36,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,12,2011,Standard,,21.36,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,1,2012,Standard,,23.64,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,2,2012,Standard,,20.44,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,3,2012,Standard,,14.55,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,4,2012,Standard,,19.06,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,5,2012,Standard,,21.46,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,6,2012,Standard,,17.78,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,7,2012,Standard,,16.76,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,8,2012,Standard,,15.13,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,9,2012,Standard,,14.03,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,10,2012,Standard,,15.96,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,11,2012,Standard,,15.05,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,12,2012,Standard,,16.69,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,1,2013,Standard,,13.69,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,2,2013,Standard,,13.07,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,3,2013,Standard,,12.64,Cboe S&P 500 Volatility Index (VIX) Futures
+VX,4,2013,Standard,,15.46,Cboe S&P 500 Volatility Index (VIX) Futures
+VXEM,2,2012,Standard,,29.73,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,3,2012,Standard,,25.63,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,4,2012,Standard,,26.91,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,5,2012,Standard,,33.75,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,6,2012,Standard,,27.41,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,7,2012,Standard,,26.34,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,8,2012,Standard,,20.87,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,9,2012,Standard,,21.8,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,10,2012,Standard,,20.94,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,11,2012,Standard,,17.19,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,12,2012,Standard,,20.46,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,1,2013,Standard,,18,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,2,2013,Standard,,16.59,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,3,2013,Standard,,18.61,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,4,2013,Standard,,21.18,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,5,2013,Standard,,18.15,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,6,2013,Standard,,28.49,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,7,2013,Standard,,26.72,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,8,2013,Standard,,26.41,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,9,2013,Standard,,24.79,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,10,2013,Standard,,24.21,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,11,2013,Standard,,25.89,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,12,2013,Standard,,24.77,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,1,2014,Standard,,22.8,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,2,2014,Standard,,28.86,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,3,2014,Standard,,29.23,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,4,2014,Standard,,21.65,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,5,2014,Standard,,16.65,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,6,2014,Standard,,18.46,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,7,2014,Standard,,13.89,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,8,2014,Standard,,15.62,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,9,2014,Standard,,21.76,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,10,2014,Standard,,24.81,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,11,2014,Standard,,20.35,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,12,2014,Standard,,27.11,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,1,2015,Standard,,21.23,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,2,2015,Standard,,22.32,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,3,2015,Standard,,20.8,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,4,2015,Standard,,19.16,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,5,2015,Standard,,17.84,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEM,6,2015,Standard,,20.48,Cboe Emerging Markets ETF Volatility Index (VXEEM) Security Futures
+VXEW,4,2012,Standard,,31.3,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,5,2012,Standard,,37.99,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,6,2012,Standard,,32.07,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,7,2012,Standard,,28.53,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,8,2012,Standard,,27.51,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,9,2012,Standard,,26.62,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,10,2012,Standard,,24.33,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,11,2012,Standard,,23.5,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,12,2012,Standard,,22.81,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,1,2013,Standard,,19.1,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,2,2013,Standard,,17.73,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,3,2013,Standard,,20.21,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,4,2013,Standard,,22.3,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,5,2013,Standard,,18.47,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,6,2013,Standard,,33.75,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,7,2013,Standard,,29.55,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,8,2013,Standard,,30.58,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,9,2013,Standard,,28.68,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,10,2013,Standard,,26.2,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,11,2013,Standard,,28.27,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,12,2013,Standard,,28.3,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,1,2014,Standard,,25.12,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,2,2014,Standard,,34.95,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,3,2014,Standard,,33.11,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,4,2014,Standard,,31.01,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,5,2014,Standard,,24.41,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,6,2014,Standard,,30.28,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,7,2014,Standard,,23.62,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,8,2014,Standard,,23.77,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,9,2014,Standard,,46.21,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,10,2014,Standard,,65.8,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,11,2014,Standard,,32.5,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,12,2014,Standard,,37.61,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,1,2015,Standard,,34.51,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,2,2015,Standard,,36.9,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,3,2015,Standard,,39.85,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,4,2015,Standard,,33.98,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXEW,5,2015,Standard,,29.51,Cboe Brazil ETF Volatility Index (VXEWZ) Security Futures 
+VXTY,1,2015,Standard,,6.83,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,2,2015,Standard,,6.36,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,3,2015,Standard,,5.58,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,4,2015,Standard,,5.21,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,5,2015,Standard,,5.86,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,6,2015,Standard,,6.2,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,7,2015,Standard,,5.33,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,8,2015,Standard,,6.37,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,9,2015,Standard,,5.36,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,10,2015,Standard,,4.96,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,11,2015,Standard,,5.29,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,12,2015,Standard,,4.73,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,1,2016,Standard,,6.39,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,2,2016,Standard,,6.03,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,3,2016,Standard,,5.41,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,4,2016,Standard,,5.23,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,5,2016,Standard,,4.88,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,6,2016,Standard,,6.28,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,7,2016,Standard,,5.16,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,8,2016,Standard,,5.05,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,9,2016,Standard,,4.73,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,10,2016,Standard,,4.33,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,11,2016,Standard,,6.42,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,12,2016,Standard,,5.34,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,1,2017,Standard,,6,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,2,2017,Standard,,5.34,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,3,2017,Standard,,4.73,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,4,2017,Standard,,4.68,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,5,2017,Standard,,4.39,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,6,2017,Standard,,4.26,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,7,2017,Standard,,3.68,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,8,2017,Standard,,4.32,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,9,2017,Standard,,4.16,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,10,2017,Standard,,4.56,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,11,2017,Standard,,3.53,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,12,2017,Standard,,3.46,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,1,2018,Standard,,4.26,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,2,2018,Standard,,4.71,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,3,2018,Standard,,3.97,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,4,2018,Standard,,4.18,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,5,2018,Standard,,3.98,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,6,2018,Standard,,4.02,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,7,2018,Standard,,3.78,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,8,2018,Standard,,3.82,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,9,2018,Standard,,3.36,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,10,2018,Standard,,4.49,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,11,2018,Standard,,4.16,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,12,2018,Standard,,4.44,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,1,2019,Standard,,4.2,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,2,2019,Standard,,3.48,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,3,2019,Standard,,4.67,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,4,2019,Standard,,3.83,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,5,2019,Standard,,4.05,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,6,2019,Standard,,4.77,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,7,2019,Standard,,4.4,Cboe/CBOT 10-Year Treasury Note Volatility Index
+VXTY,8,2019,Standard,,5.37,Cboe/CBOT 10-Year Treasury Note Volatility Index
+XBT,1,2018,Standard,,10900,Cboe Bitcoin (USD) Futures
+XBT,2,2018,Standard,,9195,Cboe Bitcoin (USD) Futures

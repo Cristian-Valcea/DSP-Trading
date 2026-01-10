@@ -23,6 +23,7 @@ from ..data.fetcher import DataFetcher
 from ..ibkr import IBKRClient, AccountSummary, Position
 from ..risk import RiskManager, RiskStatus, RiskAlert
 from ..risk.margin import MarginMonitor
+from ..risk.vol_target_overlay import VolTargetOverlay, VolTargetOverlayConfig
 from ..sleeves import SleeveA, SleeveB, SleeveC, SleeveDM, SleeveIM
 from ..utils.config import DSPConfig
 from ..utils.logging import get_audit_logger, setup_logging
@@ -111,6 +112,7 @@ class DailyOrchestrator:
         self._sleeve_im: Optional[SleeveIM] = None
         self._sleeve_c: Optional[SleeveC] = None
         self._cache: Optional[DataCache] = None
+        self._vol_overlay: Optional[VolTargetOverlay] = None
 
         # Tracking
         self._last_execution: Optional[ExecutionResult] = None
@@ -207,6 +209,19 @@ class DailyOrchestrator:
                 )
             self._sleeve_c_enabled = False  # Override config until options work
             self._sleeve_c = SleeveC(self.config.sleeve_c, self._ibkr)
+
+            # Initialize vol-targeting overlay (applies to DM + VRP-ERP, not VRP-CS)
+            # Per SPEC_VOL_TARGET_OVERLAY.md: target_vol=10%, bounds [0.25, 1.50]
+            self._vol_overlay = VolTargetOverlay(
+                fetcher=self._fetcher,
+                config=VolTargetOverlayConfig(),
+            )
+            logger.info(
+                "✅ Vol-Targeting Overlay initialized: target_vol=%.0f%%, bounds=[%.2f, %.2f]",
+                self._vol_overlay.config.target_vol * 100,
+                self._vol_overlay.config.min_mult,
+                self._vol_overlay.config.max_mult,
+            )
 
             # Load current positions
             await self._sync_positions()
@@ -411,7 +426,7 @@ class DailyOrchestrator:
                 )
 
             # 3. Generate daily plan
-            plan = await self._generate_plan(today, summary, risk_status)
+            plan = await self._generate_plan(today, summary, risk_status, force_rebalance=force)
             logger.info(
                 "Generated plan: Sleeve A=%d orders, Sleeve B=%d orders, Sleeve DM=%d orders, Sleeve IM=%d orders",
                 len(plan.sleeve_a_orders),
@@ -601,6 +616,7 @@ class DailyOrchestrator:
         as_of_date: date,
         summary: AccountSummary,
         risk_status: RiskStatus,
+        force_rebalance: bool = False,
     ) -> DailyPlan:
         """Generate daily execution plan."""
 
@@ -628,6 +644,25 @@ class DailyOrchestrator:
         # - risk_status.scale_factor is computed by RiskManager (drawdown/vol/margin)
         # - config.general.risk_scale is an operator-controlled manual scale (e.g. 0.25 for small-size live)
         scale_factor = risk_status.scale_factor * float(self.config.general.risk_scale)
+
+        # Compute vol-targeting overlay multiplier (applies to DM + VRP-ERP per spec)
+        # Per SPEC_VOL_TARGET_OVERLAY.md Section 6: vol overlay scales directional sleeves only
+        vol_mult = 1.0
+        if self._vol_overlay is not None:
+            vol_mult = await self._vol_overlay.compute_multiplier(as_of_date=as_of_date)
+            if self._vol_overlay.should_rebalance(as_of_date, vol_mult):
+                self._vol_overlay.adopt_multiplier(as_of_date, vol_mult)
+                logger.info(
+                    "📊 Vol-Target Overlay: adopted new multiplier %.2f (realized_vol changed)",
+                    vol_mult,
+                )
+            else:
+                # Use the persisted multiplier (no rebalance triggered)
+                vol_mult = self._vol_overlay.get_active_multiplier()
+            logger.info(
+                "📊 Vol-Target Overlay: active_mult=%.2f (scales DM + VRP-ERP, not VRP-CS)",
+                vol_mult,
+            )
 
         sleeve_a_orders: List[Dict] = []
         if self._sleeve_a is not None and self.config.sleeve_a.enabled:
@@ -657,13 +692,16 @@ class DailyOrchestrator:
                 sleeve_b_orders = self._sleeve_b.get_target_orders(adjustment)
 
         # Generate Sleeve DM (ETF Dual Momentum) adjustment
+        # Per SPEC_VOL_TARGET_OVERLAY.md Section 6.2: apply vol_mult to DM allocation
         sleeve_dm_orders: List[Dict] = []
         if self._sleeve_dm is not None and self.config.sleeve_dm.enabled:
             dm_prices = await self._get_current_prices(self._sleeve_dm.symbols)
+            dm_adjusted_nav = sleeve_dm_nav * scale_factor * vol_mult
             dm_adjustment = await self._sleeve_dm.generate_adjustment(
-                sleeve_nav=sleeve_dm_nav * scale_factor,
+                sleeve_nav=dm_adjusted_nav,
                 prices=dm_prices,
                 as_of_date=as_of_date,
+                force_rebalance=force_rebalance,
             )
             estimated_turnover = max(float(estimated_turnover), float(dm_adjustment.estimated_turnover))
             if dm_adjustment.rebalance_needed:

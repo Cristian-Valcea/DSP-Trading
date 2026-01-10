@@ -12,8 +12,8 @@ import torch.optim as optim
 from typing import Tuple, Optional, Dict, Any
 from pathlib import Path
 
-from dsp100k.src.dqn.model import DuelingDQN, create_model
-from dsp100k.src.dqn.replay_buffer import (
+from .model import DuelingDQN, create_model
+from .replay_buffer import (
     PrioritizedReplayBuffer,
     UniformReplayBuffer,
     create_replay_buffer,

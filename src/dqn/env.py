@@ -22,13 +22,13 @@ import random
 import json
 from datetime import datetime, time
 
-from dsp100k.src.dqn.state_builder import StateBuilder
-from dsp100k.src.dqn.reward import (
+from .state_builder import StateBuilder
+from .reward import (
     compute_portfolio_reward,
     actions_to_positions,
     action_to_position,
 )
-from dsp100k.src.dqn.constraints import apply_topk_constraint
+from .constraints import apply_topk_constraint
 
 
 # Default DQN Universe

@@ -1,8 +1,8 @@
 # DSP-100K Sleeve Kill-Test Summary
 
-**Date**: 2026-01-09
+**Date**: 2026-01-10
 **Author**: Claude (consolidated from session logs)
-**Status**: Sleeve DM LIVE, Sleeve VRP-CS and VRP-ERP pass kill-test (ready for paper trading)
+**Status**: Sleeve DM LIVE, VRP-CS and VRP-ERP pass kill-test. Carry (ETF) killed Jan 10.
 
 ---
 
@@ -22,8 +22,10 @@
 | **DQN (Gate 2.6)** | Deep RL intraday | 2024 val | see below | -79.7% | n/a | 10 bps/side | **KILLED** (no signal) |
 | **Sleeve VRP (Futures)** | Short VIX futures | 2014-2025 | 0.01 | -1.2% | -16% | $2.50+1tick/RT | **KILLED** (1/3 folds, -2.58% roll) |
 | **Sleeve ORB** | Futures opening range breakout | 2022-2025 | 0.23 | 0.4%* | -1.7% | 1 tick + $1.24/RT | **KILLED** (low Sharpe, 2/6 folds) |
+| **Sleeve Carry** | ETF FX carry (rate differentials) | 2022-2024 | -0.39 | -1.4% | -5.1% | 5 bps + $0.005/sh | **KILLED** (0/3 folds, data starts 2021†) |
 
 *Annualized from $1,403 total profit over 3.25 years
+†Local ETF data starts 2021; spec called for 2018-2024 folds but only 2022-2024 testable
 
 ---
 
@@ -412,6 +414,47 @@ Variance risk premium exists in theory, but harsh VIX spikes, negative expected 
 
 ---
 
+## Sleeve Carry: ETF FX Carry — KILLED
+
+**Strategy**: Cross-sectional FX carry using rate differentials
+**Universe**: FXE, FXY, FXB, FXA (FX ETFs) + SHY, IEF (rates anchor)
+**Signal**: Long top-2 / short bottom-2 FX ETFs by (foreign 3M rate − US 3M rate)
+**Allocation**: 50% FX L/S basket, 25% IEF, 25% SHY
+**Rebalance**: Weekly
+
+### Results (2022-2024, 5 bps + $0.005/sh)
+
+| Fold | Period | Sharpe | Net PnL | Max DD | Pass? |
+|------|--------|--------|---------|--------|-------|
+| 1 | 2022 | -1.33 | -$4,752 | -5.07% | ❌ |
+| 2 | 2023 | +0.21 | +$601 | -2.77% | ❌ |
+| 3 | 2024 | -0.05 | -$138 | -2.14% | ❌ |
+| **Mean** | | **-0.39** | **-$4,289** | **-5.07%** | **0/3** |
+
+**VRP-Gated Variant**: Mean Sharpe -0.72 (worse—gate blocks recovery periods)
+
+### Why Killed
+
+1. **Negative Sharpe** (-0.39 < 0.50 threshold)
+2. **0/3 folds pass** (threshold: ≥2/3)
+3. **2022 drawdown** (-$4,752) from rate-hiking environment crushing FX carry
+4. **ETF tracking costs** erode thin carry spreads at weekly horizon
+
+### Data Caveat
+
+- **Spec**: 2018-2024 OOS folds
+- **Actual**: 2022-2024 only (local ETF data starts 2021)
+- **Impact**: Missing 2018-2021 period where carry was generally more favorable
+
+**Verdict**: 🔴 **DO NOT TRADE** — Even with truncated data (harder test), strategy shows no edge.
+
+**Files**:
+- Spec: `dsp100k/docs/SPEC_SLEEVE_CARRY.md`
+- Backtester: `dsp100k/src/dsp/backtest/etf_carry.py`
+- Results: `dsp100k/data/carry/etf_carry_evaluation.json`
+
+---
+
 ## Appendix: Kill-Test Criteria
 
 For a strategy to pass kill tests:
@@ -441,7 +484,8 @@ For a strategy to pass kill tests:
 | Sleeve IM | `dsp100k/scripts/sleeve_im/walk_forward_validation.py` | `dsp100k/data/sleeve_im/walk_forward_results.json` |
 | DQN | `dsp100k/scripts/dqn/train.py`, `evaluate.py` | `dsp100k/docs/GATE_2_REPORT.md` |
 | Sleeve ORB | `dsp100k/src/dsp/backtest/orb_futures.py` | `dsp100k/data/orb/walk_forward_results.json` |
+| Sleeve Carry | `dsp100k/src/dsp/backtest/etf_carry.py` | `dsp100k/data/carry/etf_carry_evaluation.json` |
 
 ---
 
-*Last updated: 2026-01-09*
+*Last updated: 2026-01-10*

@@ -1,0 +1,4179 @@
+{
+  "strategy": "VRP Calendar Spread (Long VX2, Short VX1)",
+  "period": "2014-01-01 to 2025-12-31",
+  "metrics": {
+    "return": 4.795020000000001,
+    "cagr": 0.15775573386561859,
+    "vol": 0.1139623889504781,
+    "sharpe": 1.347778955778744,
+    "max_dd": -0.09240407204385273,
+    "calmar": 1.7072378995457207
+  },
+  "trade_stats": {
+    "total_trades": 460,
+    "win_rate": 0.47608695652173916,
+    "avg_win": 4333.228310502283,
+    "avg_loss": -1948.029045643154
+  },
+  "gate_distribution": {
+    "OPEN": 3010,
+    "REDUCE": 0,
+    "CLOSED": 0
+  },
+  "config": {
+    "min_contango_pct": 2.0,
+    "max_vix_level": 30.0,
+    "stop_loss_pct": 25.0,
+    "use_gate": false
+  },
+  "trades": [
+    {
+      "entry_date": "2014-01-02 00:00:00",
+      "exit_date": "2014-01-21 00:00:00",
+      "entry_spread": 1.4499999999999993,
+      "exit_spread": 1.8499999999999996,
+      "contracts": 5,
+      "pnl": -2000.0000000000018,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-01-21 00:00:00",
+      "exit_date": "2014-01-24 00:00:00",
+      "entry_spread": 1.8499999999999996,
+      "exit_spread": 0.5500000000000007,
+      "contracts": 5,
+      "pnl": 6499.9999999999945,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-01-24 00:00:00",
+      "exit_date": "2014-01-28 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": 0.9000000000000021,
+      "contracts": 5,
+      "pnl": -1750.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-01-28 00:00:00",
+      "exit_date": "2014-01-29 00:00:00",
+      "entry_spread": 0.9000000000000021,
+      "exit_spread": 0.40000000000000213,
+      "contracts": 5,
+      "pnl": 2500.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-01-29 00:00:00",
+      "exit_date": "2014-01-31 00:00:00",
+      "entry_spread": 0.40000000000000213,
+      "exit_spread": -0.20000000000000284,
+      "contracts": 5,
+      "pnl": 3000.000000000025,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-02-06 00:00:00",
+      "exit_date": "2014-02-07 00:00:00",
+      "entry_spread": 0.3500000000000014,
+      "exit_spread": 1.0,
+      "contracts": 5,
+      "pnl": -3249.9999999999927,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-02-07 00:00:00",
+      "exit_date": "2014-03-03 00:00:00",
+      "entry_spread": 1.0,
+      "exit_spread": 0.3500000000000014,
+      "contracts": 5,
+      "pnl": 3249.9999999999927,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-03-03 00:00:00",
+      "exit_date": "2014-03-04 00:00:00",
+      "entry_spread": 0.3500000000000014,
+      "exit_spread": 0.7500000000000018,
+      "contracts": 5,
+      "pnl": -2000.0000000000018,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-03-04 00:00:00",
+      "exit_date": "2014-03-14 00:00:00",
+      "entry_spread": 0.7500000000000018,
+      "exit_spread": 0.14999999999999858,
+      "contracts": 5,
+      "pnl": 3000.000000000016,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-03-17 00:00:00",
+      "exit_date": "2014-03-18 00:00:00",
+      "entry_spread": 0.45000000000000284,
+      "exit_spread": 0.6500000000000004,
+      "contracts": 5,
+      "pnl": -999.9999999999876,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-03-18 00:00:00",
+      "exit_date": "2014-04-01 00:00:00",
+      "entry_spread": 0.6500000000000004,
+      "exit_spread": 0.9499999999999993,
+      "contracts": 5,
+      "pnl": -1499.9999999999948,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-04-01 00:00:00",
+      "exit_date": "2014-04-10 00:00:00",
+      "entry_spread": 0.9499999999999993,
+      "exit_spread": 0.40000000000000036,
+      "contracts": 5,
+      "pnl": 2749.9999999999945,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-04-10 00:00:00",
+      "exit_date": "2014-04-11 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": -0.20000000000000284,
+      "contracts": 5,
+      "pnl": 3000.000000000016,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-04-14 00:00:00",
+      "exit_date": "2014-04-15 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 0.8499999999999996,
+      "contracts": 5,
+      "pnl": -2000.0000000000018,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-04-15 00:00:00",
+      "exit_date": "2014-04-23 00:00:00",
+      "entry_spread": 0.8499999999999996,
+      "exit_spread": 0.40000000000000036,
+      "contracts": 5,
+      "pnl": 2249.9999999999964,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-04-23 00:00:00",
+      "exit_date": "2014-04-24 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": 0.5500000000000007,
+      "contracts": 5,
+      "pnl": -750.0000000000018,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-04-24 00:00:00",
+      "exit_date": "2014-04-28 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": 0.7000000000000011,
+      "contracts": 5,
+      "pnl": -750.0000000000018,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-04-28 00:00:00",
+      "exit_date": "2014-05-02 00:00:00",
+      "entry_spread": 0.7000000000000011,
+      "exit_spread": 0.9499999999999993,
+      "contracts": 5,
+      "pnl": -1249.9999999999911,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-05-02 00:00:00",
+      "exit_date": "2014-05-12 00:00:00",
+      "entry_spread": 0.9499999999999993,
+      "exit_spread": 1.3000000000000007,
+      "contracts": 5,
+      "pnl": -1750.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-05-12 00:00:00",
+      "exit_date": "2014-07-09 00:00:00",
+      "entry_spread": 1.3000000000000007,
+      "exit_spread": 0.5999999999999996,
+      "contracts": 5,
+      "pnl": 3500.0000000000055,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-07-09 00:00:00",
+      "exit_date": "2014-07-15 00:00:00",
+      "entry_spread": 0.5999999999999996,
+      "exit_spread": 0.8000000000000007,
+      "contracts": 5,
+      "pnl": -1000.0000000000053,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-07-15 00:00:00",
+      "exit_date": "2014-07-31 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": 0.3000000000000007,
+      "contracts": 5,
+      "pnl": 2500.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-08-04 00:00:00",
+      "exit_date": "2014-08-05 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": 0.05000000000000071,
+      "contracts": 5,
+      "pnl": 1749.9999999999982,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-08-11 00:00:00",
+      "exit_date": "2014-08-13 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.8499999999999996,
+      "contracts": 5,
+      "pnl": -1749.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-08-13 00:00:00",
+      "exit_date": "2014-08-19 00:00:00",
+      "entry_spread": 0.8499999999999996,
+      "exit_spread": 1.3000000000000007,
+      "contracts": 5,
+      "pnl": -2250.0000000000055,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-08-19 00:00:00",
+      "exit_date": "2014-09-03 00:00:00",
+      "entry_spread": 1.3000000000000007,
+      "exit_spread": 1.6500000000000004,
+      "contracts": 5,
+      "pnl": -1749.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-09-03 00:00:00",
+      "exit_date": "2014-09-17 00:00:00",
+      "entry_spread": 1.6500000000000004,
+      "exit_spread": 0.45000000000000107,
+      "contracts": 5,
+      "pnl": 5999.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-09-17 00:00:00",
+      "exit_date": "2014-09-29 00:00:00",
+      "entry_spread": 0.45000000000000107,
+      "exit_spread": 0.1999999999999993,
+      "contracts": 5,
+      "pnl": 1250.0000000000089,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-10-03 00:00:00",
+      "exit_date": "2014-10-07 00:00:00",
+      "entry_spread": 0.34999999999999787,
+      "exit_spread": 0.15000000000000213,
+      "contracts": 5,
+      "pnl": 999.9999999999786,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-10-08 00:00:00",
+      "exit_date": "2014-10-09 00:00:00",
+      "entry_spread": 0.3500000000000014,
+      "exit_spread": 0.10000000000000142,
+      "contracts": 5,
+      "pnl": 1250.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-11-04 00:00:00",
+      "exit_date": "2014-11-05 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": 0.5999999999999996,
+      "contracts": 5,
+      "pnl": -999.9999999999965,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-11-05 00:00:00",
+      "exit_date": "2014-11-10 00:00:00",
+      "entry_spread": 0.5999999999999996,
+      "exit_spread": 0.9499999999999993,
+      "contracts": 5,
+      "pnl": -1749.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-11-10 00:00:00",
+      "exit_date": "2014-11-18 00:00:00",
+      "entry_spread": 0.9499999999999993,
+      "exit_spread": 1.3000000000000007,
+      "contracts": 5,
+      "pnl": -1750.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-11-18 00:00:00",
+      "exit_date": "2014-12-05 00:00:00",
+      "entry_spread": 1.3000000000000007,
+      "exit_spread": 1.75,
+      "contracts": 5,
+      "pnl": -2249.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-12-05 00:00:00",
+      "exit_date": "2014-12-10 00:00:00",
+      "entry_spread": 1.75,
+      "exit_spread": 0.3500000000000014,
+      "contracts": 5,
+      "pnl": 6999.999999999993,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-12-10 00:00:00",
+      "exit_date": "2014-12-11 00:00:00",
+      "entry_spread": 0.3500000000000014,
+      "exit_spread": 0.04999999999999716,
+      "contracts": 5,
+      "pnl": 1500.0000000000214,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2014-12-17 00:00:00",
+      "exit_date": "2014-12-23 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.8000000000000007,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2014-12-23 00:00:00",
+      "exit_date": "2014-12-31 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": 0.20000000000000284,
+      "contracts": 5,
+      "pnl": 2999.9999999999895,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-01-02 00:00:00",
+      "exit_date": "2015-01-05 00:00:00",
+      "entry_spread": 0.40000000000000213,
+      "exit_spread": 0.07499999999999929,
+      "contracts": 5,
+      "pnl": 1625.000000000014,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-01-26 00:00:00",
+      "exit_date": "2015-01-28 00:00:00",
+      "entry_spread": 0.3999999999999986,
+      "exit_spread": -0.3500000000000014,
+      "contracts": 5,
+      "pnl": 3750.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-02-05 00:00:00",
+      "exit_date": "2015-02-10 00:00:00",
+      "entry_spread": 0.3999999999999986,
+      "exit_spread": 0.5749999999999993,
+      "contracts": 5,
+      "pnl": -875.0000000000035,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-02-10 00:00:00",
+      "exit_date": "2015-02-12 00:00:00",
+      "entry_spread": 0.5749999999999993,
+      "exit_spread": 1.3500000000000014,
+      "contracts": 5,
+      "pnl": -3875.0000000000105,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-02-12 00:00:00",
+      "exit_date": "2015-02-17 00:00:00",
+      "entry_spread": 1.3500000000000014,
+      "exit_spread": 2.0500000000000007,
+      "contracts": 5,
+      "pnl": -3499.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-02-17 00:00:00",
+      "exit_date": "2015-02-18 00:00:00",
+      "entry_spread": 2.0500000000000007,
+      "exit_spread": 0.7250000000000014,
+      "contracts": 5,
+      "pnl": 6624.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-02-18 00:00:00",
+      "exit_date": "2015-02-20 00:00:00",
+      "entry_spread": 0.7250000000000014,
+      "exit_spread": 0.9250000000000007,
+      "contracts": 5,
+      "pnl": -999.9999999999965,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-02-20 00:00:00",
+      "exit_date": "2015-02-24 00:00:00",
+      "entry_spread": 0.9250000000000007,
+      "exit_spread": 1.1999999999999993,
+      "contracts": 5,
+      "pnl": -1374.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-02-24 00:00:00",
+      "exit_date": "2015-02-27 00:00:00",
+      "entry_spread": 1.1999999999999993,
+      "exit_spread": 1.5500000000000007,
+      "contracts": 5,
+      "pnl": -1750.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-02-27 00:00:00",
+      "exit_date": "2015-04-09 00:00:00",
+      "entry_spread": 1.5500000000000007,
+      "exit_spread": 2.1000000000000014,
+      "contracts": 5,
+      "pnl": -2750.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-04-09 00:00:00",
+      "exit_date": "2015-05-06 00:00:00",
+      "entry_spread": 2.1000000000000014,
+      "exit_spread": 1.0,
+      "contracts": 5,
+      "pnl": 5500.000000000007,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-05-06 00:00:00",
+      "exit_date": "2015-05-08 00:00:00",
+      "entry_spread": 1.0,
+      "exit_spread": 1.5749999999999993,
+      "contracts": 5,
+      "pnl": -2874.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-05-08 00:00:00",
+      "exit_date": "2015-06-10 00:00:00",
+      "entry_spread": 1.5749999999999993,
+      "exit_spread": 2.3000000000000007,
+      "contracts": 5,
+      "pnl": -3625.0000000000073,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-06-10 00:00:00",
+      "exit_date": "2015-06-15 00:00:00",
+      "entry_spread": 2.3000000000000007,
+      "exit_spread": 1.0999999999999996,
+      "contracts": 5,
+      "pnl": 6000.0000000000055,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-06-15 00:00:00",
+      "exit_date": "2015-06-16 00:00:00",
+      "entry_spread": 1.0999999999999996,
+      "exit_spread": 1.3999999999999986,
+      "contracts": 5,
+      "pnl": -1499.9999999999948,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-06-16 00:00:00",
+      "exit_date": "2015-06-17 00:00:00",
+      "entry_spread": 1.3999999999999986,
+      "exit_spread": 0.6499999999999986,
+      "contracts": 5,
+      "pnl": 3750.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-06-17 00:00:00",
+      "exit_date": "2015-06-29 00:00:00",
+      "entry_spread": 0.6499999999999986,
+      "exit_spread": 0.25,
+      "contracts": 5,
+      "pnl": 1999.999999999993,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-07-01 00:00:00",
+      "exit_date": "2015-07-08 00:00:00",
+      "entry_spread": 0.3999999999999986,
+      "exit_spread": 0.07499999999999929,
+      "contracts": 5,
+      "pnl": 1624.9999999999964,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-07-10 00:00:00",
+      "exit_date": "2015-07-13 00:00:00",
+      "entry_spread": 0.3999999999999986,
+      "exit_spread": 0.6500000000000021,
+      "contracts": 5,
+      "pnl": -1250.0000000000177,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-07-13 00:00:00",
+      "exit_date": "2015-07-16 00:00:00",
+      "entry_spread": 0.6500000000000021,
+      "exit_spread": 0.9500000000000011,
+      "contracts": 5,
+      "pnl": -1499.9999999999948,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-07-16 00:00:00",
+      "exit_date": "2015-07-29 00:00:00",
+      "entry_spread": 0.9500000000000011,
+      "exit_spread": 1.3000000000000007,
+      "contracts": 5,
+      "pnl": -1749.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-07-29 00:00:00",
+      "exit_date": "2015-08-19 00:00:00",
+      "entry_spread": 1.3000000000000007,
+      "exit_spread": 0.5999999999999996,
+      "contracts": 5,
+      "pnl": 3500.0000000000055,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-08-19 00:00:00",
+      "exit_date": "2015-08-20 00:00:00",
+      "entry_spread": 0.5999999999999996,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 2999.999999999998,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-10-12 00:00:00",
+      "exit_date": "2015-10-15 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 0.6000000000000014,
+      "contracts": 5,
+      "pnl": -750.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-10-15 00:00:00",
+      "exit_date": "2015-10-16 00:00:00",
+      "entry_spread": 0.6000000000000014,
+      "exit_spread": 0.9749999999999979,
+      "contracts": 5,
+      "pnl": -1874.9999999999823,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-10-16 00:00:00",
+      "exit_date": "2015-10-21 00:00:00",
+      "entry_spread": 0.9749999999999979,
+      "exit_spread": 0.3999999999999986,
+      "contracts": 5,
+      "pnl": 2874.9999999999964,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-10-21 00:00:00",
+      "exit_date": "2015-10-22 00:00:00",
+      "entry_spread": 0.3999999999999986,
+      "exit_spread": 0.8000000000000007,
+      "contracts": 5,
+      "pnl": -2000.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-10-22 00:00:00",
+      "exit_date": "2015-11-12 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": 0.15000000000000213,
+      "contracts": 5,
+      "pnl": 3249.9999999999927,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-11-18 00:00:00",
+      "exit_date": "2015-11-20 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": 0.8499999999999979,
+      "contracts": 5,
+      "pnl": -1499.999999999986,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-11-20 00:00:00",
+      "exit_date": "2015-12-03 00:00:00",
+      "entry_spread": 0.8499999999999979,
+      "exit_spread": 0.1999999999999993,
+      "contracts": 5,
+      "pnl": 3249.9999999999927,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-12-04 00:00:00",
+      "exit_date": "2015-12-09 00:00:00",
+      "entry_spread": 1.0999999999999979,
+      "exit_spread": 0.04999999999999716,
+      "contracts": 5,
+      "pnl": 5250.000000000004,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-12-16 00:00:00",
+      "exit_date": "2015-12-18 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": 0.14999999999999858,
+      "contracts": 5,
+      "pnl": 2000.0000000000107,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2015-12-21 00:00:00",
+      "exit_date": "2015-12-22 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 0.6500000000000021,
+      "contracts": 5,
+      "pnl": -1000.0000000000142,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2015-12-22 00:00:00",
+      "exit_date": "2016-01-04 00:00:00",
+      "entry_spread": 0.6500000000000021,
+      "exit_spread": -0.3000000000000007,
+      "contracts": 5,
+      "pnl": 4750.000000000015,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-02-22 00:00:00",
+      "exit_date": "2016-03-01 00:00:00",
+      "entry_spread": 0.6000000000000014,
+      "exit_spread": 0.8999999999999986,
+      "contracts": 5,
+      "pnl": -1499.999999999986,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-03-01 00:00:00",
+      "exit_date": "2016-03-03 00:00:00",
+      "entry_spread": 0.8999999999999986,
+      "exit_spread": 1.1999999999999993,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-03-03 00:00:00",
+      "exit_date": "2016-03-15 00:00:00",
+      "entry_spread": 1.1999999999999993,
+      "exit_spread": 2.1750000000000007,
+      "contracts": 5,
+      "pnl": -4875.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-03-15 00:00:00",
+      "exit_date": "2016-03-16 00:00:00",
+      "entry_spread": 2.1750000000000007,
+      "exit_spread": 0.9000000000000021,
+      "contracts": 5,
+      "pnl": 6374.999999999993,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-03-16 00:00:00",
+      "exit_date": "2016-03-18 00:00:00",
+      "entry_spread": 0.9000000000000021,
+      "exit_spread": 1.1499999999999986,
+      "contracts": 5,
+      "pnl": -1249.9999999999823,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-03-18 00:00:00",
+      "exit_date": "2016-03-22 00:00:00",
+      "entry_spread": 1.1499999999999986,
+      "exit_spread": 1.5500000000000007,
+      "contracts": 5,
+      "pnl": -2000.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-03-22 00:00:00",
+      "exit_date": "2016-04-11 00:00:00",
+      "entry_spread": 1.5500000000000007,
+      "exit_spread": 1.9499999999999993,
+      "contracts": 5,
+      "pnl": -1999.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-04-11 00:00:00",
+      "exit_date": "2016-04-13 00:00:00",
+      "entry_spread": 1.9499999999999993,
+      "exit_spread": 2.650000000000002,
+      "contracts": 5,
+      "pnl": -3500.000000000014,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-04-13 00:00:00",
+      "exit_date": "2016-06-10 00:00:00",
+      "entry_spread": 2.650000000000002,
+      "exit_spread": 0.9000000000000021,
+      "contracts": 5,
+      "pnl": 8750.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-06-10 00:00:00",
+      "exit_date": "2016-06-13 00:00:00",
+      "entry_spread": 0.9000000000000021,
+      "exit_spread": -0.09999999999999787,
+      "contracts": 5,
+      "pnl": 5000.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-06-20 00:00:00",
+      "exit_date": "2016-06-22 00:00:00",
+      "entry_spread": 0.7999999999999972,
+      "exit_spread": 0.25,
+      "contracts": 5,
+      "pnl": 2749.999999999986,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-06-23 00:00:00",
+      "exit_date": "2016-06-24 00:00:00",
+      "entry_spread": 0.9499999999999993,
+      "exit_spread": -0.5249999999999986,
+      "contracts": 5,
+      "pnl": 7374.999999999989,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-06-28 00:00:00",
+      "exit_date": "2016-06-29 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 1.0749999999999993,
+      "contracts": 5,
+      "pnl": -2874.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-06-29 00:00:00",
+      "exit_date": "2016-06-30 00:00:00",
+      "entry_spread": 1.0749999999999993,
+      "exit_spread": 1.3499999999999979,
+      "contracts": 5,
+      "pnl": -1374.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-06-30 00:00:00",
+      "exit_date": "2016-07-07 00:00:00",
+      "entry_spread": 1.3499999999999979,
+      "exit_spread": 1.75,
+      "contracts": 5,
+      "pnl": -2000.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-07-07 00:00:00",
+      "exit_date": "2016-07-15 00:00:00",
+      "entry_spread": 1.75,
+      "exit_spread": 2.5,
+      "contracts": 5,
+      "pnl": -3750.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-07-15 00:00:00",
+      "exit_date": "2016-07-19 00:00:00",
+      "entry_spread": 2.5,
+      "exit_spread": 3.450000000000001,
+      "contracts": 5,
+      "pnl": -4750.0000000000055,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-07-19 00:00:00",
+      "exit_date": "2016-09-09 00:00:00",
+      "entry_spread": 3.450000000000001,
+      "exit_spread": 1.3999999999999986,
+      "contracts": 5,
+      "pnl": 10250.000000000013,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-09-09 00:00:00",
+      "exit_date": "2016-09-13 00:00:00",
+      "entry_spread": 1.3999999999999986,
+      "exit_spread": 0.5500000000000007,
+      "contracts": 5,
+      "pnl": 4249.999999999989,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-09-13 00:00:00",
+      "exit_date": "2016-09-15 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": 1.1500000000000021,
+      "contracts": 5,
+      "pnl": -3000.0000000000073,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-09-15 00:00:00",
+      "exit_date": "2016-09-16 00:00:00",
+      "entry_spread": 1.1500000000000021,
+      "exit_spread": 1.5,
+      "contracts": 5,
+      "pnl": -1749.9999999999893,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-09-16 00:00:00",
+      "exit_date": "2016-10-13 00:00:00",
+      "entry_spread": 1.5,
+      "exit_spread": 0.5,
+      "contracts": 5,
+      "pnl": 5000.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-10-13 00:00:00",
+      "exit_date": "2016-10-14 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.6999999999999993,
+      "contracts": 5,
+      "pnl": -999.9999999999965,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-10-14 00:00:00",
+      "exit_date": "2016-10-18 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": 0.9499999999999993,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-10-18 00:00:00",
+      "exit_date": "2016-10-31 00:00:00",
+      "entry_spread": 0.9499999999999993,
+      "exit_spread": 0.1999999999999993,
+      "contracts": 5,
+      "pnl": 3750.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2016-11-07 00:00:00",
+      "exit_date": "2016-11-09 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": 0.8499999999999996,
+      "contracts": 5,
+      "pnl": -1499.9999999999948,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-11-09 00:00:00",
+      "exit_date": "2016-11-11 00:00:00",
+      "entry_spread": 0.8499999999999996,
+      "exit_spread": 1.1999999999999993,
+      "contracts": 5,
+      "pnl": -1749.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-11-11 00:00:00",
+      "exit_date": "2016-11-14 00:00:00",
+      "entry_spread": 1.1999999999999993,
+      "exit_spread": 1.5,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-11-14 00:00:00",
+      "exit_date": "2016-11-15 00:00:00",
+      "entry_spread": 1.5,
+      "exit_spread": 2.075000000000001,
+      "contracts": 5,
+      "pnl": -2875.0000000000055,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-11-15 00:00:00",
+      "exit_date": "2016-12-20 00:00:00",
+      "entry_spread": 2.075000000000001,
+      "exit_spread": 2.6500000000000004,
+      "contracts": 5,
+      "pnl": -2874.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2016-12-20 00:00:00",
+      "exit_date": "2017-02-10 00:00:00",
+      "entry_spread": 2.6500000000000004,
+      "exit_spread": 3.4000000000000004,
+      "contracts": 5,
+      "pnl": -3750.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-02-10 00:00:00",
+      "exit_date": "2017-02-15 00:00:00",
+      "entry_spread": 3.4000000000000004,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": 13250.000000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-02-15 00:00:00",
+      "exit_date": "2017-03-13 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 1.0,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-03-13 00:00:00",
+      "exit_date": "2017-03-24 00:00:00",
+      "entry_spread": 1.0,
+      "exit_spread": 0.47499999999999964,
+      "contracts": 5,
+      "pnl": 2625.000000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-03-24 00:00:00",
+      "exit_date": "2017-03-28 00:00:00",
+      "entry_spread": 0.47499999999999964,
+      "exit_spread": 0.625,
+      "contracts": 5,
+      "pnl": -750.0000000000018,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-03-28 00:00:00",
+      "exit_date": "2017-03-31 00:00:00",
+      "entry_spread": 0.625,
+      "exit_spread": 0.29999999999999893,
+      "contracts": 5,
+      "pnl": 1625.0000000000052,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-03-31 00:00:00",
+      "exit_date": "2017-04-03 00:00:00",
+      "entry_spread": 0.29999999999999893,
+      "exit_spread": 0.09999999999999964,
+      "contracts": 5,
+      "pnl": 999.9999999999965,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-04-24 00:00:00",
+      "exit_date": "2017-04-28 00:00:00",
+      "entry_spread": 0.6499999999999986,
+      "exit_spread": 0.8499999999999996,
+      "contracts": 5,
+      "pnl": -1000.0000000000053,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-04-28 00:00:00",
+      "exit_date": "2017-05-11 00:00:00",
+      "entry_spread": 0.8499999999999996,
+      "exit_spread": 1.1999999999999993,
+      "contracts": 5,
+      "pnl": -1749.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-05-11 00:00:00",
+      "exit_date": "2017-05-17 00:00:00",
+      "entry_spread": 1.1999999999999993,
+      "exit_spread": 0.40000000000000036,
+      "contracts": 5,
+      "pnl": 3999.9999999999945,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-05-17 00:00:00",
+      "exit_date": "2017-05-19 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": -1749.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-05-19 00:00:00",
+      "exit_date": "2017-05-22 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 0.9500000000000011,
+      "contracts": 5,
+      "pnl": -1000.0000000000053,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-05-22 00:00:00",
+      "exit_date": "2017-06-19 00:00:00",
+      "entry_spread": 0.9500000000000011,
+      "exit_spread": 1.25,
+      "contracts": 5,
+      "pnl": -1499.9999999999948,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-06-19 00:00:00",
+      "exit_date": "2017-06-29 00:00:00",
+      "entry_spread": 1.25,
+      "exit_spread": 0.5999999999999996,
+      "contracts": 5,
+      "pnl": 3250.000000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-06-29 00:00:00",
+      "exit_date": "2017-07-12 00:00:00",
+      "entry_spread": 0.5999999999999996,
+      "exit_spread": 0.9000000000000004,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-07-12 00:00:00",
+      "exit_date": "2017-07-13 00:00:00",
+      "entry_spread": 0.9000000000000004,
+      "exit_spread": 1.3000000000000007,
+      "contracts": 5,
+      "pnl": -2000.0000000000018,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-07-13 00:00:00",
+      "exit_date": "2017-07-17 00:00:00",
+      "entry_spread": 1.3000000000000007,
+      "exit_spread": 1.6500000000000004,
+      "contracts": 5,
+      "pnl": -1749.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-07-17 00:00:00",
+      "exit_date": "2017-08-10 00:00:00",
+      "entry_spread": 1.6500000000000004,
+      "exit_spread": -0.34999999999999964,
+      "contracts": 5,
+      "pnl": 10000.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-08-14 00:00:00",
+      "exit_date": "2017-08-17 00:00:00",
+      "entry_spread": 0.7250000000000014,
+      "exit_spread": 0.09999999999999964,
+      "contracts": 5,
+      "pnl": 3125.000000000009,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-08-21 00:00:00",
+      "exit_date": "2017-08-22 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.7000000000000011,
+      "contracts": 5,
+      "pnl": -1000.0000000000053,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-08-22 00:00:00",
+      "exit_date": "2017-08-25 00:00:00",
+      "entry_spread": 0.7000000000000011,
+      "exit_spread": 0.9500000000000011,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-08-25 00:00:00",
+      "exit_date": "2017-09-07 00:00:00",
+      "entry_spread": 0.9500000000000011,
+      "exit_spread": 1.25,
+      "contracts": 5,
+      "pnl": -1499.9999999999948,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-09-07 00:00:00",
+      "exit_date": "2017-09-11 00:00:00",
+      "entry_spread": 1.25,
+      "exit_spread": 1.6000000000000014,
+      "contracts": 5,
+      "pnl": -1750.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-09-11 00:00:00",
+      "exit_date": "2017-10-18 00:00:00",
+      "entry_spread": 1.6000000000000014,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": 4250.000000000007,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-10-18 00:00:00",
+      "exit_date": "2017-11-02 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 1.1500000000000004,
+      "contracts": 5,
+      "pnl": -2000.0000000000018,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-11-02 00:00:00",
+      "exit_date": "2017-11-06 00:00:00",
+      "entry_spread": 1.1500000000000004,
+      "exit_spread": 1.450000000000001,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-11-06 00:00:00",
+      "exit_date": "2017-11-14 00:00:00",
+      "entry_spread": 1.450000000000001,
+      "exit_spread": 0.625,
+      "contracts": 5,
+      "pnl": 4125.0000000000055,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2017-11-14 00:00:00",
+      "exit_date": "2017-11-15 00:00:00",
+      "entry_spread": 0.625,
+      "exit_spread": 1.1499999999999986,
+      "contracts": 5,
+      "pnl": -2624.9999999999927,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-11-15 00:00:00",
+      "exit_date": "2017-11-27 00:00:00",
+      "entry_spread": 1.1499999999999986,
+      "exit_spread": 1.5500000000000007,
+      "contracts": 5,
+      "pnl": -2000.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2017-11-27 00:00:00",
+      "exit_date": "2018-01-02 00:00:00",
+      "entry_spread": 1.5500000000000007,
+      "exit_spread": 1.9499999999999993,
+      "contracts": 5,
+      "pnl": -1999.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-01-02 00:00:00",
+      "exit_date": "2018-01-16 00:00:00",
+      "entry_spread": 1.9499999999999993,
+      "exit_spread": 0.7999999999999989,
+      "contracts": 5,
+      "pnl": 5750.000000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-01-16 00:00:00",
+      "exit_date": "2018-01-17 00:00:00",
+      "entry_spread": 0.7999999999999989,
+      "exit_spread": 0.09999999999999964,
+      "contracts": 5,
+      "pnl": 3499.9999999999964,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-01-22 00:00:00",
+      "exit_date": "2018-01-23 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": 0.5250000000000004,
+      "contracts": 5,
+      "pnl": -625.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-01-23 00:00:00",
+      "exit_date": "2018-01-29 00:00:00",
+      "entry_spread": 0.5250000000000004,
+      "exit_spread": 0.1999999999999993,
+      "contracts": 5,
+      "pnl": 1625.0000000000052,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-01-31 00:00:00",
+      "exit_date": "2018-02-02 00:00:00",
+      "entry_spread": 0.27500000000000036,
+      "exit_spread": -0.05000000000000071,
+      "contracts": 5,
+      "pnl": 1625.0000000000052,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-02-06 00:00:00",
+      "exit_date": "2018-02-07 00:00:00",
+      "entry_spread": 0.7749999999999986,
+      "exit_spread": -1.0500000000000007,
+      "contracts": 5,
+      "pnl": 9124.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-03-09 00:00:00",
+      "exit_date": "2018-03-13 00:00:00",
+      "entry_spread": 0.45000000000000107,
+      "exit_spread": 0.15000000000000213,
+      "contracts": 5,
+      "pnl": 1499.9999999999948,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-04-16 00:00:00",
+      "exit_date": "2018-04-17 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 1.0500000000000007,
+      "contracts": 5,
+      "pnl": -3000.0000000000073,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-04-17 00:00:00",
+      "exit_date": "2018-04-18 00:00:00",
+      "entry_spread": 1.0500000000000007,
+      "exit_spread": 0.25,
+      "contracts": 5,
+      "pnl": 4000.0000000000036,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-04-27 00:00:00",
+      "exit_date": "2018-05-02 00:00:00",
+      "entry_spread": 0.3999999999999986,
+      "exit_spread": 0.14999999999999858,
+      "contracts": 5,
+      "pnl": 1250.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-05-04 00:00:00",
+      "exit_date": "2018-05-09 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.8000000000000007,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-05-09 00:00:00",
+      "exit_date": "2018-05-11 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": 1.0249999999999986,
+      "contracts": 5,
+      "pnl": -1124.9999999999893,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-05-11 00:00:00",
+      "exit_date": "2018-05-15 00:00:00",
+      "entry_spread": 1.0249999999999986,
+      "exit_spread": 0.4499999999999993,
+      "contracts": 5,
+      "pnl": 2874.9999999999964,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-05-15 00:00:00",
+      "exit_date": "2018-05-16 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 0.6499999999999986,
+      "contracts": 5,
+      "pnl": -999.9999999999965,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-05-16 00:00:00",
+      "exit_date": "2018-05-23 00:00:00",
+      "entry_spread": 0.6499999999999986,
+      "exit_spread": 0.8499999999999996,
+      "contracts": 5,
+      "pnl": -1000.0000000000053,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-05-23 00:00:00",
+      "exit_date": "2018-05-29 00:00:00",
+      "entry_spread": 0.8499999999999996,
+      "exit_spread": 0.1999999999999993,
+      "contracts": 5,
+      "pnl": 3250.000000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-05-30 00:00:00",
+      "exit_date": "2018-06-01 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-06-01 00:00:00",
+      "exit_date": "2018-06-06 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 1.0,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-06-06 00:00:00",
+      "exit_date": "2018-06-20 00:00:00",
+      "entry_spread": 1.0,
+      "exit_spread": 1.299999999999999,
+      "contracts": 5,
+      "pnl": -1499.9999999999948,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-06-20 00:00:00",
+      "exit_date": "2018-06-25 00:00:00",
+      "entry_spread": 1.299999999999999,
+      "exit_spread": 0.15000000000000213,
+      "contracts": 5,
+      "pnl": 5749.999999999984,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-06-26 00:00:00",
+      "exit_date": "2018-06-27 00:00:00",
+      "entry_spread": 0.5749999999999993,
+      "exit_spread": 0.14999999999999858,
+      "contracts": 5,
+      "pnl": 2125.0000000000036,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-06-29 00:00:00",
+      "exit_date": "2018-07-12 00:00:00",
+      "entry_spread": 0.7000000000000028,
+      "exit_spread": 0.9250000000000007,
+      "contracts": 5,
+      "pnl": -1124.9999999999893,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-07-12 00:00:00",
+      "exit_date": "2018-07-16 00:00:00",
+      "entry_spread": 0.9250000000000007,
+      "exit_spread": 1.1750000000000007,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-07-16 00:00:00",
+      "exit_date": "2018-07-17 00:00:00",
+      "entry_spread": 1.1750000000000007,
+      "exit_spread": 1.625,
+      "contracts": 5,
+      "pnl": -2249.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-07-17 00:00:00",
+      "exit_date": "2018-08-08 00:00:00",
+      "entry_spread": 1.625,
+      "exit_spread": 2.1999999999999993,
+      "contracts": 5,
+      "pnl": -2874.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-08-08 00:00:00",
+      "exit_date": "2018-08-15 00:00:00",
+      "entry_spread": 2.1999999999999993,
+      "exit_spread": 0.45000000000000107,
+      "contracts": 5,
+      "pnl": 8749.99999999999,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-08-15 00:00:00",
+      "exit_date": "2018-08-16 00:00:00",
+      "entry_spread": 0.45000000000000107,
+      "exit_spread": 0.5999999999999996,
+      "contracts": 5,
+      "pnl": -749.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-08-16 00:00:00",
+      "exit_date": "2018-08-22 00:00:00",
+      "entry_spread": 0.5999999999999996,
+      "exit_spread": 0.8999999999999986,
+      "contracts": 5,
+      "pnl": -1499.9999999999948,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-08-22 00:00:00",
+      "exit_date": "2018-08-28 00:00:00",
+      "entry_spread": 0.8999999999999986,
+      "exit_spread": 1.200000000000001,
+      "contracts": 5,
+      "pnl": -1500.0000000000125,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-08-28 00:00:00",
+      "exit_date": "2018-09-18 00:00:00",
+      "entry_spread": 1.200000000000001,
+      "exit_spread": 1.950000000000001,
+      "contracts": 5,
+      "pnl": -3750.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-09-18 00:00:00",
+      "exit_date": "2018-09-19 00:00:00",
+      "entry_spread": 1.950000000000001,
+      "exit_spread": 0.8499999999999996,
+      "contracts": 5,
+      "pnl": 5500.000000000007,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-09-19 00:00:00",
+      "exit_date": "2018-10-04 00:00:00",
+      "entry_spread": 0.8499999999999996,
+      "exit_spread": 0.34999999999999964,
+      "contracts": 5,
+      "pnl": 2500.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-10-04 00:00:00",
+      "exit_date": "2018-10-08 00:00:00",
+      "entry_spread": 0.34999999999999964,
+      "exit_spread": 0.049999999999998934,
+      "contracts": 5,
+      "pnl": 1500.0000000000036,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2018-11-26 00:00:00",
+      "exit_date": "2018-12-03 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 0.6000000000000014,
+      "contracts": 5,
+      "pnl": -750.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2018-12-03 00:00:00",
+      "exit_date": "2018-12-04 00:00:00",
+      "entry_spread": 0.6000000000000014,
+      "exit_spread": -0.15000000000000213,
+      "contracts": 5,
+      "pnl": 3750.0000000000177,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-01-09 00:00:00",
+      "exit_date": "2019-01-11 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": 1.0750000000000028,
+      "contracts": 5,
+      "pnl": -1375.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-01-11 00:00:00",
+      "exit_date": "2019-01-14 00:00:00",
+      "entry_spread": 1.0750000000000028,
+      "exit_spread": 0.5,
+      "contracts": 5,
+      "pnl": 2875.000000000014,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-01-14 00:00:00",
+      "exit_date": "2019-01-15 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": -0.02499999999999858,
+      "contracts": 5,
+      "pnl": 2624.9999999999927,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-01-31 00:00:00",
+      "exit_date": "2019-02-05 00:00:00",
+      "entry_spread": 0.4250000000000007,
+      "exit_spread": 0.125,
+      "contracts": 5,
+      "pnl": 1500.0000000000036,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-02-12 00:00:00",
+      "exit_date": "2019-02-13 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 0.5749999999999993,
+      "contracts": 5,
+      "pnl": -625.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-02-13 00:00:00",
+      "exit_date": "2019-02-15 00:00:00",
+      "entry_spread": 0.5749999999999993,
+      "exit_spread": 0.8000000000000007,
+      "contracts": 5,
+      "pnl": -1125.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-02-15 00:00:00",
+      "exit_date": "2019-02-19 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": 1.4749999999999996,
+      "contracts": 5,
+      "pnl": -3374.9999999999945,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-02-19 00:00:00",
+      "exit_date": "2019-02-20 00:00:00",
+      "entry_spread": 1.4749999999999996,
+      "exit_spread": 0.6499999999999986,
+      "contracts": 5,
+      "pnl": 4125.0000000000055,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-02-20 00:00:00",
+      "exit_date": "2019-03-14 00:00:00",
+      "entry_spread": 0.6499999999999986,
+      "exit_spread": 0.9499999999999993,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-03-14 00:00:00",
+      "exit_date": "2019-03-22 00:00:00",
+      "entry_spread": 0.9499999999999993,
+      "exit_spread": 0.4499999999999993,
+      "contracts": 5,
+      "pnl": 2500.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-03-22 00:00:00",
+      "exit_date": "2019-03-26 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 1.0,
+      "contracts": 5,
+      "pnl": -2750.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-03-26 00:00:00",
+      "exit_date": "2019-03-28 00:00:00",
+      "entry_spread": 1.0,
+      "exit_spread": 1.3500000000000014,
+      "contracts": 5,
+      "pnl": -1750.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-03-28 00:00:00",
+      "exit_date": "2019-04-23 00:00:00",
+      "entry_spread": 1.3500000000000014,
+      "exit_spread": 1.75,
+      "contracts": 5,
+      "pnl": -1999.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-04-23 00:00:00",
+      "exit_date": "2019-05-07 00:00:00",
+      "entry_spread": 1.75,
+      "exit_spread": -0.5499999999999972,
+      "contracts": 5,
+      "pnl": 11499.999999999985,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-05-10 00:00:00",
+      "exit_date": "2019-05-13 00:00:00",
+      "entry_spread": 0.6750000000000007,
+      "exit_spread": -1.1499999999999986,
+      "contracts": 5,
+      "pnl": 9124.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-05-16 00:00:00",
+      "exit_date": "2019-05-21 00:00:00",
+      "entry_spread": 0.3500000000000014,
+      "exit_spread": 0.45000000000000284,
+      "contracts": 5,
+      "pnl": -500.0000000000071,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-05-21 00:00:00",
+      "exit_date": "2019-05-22 00:00:00",
+      "entry_spread": 0.45000000000000284,
+      "exit_spread": 0.6499999999999986,
+      "contracts": 5,
+      "pnl": -999.9999999999786,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-05-22 00:00:00",
+      "exit_date": "2019-05-23 00:00:00",
+      "entry_spread": 0.6499999999999986,
+      "exit_spread": 0.3000000000000007,
+      "contracts": 5,
+      "pnl": 1749.9999999999893,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-05-24 00:00:00",
+      "exit_date": "2019-05-29 00:00:00",
+      "entry_spread": 0.5999999999999979,
+      "exit_spread": 0.25,
+      "contracts": 5,
+      "pnl": 1749.9999999999893,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-05-30 00:00:00",
+      "exit_date": "2019-06-03 00:00:00",
+      "entry_spread": 0.3999999999999986,
+      "exit_spread": 0.05000000000000071,
+      "contracts": 5,
+      "pnl": 1749.9999999999893,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-06-04 00:00:00",
+      "exit_date": "2019-06-05 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 0.6999999999999993,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-06-05 00:00:00",
+      "exit_date": "2019-06-13 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": 0.8999999999999986,
+      "contracts": 5,
+      "pnl": -999.9999999999965,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-06-13 00:00:00",
+      "exit_date": "2019-06-17 00:00:00",
+      "entry_spread": 0.8999999999999986,
+      "exit_spread": 1.3499999999999996,
+      "contracts": 5,
+      "pnl": -2250.0000000000055,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-06-17 00:00:00",
+      "exit_date": "2019-06-20 00:00:00",
+      "entry_spread": 1.3499999999999996,
+      "exit_spread": 0.6000000000000014,
+      "contracts": 5,
+      "pnl": 3749.999999999991,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-06-20 00:00:00",
+      "exit_date": "2019-06-27 00:00:00",
+      "entry_spread": 0.6000000000000014,
+      "exit_spread": 0.9000000000000021,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-06-27 00:00:00",
+      "exit_date": "2019-07-01 00:00:00",
+      "entry_spread": 0.9000000000000021,
+      "exit_spread": 1.1999999999999993,
+      "contracts": 5,
+      "pnl": -1499.999999999986,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-07-01 00:00:00",
+      "exit_date": "2019-07-03 00:00:00",
+      "entry_spread": 1.1999999999999993,
+      "exit_spread": 1.5,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-07-03 00:00:00",
+      "exit_date": "2019-07-12 00:00:00",
+      "entry_spread": 1.5,
+      "exit_spread": 2.0999999999999996,
+      "contracts": 5,
+      "pnl": -2999.999999999998,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-07-12 00:00:00",
+      "exit_date": "2019-07-17 00:00:00",
+      "entry_spread": 2.0999999999999996,
+      "exit_spread": 0.8499999999999996,
+      "contracts": 5,
+      "pnl": 6250.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-07-17 00:00:00",
+      "exit_date": "2019-07-22 00:00:00",
+      "entry_spread": 0.8499999999999996,
+      "exit_spread": 1.1999999999999993,
+      "contracts": 5,
+      "pnl": -1749.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-07-22 00:00:00",
+      "exit_date": "2019-08-01 00:00:00",
+      "entry_spread": 1.1999999999999993,
+      "exit_spread": 0.29999999999999716,
+      "contracts": 5,
+      "pnl": 4500.000000000011,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-08-16 00:00:00",
+      "exit_date": "2019-08-19 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": 1.25,
+      "contracts": 5,
+      "pnl": -3499.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-08-19 00:00:00",
+      "exit_date": "2019-08-22 00:00:00",
+      "entry_spread": 1.25,
+      "exit_spread": 0.4499999999999993,
+      "contracts": 5,
+      "pnl": 4000.0000000000036,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-08-22 00:00:00",
+      "exit_date": "2019-08-23 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": -0.1999999999999993,
+      "contracts": 5,
+      "pnl": 3249.9999999999927,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-08-29 00:00:00",
+      "exit_date": "2019-09-03 00:00:00",
+      "entry_spread": 0.5499999999999972,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 2749.999999999986,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-09-04 00:00:00",
+      "exit_date": "2019-09-05 00:00:00",
+      "entry_spread": 0.6000000000000014,
+      "exit_spread": 0.9500000000000028,
+      "contracts": 5,
+      "pnl": -1750.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-09-05 00:00:00",
+      "exit_date": "2019-09-06 00:00:00",
+      "entry_spread": 0.9500000000000028,
+      "exit_spread": 1.2000000000000028,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-09-06 00:00:00",
+      "exit_date": "2019-09-11 00:00:00",
+      "entry_spread": 1.2000000000000028,
+      "exit_spread": 1.5999999999999996,
+      "contracts": 5,
+      "pnl": -1999.999999999984,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-09-11 00:00:00",
+      "exit_date": "2019-09-12 00:00:00",
+      "entry_spread": 1.5999999999999996,
+      "exit_spread": 2.049999999999999,
+      "contracts": 5,
+      "pnl": -2249.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-09-12 00:00:00",
+      "exit_date": "2019-09-16 00:00:00",
+      "entry_spread": 2.049999999999999,
+      "exit_spread": 2.6499999999999986,
+      "contracts": 5,
+      "pnl": -2999.999999999998,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-09-16 00:00:00",
+      "exit_date": "2019-09-18 00:00:00",
+      "entry_spread": 2.6499999999999986,
+      "exit_spread": 1.1999999999999993,
+      "contracts": 5,
+      "pnl": 7249.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-09-18 00:00:00",
+      "exit_date": "2019-10-02 00:00:00",
+      "entry_spread": 1.1999999999999993,
+      "exit_spread": 0.10000000000000142,
+      "contracts": 5,
+      "pnl": 5499.999999999989,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-10-03 00:00:00",
+      "exit_date": "2019-10-04 00:00:00",
+      "entry_spread": 0.3999999999999986,
+      "exit_spread": 1.0500000000000007,
+      "contracts": 5,
+      "pnl": -3250.0000000000105,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-10-04 00:00:00",
+      "exit_date": "2019-10-08 00:00:00",
+      "entry_spread": 1.0500000000000007,
+      "exit_spread": -0.09999999999999787,
+      "contracts": 5,
+      "pnl": 5749.999999999993,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-10-09 00:00:00",
+      "exit_date": "2019-10-10 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": 1.1999999999999993,
+      "contracts": 5,
+      "pnl": -2500.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-10-10 00:00:00",
+      "exit_date": "2019-10-11 00:00:00",
+      "entry_spread": 1.1999999999999993,
+      "exit_spread": 2.25,
+      "contracts": 5,
+      "pnl": -5250.000000000004,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-10-11 00:00:00",
+      "exit_date": "2019-10-15 00:00:00",
+      "entry_spread": 2.25,
+      "exit_spread": 3.25,
+      "contracts": 5,
+      "pnl": -5000.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-10-15 00:00:00",
+      "exit_date": "2019-10-16 00:00:00",
+      "entry_spread": 3.25,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": 12500.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-10-16 00:00:00",
+      "exit_date": "2019-10-21 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 1.1500000000000021,
+      "contracts": 5,
+      "pnl": -2000.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-10-21 00:00:00",
+      "exit_date": "2019-10-25 00:00:00",
+      "entry_spread": 1.1500000000000021,
+      "exit_spread": 1.5,
+      "contracts": 5,
+      "pnl": -1749.9999999999893,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-10-25 00:00:00",
+      "exit_date": "2019-11-12 00:00:00",
+      "entry_spread": 1.5,
+      "exit_spread": 1.9499999999999993,
+      "contracts": 5,
+      "pnl": -2249.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-11-12 00:00:00",
+      "exit_date": "2019-11-29 00:00:00",
+      "entry_spread": 1.9499999999999993,
+      "exit_spread": 0.9000000000000004,
+      "contracts": 5,
+      "pnl": 5249.9999999999945,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-11-29 00:00:00",
+      "exit_date": "2019-12-02 00:00:00",
+      "entry_spread": 0.9000000000000004,
+      "exit_spread": 1.7500000000000018,
+      "contracts": 5,
+      "pnl": -4250.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-12-02 00:00:00",
+      "exit_date": "2019-12-03 00:00:00",
+      "entry_spread": 1.7500000000000018,
+      "exit_spread": 0.875,
+      "contracts": 5,
+      "pnl": 4375.000000000009,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-12-03 00:00:00",
+      "exit_date": "2019-12-06 00:00:00",
+      "entry_spread": 0.875,
+      "exit_spread": 1.3999999999999986,
+      "contracts": 5,
+      "pnl": -2624.9999999999927,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-12-06 00:00:00",
+      "exit_date": "2019-12-16 00:00:00",
+      "entry_spread": 1.3999999999999986,
+      "exit_spread": 1.8000000000000007,
+      "contracts": 5,
+      "pnl": -2000.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-12-16 00:00:00",
+      "exit_date": "2019-12-18 00:00:00",
+      "entry_spread": 1.8000000000000007,
+      "exit_spread": 0.22499999999999964,
+      "contracts": 5,
+      "pnl": 7875.0000000000055,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2019-12-19 00:00:00",
+      "exit_date": "2019-12-26 00:00:00",
+      "entry_spread": 0.375,
+      "exit_spread": 0.47499999999999964,
+      "contracts": 5,
+      "pnl": -499.99999999999824,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2019-12-26 00:00:00",
+      "exit_date": "2019-12-30 00:00:00",
+      "entry_spread": 0.47499999999999964,
+      "exit_spread": 0.14999999999999858,
+      "contracts": 5,
+      "pnl": 1625.0000000000052,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-01-02 00:00:00",
+      "exit_date": "2020-01-06 00:00:00",
+      "entry_spread": 0.47499999999999964,
+      "exit_spread": 0.6999999999999993,
+      "contracts": 5,
+      "pnl": -1124.9999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-01-06 00:00:00",
+      "exit_date": "2020-01-08 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": 0.125,
+      "contracts": 5,
+      "pnl": 2874.9999999999964,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-01-13 00:00:00",
+      "exit_date": "2020-01-15 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": 0.8999999999999986,
+      "contracts": 5,
+      "pnl": -2499.999999999991,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-01-15 00:00:00",
+      "exit_date": "2020-01-27 00:00:00",
+      "entry_spread": 0.8999999999999986,
+      "exit_spread": -0.22499999999999787,
+      "contracts": 5,
+      "pnl": 5624.999999999982,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-02-11 00:00:00",
+      "exit_date": "2020-02-12 00:00:00",
+      "entry_spread": 0.375,
+      "exit_spread": 0.5,
+      "contracts": 5,
+      "pnl": -625.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-02-12 00:00:00",
+      "exit_date": "2020-02-14 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.6749999999999989,
+      "contracts": 5,
+      "pnl": -874.9999999999947,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-02-14 00:00:00",
+      "exit_date": "2020-02-19 00:00:00",
+      "entry_spread": 0.6749999999999989,
+      "exit_spread": 0.05000000000000071,
+      "contracts": 5,
+      "pnl": 3124.999999999991,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-05-08 00:00:00",
+      "exit_date": "2020-05-11 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": 0.07499999999999929,
+      "contracts": 5,
+      "pnl": 3125.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-05-22 00:00:00",
+      "exit_date": "2020-05-26 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 1.3249999999999993,
+      "contracts": 5,
+      "pnl": -2874.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-05-26 00:00:00",
+      "exit_date": "2020-05-27 00:00:00",
+      "entry_spread": 1.3249999999999993,
+      "exit_spread": 0.3249999999999993,
+      "contracts": 5,
+      "pnl": 5000.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-07-06 00:00:00",
+      "exit_date": "2020-07-08 00:00:00",
+      "entry_spread": 0.875,
+      "exit_spread": 0.42499999999999716,
+      "contracts": 5,
+      "pnl": 2250.000000000014,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-07-15 00:00:00",
+      "exit_date": "2020-07-21 00:00:00",
+      "entry_spread": 1.2250000000000014,
+      "exit_spread": 1.6000000000000014,
+      "contracts": 5,
+      "pnl": -1875.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-07-21 00:00:00",
+      "exit_date": "2020-07-22 00:00:00",
+      "entry_spread": 1.6000000000000014,
+      "exit_spread": 0.625,
+      "contracts": 5,
+      "pnl": 4875.000000000007,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-07-22 00:00:00",
+      "exit_date": "2020-07-24 00:00:00",
+      "entry_spread": 0.625,
+      "exit_spread": 0.8000000000000007,
+      "contracts": 5,
+      "pnl": -875.0000000000035,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-07-24 00:00:00",
+      "exit_date": "2020-07-27 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": 1.0749999999999993,
+      "contracts": 5,
+      "pnl": -1374.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-07-27 00:00:00",
+      "exit_date": "2020-07-30 00:00:00",
+      "entry_spread": 1.0749999999999993,
+      "exit_spread": 0.3500000000000014,
+      "contracts": 5,
+      "pnl": 3624.9999999999895,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-08-03 00:00:00",
+      "exit_date": "2020-08-05 00:00:00",
+      "entry_spread": 0.6000000000000014,
+      "exit_spread": 1.375,
+      "contracts": 5,
+      "pnl": -3874.9999999999927,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-08-05 00:00:00",
+      "exit_date": "2020-08-25 00:00:00",
+      "entry_spread": 1.375,
+      "exit_spread": 1.7250000000000014,
+      "contracts": 5,
+      "pnl": -1750.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-08-25 00:00:00",
+      "exit_date": "2020-09-03 00:00:00",
+      "entry_spread": 1.7250000000000014,
+      "exit_spread": 0.17499999999999716,
+      "contracts": 5,
+      "pnl": 7750.000000000021,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-09-11 00:00:00",
+      "exit_date": "2020-09-14 00:00:00",
+      "entry_spread": 0.7250000000000014,
+      "exit_spread": 1.0249999999999986,
+      "contracts": 5,
+      "pnl": -1499.999999999986,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-09-14 00:00:00",
+      "exit_date": "2020-09-21 00:00:00",
+      "entry_spread": 1.0249999999999986,
+      "exit_spread": 0.1750000000000007,
+      "contracts": 5,
+      "pnl": 4249.999999999989,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-09-22 00:00:00",
+      "exit_date": "2020-09-23 00:00:00",
+      "entry_spread": 0.5749999999999993,
+      "exit_spread": 2.799999999999997,
+      "contracts": 5,
+      "pnl": -11124.999999999989,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-09-23 00:00:00",
+      "exit_date": "2020-09-28 00:00:00",
+      "entry_spread": 2.799999999999997,
+      "exit_spread": 3.75,
+      "contracts": 5,
+      "pnl": -4750.000000000015,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-09-28 00:00:00",
+      "exit_date": "2020-09-30 00:00:00",
+      "entry_spread": 3.75,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": 15000.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-09-30 00:00:00",
+      "exit_date": "2020-10-02 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 1.0,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-10-02 00:00:00",
+      "exit_date": "2020-10-05 00:00:00",
+      "entry_spread": 1.0,
+      "exit_spread": 1.4499999999999993,
+      "contracts": 5,
+      "pnl": -2249.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-10-05 00:00:00",
+      "exit_date": "2020-10-07 00:00:00",
+      "entry_spread": 1.4499999999999993,
+      "exit_spread": 0.42499999999999716,
+      "contracts": 5,
+      "pnl": 5125.000000000011,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-10-12 00:00:00",
+      "exit_date": "2020-10-21 00:00:00",
+      "entry_spread": 1.0249999999999986,
+      "exit_spread": -0.7249999999999979,
+      "contracts": 5,
+      "pnl": 8749.999999999982,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-11-11 00:00:00",
+      "exit_date": "2020-11-13 00:00:00",
+      "entry_spread": 1.1500000000000021,
+      "exit_spread": 1.6999999999999993,
+      "contracts": 5,
+      "pnl": -2749.999999999986,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-11-13 00:00:00",
+      "exit_date": "2020-11-18 00:00:00",
+      "entry_spread": 1.6999999999999993,
+      "exit_spread": -0.5,
+      "contracts": 5,
+      "pnl": 10999.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-12-07 00:00:00",
+      "exit_date": "2020-12-11 00:00:00",
+      "entry_spread": 0.8250000000000028,
+      "exit_spread": 0.22500000000000142,
+      "contracts": 5,
+      "pnl": 3000.0000000000073,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-12-15 00:00:00",
+      "exit_date": "2020-12-16 00:00:00",
+      "entry_spread": 0.6499999999999986,
+      "exit_spread": 0.9249999999999972,
+      "contracts": 5,
+      "pnl": -1374.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-12-16 00:00:00",
+      "exit_date": "2020-12-18 00:00:00",
+      "entry_spread": 0.9249999999999972,
+      "exit_spread": 0.27500000000000213,
+      "contracts": 5,
+      "pnl": 3249.999999999975,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-12-21 00:00:00",
+      "exit_date": "2020-12-22 00:00:00",
+      "entry_spread": 1.0249999999999986,
+      "exit_spread": 1.4250000000000007,
+      "contracts": 5,
+      "pnl": -2000.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-12-22 00:00:00",
+      "exit_date": "2020-12-23 00:00:00",
+      "entry_spread": 1.4250000000000007,
+      "exit_spread": 0.15000000000000213,
+      "contracts": 5,
+      "pnl": 6374.999999999993,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2020-12-24 00:00:00",
+      "exit_date": "2020-12-28 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.8000000000000007,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2020-12-28 00:00:00",
+      "exit_date": "2020-12-30 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": -0.05000000000000071,
+      "contracts": 5,
+      "pnl": 4250.000000000007,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-01-13 00:00:00",
+      "exit_date": "2021-01-15 00:00:00",
+      "entry_spread": 0.9250000000000007,
+      "exit_spread": 1.375,
+      "contracts": 5,
+      "pnl": -2249.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-01-15 00:00:00",
+      "exit_date": "2021-01-20 00:00:00",
+      "entry_spread": 1.375,
+      "exit_spread": 0.5249999999999986,
+      "contracts": 5,
+      "pnl": 4250.000000000007,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-01-20 00:00:00",
+      "exit_date": "2021-01-25 00:00:00",
+      "entry_spread": 0.5249999999999986,
+      "exit_spread": 1.125,
+      "contracts": 5,
+      "pnl": -3000.0000000000073,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-01-25 00:00:00",
+      "exit_date": "2021-01-27 00:00:00",
+      "entry_spread": 1.125,
+      "exit_spread": -1.375,
+      "contracts": 5,
+      "pnl": 12500.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-02-02 00:00:00",
+      "exit_date": "2021-02-05 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 1.1742999999999988,
+      "contracts": 5,
+      "pnl": -2121.499999999994,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-02-05 00:00:00",
+      "exit_date": "2021-02-08 00:00:00",
+      "entry_spread": 1.1742999999999988,
+      "exit_spread": 1.7879000000000005,
+      "contracts": 5,
+      "pnl": -3068.0000000000086,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-02-08 00:00:00",
+      "exit_date": "2021-02-19 00:00:00",
+      "entry_spread": 1.7879000000000005,
+      "exit_spread": 0.8500000000000014,
+      "contracts": 5,
+      "pnl": 4689.499999999995,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-02-19 00:00:00",
+      "exit_date": "2021-02-22 00:00:00",
+      "entry_spread": 0.8500000000000014,
+      "exit_spread": 1.3000000000000007,
+      "contracts": 5,
+      "pnl": -2249.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-02-22 00:00:00",
+      "exit_date": "2021-02-24 00:00:00",
+      "entry_spread": 1.3000000000000007,
+      "exit_spread": 0.5094999999999992,
+      "contracts": 5,
+      "pnl": 3952.5000000000077,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-02-24 00:00:00",
+      "exit_date": "2021-02-25 00:00:00",
+      "entry_spread": 0.5094999999999992,
+      "exit_spread": 1.6149999999999984,
+      "contracts": 5,
+      "pnl": -5527.499999999996,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-02-25 00:00:00",
+      "exit_date": "2021-02-26 00:00:00",
+      "entry_spread": 1.6149999999999984,
+      "exit_spread": 0.41939999999999955,
+      "contracts": 5,
+      "pnl": 5977.9999999999945,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-03-10 00:00:00",
+      "exit_date": "2021-03-12 00:00:00",
+      "entry_spread": 0.7952000000000012,
+      "exit_spread": 1.5222000000000016,
+      "contracts": 5,
+      "pnl": -3635.0000000000014,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-03-12 00:00:00",
+      "exit_date": "2021-03-23 00:00:00",
+      "entry_spread": 1.5222000000000016,
+      "exit_spread": 0.6999999999999993,
+      "contracts": 5,
+      "pnl": 4111.000000000011,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-03-23 00:00:00",
+      "exit_date": "2021-03-26 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": 0.9000000000000021,
+      "contracts": 5,
+      "pnl": -1000.0000000000142,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-03-26 00:00:00",
+      "exit_date": "2021-03-31 00:00:00",
+      "entry_spread": 0.9000000000000021,
+      "exit_spread": 0.25,
+      "contracts": 5,
+      "pnl": 3250.0000000000105,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-04-01 00:00:00",
+      "exit_date": "2021-04-05 00:00:00",
+      "entry_spread": 0.5999999999999979,
+      "exit_spread": 0.7749999999999986,
+      "contracts": 5,
+      "pnl": -875.0000000000035,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-04-05 00:00:00",
+      "exit_date": "2021-04-14 00:00:00",
+      "entry_spread": 0.7749999999999986,
+      "exit_spread": 1.001100000000001,
+      "contracts": 5,
+      "pnl": -1130.500000000012,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-04-14 00:00:00",
+      "exit_date": "2021-04-15 00:00:00",
+      "entry_spread": 1.001100000000001,
+      "exit_spread": 1.322700000000001,
+      "contracts": 5,
+      "pnl": -1608.0000000000005,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-04-15 00:00:00",
+      "exit_date": "2021-04-21 00:00:00",
+      "entry_spread": 1.322700000000001,
+      "exit_spread": 0.3999999999999986,
+      "contracts": 5,
+      "pnl": 4613.500000000013,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-04-21 00:00:00",
+      "exit_date": "2021-04-23 00:00:00",
+      "entry_spread": 0.3999999999999986,
+      "exit_spread": 0.6500000000000021,
+      "contracts": 5,
+      "pnl": -1250.0000000000177,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-04-23 00:00:00",
+      "exit_date": "2021-04-27 00:00:00",
+      "entry_spread": 0.6500000000000021,
+      "exit_spread": 0.8999999999999986,
+      "contracts": 5,
+      "pnl": -1249.9999999999823,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-04-27 00:00:00",
+      "exit_date": "2021-05-06 00:00:00",
+      "entry_spread": 0.8999999999999986,
+      "exit_spread": 0.3891999999999989,
+      "contracts": 5,
+      "pnl": 2553.9999999999986,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-05-06 00:00:00",
+      "exit_date": "2021-05-10 00:00:00",
+      "entry_spread": 0.3891999999999989,
+      "exit_spread": 0.08190000000000097,
+      "contracts": 5,
+      "pnl": 1536.4999999999895,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-05-14 00:00:00",
+      "exit_date": "2021-05-18 00:00:00",
+      "entry_spread": 0.46880000000000166,
+      "exit_spread": 0.23120000000000118,
+      "contracts": 5,
+      "pnl": 1188.0000000000023,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-05-21 00:00:00",
+      "exit_date": "2021-05-24 00:00:00",
+      "entry_spread": 0.8999999999999986,
+      "exit_spread": 1.5250000000000021,
+      "contracts": 5,
+      "pnl": -3125.0000000000177,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-05-24 00:00:00",
+      "exit_date": "2021-05-26 00:00:00",
+      "entry_spread": 1.5250000000000021,
+      "exit_spread": 0.375,
+      "contracts": 5,
+      "pnl": 5750.000000000011,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-05-28 00:00:00",
+      "exit_date": "2021-06-10 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 0.9969000000000001,
+      "contracts": 5,
+      "pnl": -1234.5000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-06-10 00:00:00",
+      "exit_date": "2021-06-22 00:00:00",
+      "entry_spread": 0.9969000000000001,
+      "exit_spread": 1.4750000000000014,
+      "contracts": 5,
+      "pnl": -2390.5000000000064,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-06-22 00:00:00",
+      "exit_date": "2021-06-23 00:00:00",
+      "entry_spread": 1.4750000000000014,
+      "exit_spread": 0.5249999999999986,
+      "contracts": 5,
+      "pnl": 4750.000000000015,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-06-23 00:00:00",
+      "exit_date": "2021-06-25 00:00:00",
+      "entry_spread": 0.5249999999999986,
+      "exit_spread": 0.7999999999999972,
+      "contracts": 5,
+      "pnl": -1374.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-06-25 00:00:00",
+      "exit_date": "2021-06-29 00:00:00",
+      "entry_spread": 0.7999999999999972,
+      "exit_spread": 1.2249999999999979,
+      "contracts": 5,
+      "pnl": -2125.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-06-29 00:00:00",
+      "exit_date": "2021-07-08 00:00:00",
+      "entry_spread": 1.2249999999999979,
+      "exit_spread": 0.2700000000000031,
+      "contracts": 5,
+      "pnl": 4774.999999999974,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-07-09 00:00:00",
+      "exit_date": "2021-07-12 00:00:00",
+      "entry_spread": 0.6211999999999982,
+      "exit_spread": 0.8713000000000015,
+      "contracts": 5,
+      "pnl": -1250.5000000000166,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-07-12 00:00:00",
+      "exit_date": "2021-07-14 00:00:00",
+      "entry_spread": 0.8713000000000015,
+      "exit_spread": 1.7779999999999987,
+      "contracts": 5,
+      "pnl": -4533.499999999985,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-07-14 00:00:00",
+      "exit_date": "2021-07-19 00:00:00",
+      "entry_spread": 1.7779999999999987,
+      "exit_spread": -0.48799999999999955,
+      "contracts": 5,
+      "pnl": 11329.99999999999,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-07-20 00:00:00",
+      "exit_date": "2021-07-26 00:00:00",
+      "entry_spread": 1.0688999999999993,
+      "exit_spread": 1.4000000000000021,
+      "contracts": 5,
+      "pnl": -1655.500000000014,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-07-26 00:00:00",
+      "exit_date": "2021-07-28 00:00:00",
+      "entry_spread": 1.4000000000000021,
+      "exit_spread": 0.1750000000000007,
+      "contracts": 5,
+      "pnl": 6125.000000000007,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-07-29 00:00:00",
+      "exit_date": "2021-08-02 00:00:00",
+      "entry_spread": 0.47499999999999787,
+      "exit_spread": 0.7750000000000021,
+      "contracts": 5,
+      "pnl": -1500.0000000000214,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-08-02 00:00:00",
+      "exit_date": "2021-08-03 00:00:00",
+      "entry_spread": 0.7750000000000021,
+      "exit_spread": 1.125,
+      "contracts": 5,
+      "pnl": -1749.9999999999893,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-08-03 00:00:00",
+      "exit_date": "2021-08-11 00:00:00",
+      "entry_spread": 1.125,
+      "exit_spread": 1.4557000000000002,
+      "contracts": 5,
+      "pnl": -1653.5000000000011,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-08-11 00:00:00",
+      "exit_date": "2021-08-16 00:00:00",
+      "entry_spread": 1.4557000000000002,
+      "exit_spread": 1.8959999999999972,
+      "contracts": 5,
+      "pnl": -2201.499999999985,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-08-16 00:00:00",
+      "exit_date": "2021-08-18 00:00:00",
+      "entry_spread": 1.8959999999999972,
+      "exit_spread": -0.07500000000000284,
+      "contracts": 5,
+      "pnl": 9855.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-08-20 00:00:00",
+      "exit_date": "2021-08-24 00:00:00",
+      "entry_spread": 1.0500000000000007,
+      "exit_spread": 0.47499999999999787,
+      "contracts": 5,
+      "pnl": 2875.000000000014,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-08-24 00:00:00",
+      "exit_date": "2021-08-25 00:00:00",
+      "entry_spread": 0.47499999999999787,
+      "exit_spread": 1.0749999999999993,
+      "contracts": 5,
+      "pnl": -3000.0000000000073,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-08-25 00:00:00",
+      "exit_date": "2021-08-26 00:00:00",
+      "entry_spread": 1.0749999999999993,
+      "exit_spread": 0.07500000000000284,
+      "contracts": 5,
+      "pnl": 4999.999999999982,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-08-27 00:00:00",
+      "exit_date": "2021-09-01 00:00:00",
+      "entry_spread": 1.25,
+      "exit_spread": 0.5305,
+      "contracts": 5,
+      "pnl": 3597.5,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-09-01 00:00:00",
+      "exit_date": "2021-09-02 00:00:00",
+      "entry_spread": 0.5305,
+      "exit_spread": 0.7132000000000005,
+      "contracts": 5,
+      "pnl": -913.5000000000026,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-09-02 00:00:00",
+      "exit_date": "2021-09-03 00:00:00",
+      "entry_spread": 0.7132000000000005,
+      "exit_spread": 0.9277999999999977,
+      "contracts": 5,
+      "pnl": -1072.9999999999861,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-09-03 00:00:00",
+      "exit_date": "2021-09-10 00:00:00",
+      "entry_spread": 0.9277999999999977,
+      "exit_spread": 0.2251000000000012,
+      "contracts": 5,
+      "pnl": 3513.4999999999827,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-09-13 00:00:00",
+      "exit_date": "2021-09-17 00:00:00",
+      "entry_spread": 0.5520000000000032,
+      "exit_spread": -0.22499999999999787,
+      "contracts": 5,
+      "pnl": 3885.000000000005,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-09-23 00:00:00",
+      "exit_date": "2021-09-24 00:00:00",
+      "entry_spread": 0.4250000000000007,
+      "exit_spread": 0.8249999999999993,
+      "contracts": 5,
+      "pnl": -1999.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-09-24 00:00:00",
+      "exit_date": "2021-09-27 00:00:00",
+      "entry_spread": 0.8249999999999993,
+      "exit_spread": 1.0999999999999979,
+      "contracts": 5,
+      "pnl": -1374.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-09-27 00:00:00",
+      "exit_date": "2021-09-28 00:00:00",
+      "entry_spread": 1.0999999999999979,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 5499.999999999989,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-10-13 00:00:00",
+      "exit_date": "2021-10-14 00:00:00",
+      "entry_spread": 0.49939999999999785,
+      "exit_spread": 0.7485999999999997,
+      "contracts": 5,
+      "pnl": -1246.0000000000093,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-10-14 00:00:00",
+      "exit_date": "2021-10-15 00:00:00",
+      "entry_spread": 0.7485999999999997,
+      "exit_spread": 0.9772999999999996,
+      "contracts": 5,
+      "pnl": -1143.4999999999995,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-10-15 00:00:00",
+      "exit_date": "2021-10-18 00:00:00",
+      "entry_spread": 0.9772999999999996,
+      "exit_spread": 1.2570000000000014,
+      "contracts": 5,
+      "pnl": -1398.500000000009,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-10-18 00:00:00",
+      "exit_date": "2021-10-25 00:00:00",
+      "entry_spread": 1.2570000000000014,
+      "exit_spread": 1.6999999999999993,
+      "contracts": 5,
+      "pnl": -2214.999999999989,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-10-25 00:00:00",
+      "exit_date": "2021-10-27 00:00:00",
+      "entry_spread": 1.6999999999999993,
+      "exit_spread": 0.375,
+      "contracts": 5,
+      "pnl": 6624.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-10-27 00:00:00",
+      "exit_date": "2021-10-29 00:00:00",
+      "entry_spread": 0.375,
+      "exit_spread": 0.6749999999999972,
+      "contracts": 5,
+      "pnl": -1499.999999999986,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-10-29 00:00:00",
+      "exit_date": "2021-11-01 00:00:00",
+      "entry_spread": 0.6749999999999972,
+      "exit_spread": 1.0750000000000028,
+      "contracts": 5,
+      "pnl": -2000.0000000000284,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-11-01 00:00:00",
+      "exit_date": "2021-11-10 00:00:00",
+      "entry_spread": 1.0750000000000028,
+      "exit_spread": 1.5231999999999992,
+      "contracts": 5,
+      "pnl": -2240.999999999982,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-11-10 00:00:00",
+      "exit_date": "2021-11-15 00:00:00",
+      "entry_spread": 1.5231999999999992,
+      "exit_spread": 3.0238999999999976,
+      "contracts": 5,
+      "pnl": -7503.499999999992,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-11-15 00:00:00",
+      "exit_date": "2021-11-17 00:00:00",
+      "entry_spread": 3.0238999999999976,
+      "exit_spread": 0.8249999999999993,
+      "contracts": 5,
+      "pnl": 10994.49999999999,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-11-17 00:00:00",
+      "exit_date": "2021-11-26 00:00:00",
+      "entry_spread": 0.8249999999999993,
+      "exit_spread": -0.875,
+      "contracts": 5,
+      "pnl": 8499.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-12-07 00:00:00",
+      "exit_date": "2021-12-08 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": -0.4482999999999997,
+      "contracts": 5,
+      "pnl": 6241.500000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-12-15 00:00:00",
+      "exit_date": "2021-12-22 00:00:00",
+      "entry_spread": 1.5741999999999976,
+      "exit_spread": 0.5499999999999972,
+      "contracts": 5,
+      "pnl": 5121.000000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2021-12-22 00:00:00",
+      "exit_date": "2021-12-23 00:00:00",
+      "entry_spread": 0.5499999999999972,
+      "exit_spread": 0.8500000000000014,
+      "contracts": 5,
+      "pnl": -1500.0000000000214,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-12-23 00:00:00",
+      "exit_date": "2021-12-27 00:00:00",
+      "entry_spread": 0.8500000000000014,
+      "exit_spread": 1.5500000000000007,
+      "contracts": 5,
+      "pnl": -3499.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2021-12-27 00:00:00",
+      "exit_date": "2022-01-05 00:00:00",
+      "entry_spread": 1.5500000000000007,
+      "exit_spread": 0.22449999999999903,
+      "contracts": 5,
+      "pnl": 6627.500000000008,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-01-07 00:00:00",
+      "exit_date": "2022-01-13 00:00:00",
+      "entry_spread": 0.597999999999999,
+      "exit_spread": 0.28330000000000055,
+      "contracts": 5,
+      "pnl": 1573.499999999992,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-01-14 00:00:00",
+      "exit_date": "2022-01-18 00:00:00",
+      "entry_spread": 0.5829999999999984,
+      "exit_spread": -0.2947000000000024,
+      "contracts": 5,
+      "pnl": 4388.500000000004,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-02-04 00:00:00",
+      "exit_date": "2022-02-09 00:00:00",
+      "entry_spread": 0.48629999999999995,
+      "exit_spread": 1.0689000000000028,
+      "contracts": 5,
+      "pnl": -2913.0000000000146,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-02-09 00:00:00",
+      "exit_date": "2022-02-11 00:00:00",
+      "entry_spread": 1.0689000000000028,
+      "exit_spread": 0.23600000000000065,
+      "contracts": 5,
+      "pnl": 4164.500000000011,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-03-22 00:00:00",
+      "exit_date": "2022-03-24 00:00:00",
+      "entry_spread": 0.5250000000000021,
+      "exit_spread": 0.8500000000000014,
+      "contracts": 5,
+      "pnl": -1624.9999999999964,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-03-24 00:00:00",
+      "exit_date": "2022-03-28 00:00:00",
+      "entry_spread": 0.8500000000000014,
+      "exit_spread": 1.75,
+      "contracts": 5,
+      "pnl": -4499.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-03-28 00:00:00",
+      "exit_date": "2022-03-30 00:00:00",
+      "entry_spread": 1.75,
+      "exit_spread": 0.40000000000000213,
+      "contracts": 5,
+      "pnl": 6749.999999999989,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-03-31 00:00:00",
+      "exit_date": "2022-04-01 00:00:00",
+      "entry_spread": 0.6499999999999986,
+      "exit_spread": 0.22500000000000142,
+      "contracts": 5,
+      "pnl": 2124.999999999986,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-04-04 00:00:00",
+      "exit_date": "2022-04-11 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 0.22919999999999874,
+      "contracts": 5,
+      "pnl": 2604.0000000000064,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-04-13 00:00:00",
+      "exit_date": "2022-04-20 00:00:00",
+      "entry_spread": 0.664200000000001,
+      "exit_spread": 0.2749999999999986,
+      "contracts": 5,
+      "pnl": 1946.0000000000123,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-06-07 00:00:00",
+      "exit_date": "2022-06-10 00:00:00",
+      "entry_spread": 0.6304999999999978,
+      "exit_spread": 0.11079999999999757,
+      "contracts": 5,
+      "pnl": 2598.5000000000014,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-06-27 00:00:00",
+      "exit_date": "2022-06-29 00:00:00",
+      "entry_spread": 0.5749999999999993,
+      "exit_spread": -0.5,
+      "contracts": 5,
+      "pnl": 5374.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-07-11 00:00:00",
+      "exit_date": "2022-07-12 00:00:00",
+      "entry_spread": 0.8610000000000007,
+      "exit_spread": 0.33789999999999765,
+      "contracts": 5,
+      "pnl": 2615.500000000015,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-07-13 00:00:00",
+      "exit_date": "2022-07-18 00:00:00",
+      "entry_spread": 0.8363999999999976,
+      "exit_spread": 1.1983999999999995,
+      "contracts": 5,
+      "pnl": -1810.0000000000093,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-07-18 00:00:00",
+      "exit_date": "2022-07-20 00:00:00",
+      "entry_spread": 1.1983999999999995,
+      "exit_spread": 0.1750000000000007,
+      "contracts": 5,
+      "pnl": 5116.999999999994,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-07-25 00:00:00",
+      "exit_date": "2022-07-26 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": 0.1750000000000007,
+      "contracts": 5,
+      "pnl": 1875.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-08-03 00:00:00",
+      "exit_date": "2022-08-08 00:00:00",
+      "entry_spread": 0.8633999999999986,
+      "exit_spread": 1.1838999999999977,
+      "contracts": 5,
+      "pnl": -1602.4999999999957,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-08-08 00:00:00",
+      "exit_date": "2022-08-12 00:00:00",
+      "entry_spread": 1.1838999999999977,
+      "exit_spread": 1.5633000000000017,
+      "contracts": 5,
+      "pnl": -1897.0000000000198,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-08-12 00:00:00",
+      "exit_date": "2022-08-17 00:00:00",
+      "entry_spread": 1.5633000000000017,
+      "exit_spread": 0.47499999999999787,
+      "contracts": 5,
+      "pnl": 5441.500000000019,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-08-17 00:00:00",
+      "exit_date": "2022-08-19 00:00:00",
+      "entry_spread": 0.47499999999999787,
+      "exit_spread": 0.6999999999999993,
+      "contracts": 5,
+      "pnl": -1125.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-08-19 00:00:00",
+      "exit_date": "2022-08-26 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": 0.1999999999999993,
+      "contracts": 5,
+      "pnl": 2500.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-08-30 00:00:00",
+      "exit_date": "2022-08-31 00:00:00",
+      "entry_spread": 0.625,
+      "exit_spread": -0.625,
+      "contracts": 5,
+      "pnl": 6250.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-11-02 00:00:00",
+      "exit_date": "2022-11-03 00:00:00",
+      "entry_spread": 0.6975000000000016,
+      "exit_spread": 0.19510000000000005,
+      "contracts": 5,
+      "pnl": 2512.0000000000077,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-11-07 00:00:00",
+      "exit_date": "2022-11-08 00:00:00",
+      "entry_spread": 0.5808999999999997,
+      "exit_spread": 0.7516999999999996,
+      "contracts": 5,
+      "pnl": -853.9999999999992,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-11-08 00:00:00",
+      "exit_date": "2022-11-09 00:00:00",
+      "entry_spread": 0.7516999999999996,
+      "exit_spread": 0.34299999999999997,
+      "contracts": 5,
+      "pnl": 2043.4999999999982,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-11-11 00:00:00",
+      "exit_date": "2022-11-16 00:00:00",
+      "entry_spread": 0.625,
+      "exit_spread": 0.25,
+      "contracts": 5,
+      "pnl": 1875.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-11-22 00:00:00",
+      "exit_date": "2022-11-30 00:00:00",
+      "entry_spread": 0.625,
+      "exit_spread": 0.8500000000000014,
+      "contracts": 5,
+      "pnl": -1125.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-11-30 00:00:00",
+      "exit_date": "2022-12-06 00:00:00",
+      "entry_spread": 0.8500000000000014,
+      "exit_spread": 0.375,
+      "contracts": 5,
+      "pnl": 2375.0000000000073,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2022-12-14 00:00:00",
+      "exit_date": "2022-12-21 00:00:00",
+      "entry_spread": 1.1738,
+      "exit_spread": 1.8000000000000007,
+      "contracts": 5,
+      "pnl": -3131.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2022-12-21 00:00:00",
+      "exit_date": "2022-12-28 00:00:00",
+      "entry_spread": 1.8000000000000007,
+      "exit_spread": -0.05000000000000071,
+      "contracts": 5,
+      "pnl": 9250.000000000007,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-01-06 00:00:00",
+      "exit_date": "2023-01-11 00:00:00",
+      "entry_spread": 0.5706999999999987,
+      "exit_spread": 0.12460000000000093,
+      "contracts": 5,
+      "pnl": 2230.4999999999886,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-01-17 00:00:00",
+      "exit_date": "2023-01-18 00:00:00",
+      "entry_spread": 0.6344999999999992,
+      "exit_spread": -0.875,
+      "contracts": 5,
+      "pnl": 7547.499999999995,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-01-19 00:00:00",
+      "exit_date": "2023-01-25 00:00:00",
+      "entry_spread": 0.5749999999999993,
+      "exit_spread": -0.27500000000000213,
+      "contracts": 5,
+      "pnl": 4250.000000000007,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-02-02 00:00:00",
+      "exit_date": "2023-02-03 00:00:00",
+      "entry_spread": 0.4238999999999997,
+      "exit_spread": 0.16229999999999833,
+      "contracts": 5,
+      "pnl": 1308.0000000000068,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-02-06 00:00:00",
+      "exit_date": "2023-02-08 00:00:00",
+      "entry_spread": 0.5373999999999981,
+      "exit_spread": 1.7226,
+      "contracts": 5,
+      "pnl": -5926.000000000009,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-02-08 00:00:00",
+      "exit_date": "2023-02-15 00:00:00",
+      "entry_spread": 1.7226,
+      "exit_spread": 0.15000000000000213,
+      "contracts": 5,
+      "pnl": 7862.999999999989,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-03-03 00:00:00",
+      "exit_date": "2023-03-10 00:00:00",
+      "entry_spread": 0.4734000000000016,
+      "exit_spread": -0.14419999999999789,
+      "contracts": 5,
+      "pnl": 3087.9999999999973,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-03-27 00:00:00",
+      "exit_date": "2023-03-28 00:00:00",
+      "entry_spread": 1.4249999999999972,
+      "exit_spread": 0.5999999999999979,
+      "contracts": 5,
+      "pnl": 4124.999999999996,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-03-28 00:00:00",
+      "exit_date": "2023-04-03 00:00:00",
+      "entry_spread": 0.5999999999999979,
+      "exit_spread": 0.875,
+      "contracts": 5,
+      "pnl": -1375.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-04-03 00:00:00",
+      "exit_date": "2023-04-05 00:00:00",
+      "entry_spread": 0.875,
+      "exit_spread": -0.45660000000000167,
+      "contracts": 5,
+      "pnl": 6658.000000000008,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-04-06 00:00:00",
+      "exit_date": "2023-04-12 00:00:00",
+      "entry_spread": 0.4531000000000027,
+      "exit_spread": 0.9732000000000021,
+      "contracts": 5,
+      "pnl": -2600.499999999997,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-04-12 00:00:00",
+      "exit_date": "2023-04-17 00:00:00",
+      "entry_spread": 0.9732000000000021,
+      "exit_spread": 1.283999999999999,
+      "contracts": 5,
+      "pnl": -1553.9999999999843,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-04-17 00:00:00",
+      "exit_date": "2023-04-19 00:00:00",
+      "entry_spread": 1.283999999999999,
+      "exit_spread": -0.10000000000000142,
+      "contracts": 5,
+      "pnl": 6920.000000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-04-28 00:00:00",
+      "exit_date": "2023-05-01 00:00:00",
+      "entry_spread": 0.3500000000000014,
+      "exit_spread": 0.5,
+      "contracts": 5,
+      "pnl": -749.999999999993,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-05-01 00:00:00",
+      "exit_date": "2023-05-02 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.22500000000000142,
+      "contracts": 5,
+      "pnl": 1374.999999999993,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-05-03 00:00:00",
+      "exit_date": "2023-05-08 00:00:00",
+      "entry_spread": 1.129100000000001,
+      "exit_spread": 1.6770999999999994,
+      "contracts": 5,
+      "pnl": -2739.9999999999914,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-05-08 00:00:00",
+      "exit_date": "2023-05-10 00:00:00",
+      "entry_spread": 1.6770999999999994,
+      "exit_spread": 0.6495999999999995,
+      "contracts": 5,
+      "pnl": 5137.499999999999,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-05-10 00:00:00",
+      "exit_date": "2023-05-15 00:00:00",
+      "entry_spread": 0.6495999999999995,
+      "exit_spread": 0.8240000000000016,
+      "contracts": 5,
+      "pnl": -872.0000000000106,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-05-15 00:00:00",
+      "exit_date": "2023-06-14 00:00:00",
+      "entry_spread": 0.8240000000000016,
+      "exit_spread": 1.0969999999999995,
+      "contracts": 5,
+      "pnl": -1364.9999999999895,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-06-14 00:00:00",
+      "exit_date": "2023-06-20 00:00:00",
+      "entry_spread": 1.0969999999999995,
+      "exit_spread": 1.5246000000000013,
+      "contracts": 5,
+      "pnl": -2138.0000000000086,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-06-20 00:00:00",
+      "exit_date": "2023-06-21 00:00:00",
+      "entry_spread": 1.5246000000000013,
+      "exit_spread": 0.5249999999999986,
+      "contracts": 5,
+      "pnl": 4998.000000000014,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-06-21 00:00:00",
+      "exit_date": "2023-06-27 00:00:00",
+      "entry_spread": 0.5249999999999986,
+      "exit_spread": 0.6750000000000007,
+      "contracts": 5,
+      "pnl": -750.0000000000107,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-06-27 00:00:00",
+      "exit_date": "2023-07-06 00:00:00",
+      "entry_spread": 0.6750000000000007,
+      "exit_spread": 0.31519999999999904,
+      "contracts": 5,
+      "pnl": 1799.0000000000084,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-07-07 00:00:00",
+      "exit_date": "2023-07-10 00:00:00",
+      "entry_spread": 0.36190000000000033,
+      "exit_spread": 0.6496999999999993,
+      "contracts": 5,
+      "pnl": -1438.9999999999948,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-07-10 00:00:00",
+      "exit_date": "2023-07-12 00:00:00",
+      "entry_spread": 0.6496999999999993,
+      "exit_spread": 0.8566000000000003,
+      "contracts": 5,
+      "pnl": -1034.5000000000048,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-07-12 00:00:00",
+      "exit_date": "2023-07-14 00:00:00",
+      "entry_spread": 0.8566000000000003,
+      "exit_spread": 1.2202000000000002,
+      "contracts": 5,
+      "pnl": -1817.9999999999995,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-07-14 00:00:00",
+      "exit_date": "2023-07-19 00:00:00",
+      "entry_spread": 1.2202000000000002,
+      "exit_spread": 0.40000000000000036,
+      "contracts": 5,
+      "pnl": 4100.999999999999,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-07-19 00:00:00",
+      "exit_date": "2023-07-20 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": 0.1750000000000007,
+      "contracts": 5,
+      "pnl": 1124.9999999999982,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-07-21 00:00:00",
+      "exit_date": "2023-07-25 00:00:00",
+      "entry_spread": 0.625,
+      "exit_spread": 0.8000000000000007,
+      "contracts": 5,
+      "pnl": -875.0000000000035,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-07-25 00:00:00",
+      "exit_date": "2023-07-26 00:00:00",
+      "entry_spread": 0.8000000000000007,
+      "exit_spread": 0.2749999999999986,
+      "contracts": 5,
+      "pnl": 2625.0000000000105,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-07-28 00:00:00",
+      "exit_date": "2023-08-01 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 0.6999999999999993,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-08-01 00:00:00",
+      "exit_date": "2023-08-04 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": 0.28259999999999863,
+      "contracts": 5,
+      "pnl": 2087.000000000003,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-08-09 00:00:00",
+      "exit_date": "2023-08-14 00:00:00",
+      "entry_spread": 0.5780999999999992,
+      "exit_spread": 0.7544000000000004,
+      "contracts": 5,
+      "pnl": -881.5000000000061,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-08-14 00:00:00",
+      "exit_date": "2023-08-16 00:00:00",
+      "entry_spread": 0.7544000000000004,
+      "exit_spread": -0.05000000000000071,
+      "contracts": 5,
+      "pnl": 4022.0000000000055,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-08-23 00:00:00",
+      "exit_date": "2023-08-25 00:00:00",
+      "entry_spread": 0.34999999999999787,
+      "exit_spread": 0.4499999999999993,
+      "contracts": 5,
+      "pnl": -500.0000000000071,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-08-25 00:00:00",
+      "exit_date": "2023-08-28 00:00:00",
+      "entry_spread": 0.4499999999999993,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": -1500.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-08-28 00:00:00",
+      "exit_date": "2023-08-30 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 0.27500000000000036,
+      "contracts": 5,
+      "pnl": 2374.999999999998,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-08-31 00:00:00",
+      "exit_date": "2023-09-01 00:00:00",
+      "entry_spread": 0.3249999999999993,
+      "exit_spread": 0.5500000000000007,
+      "contracts": 5,
+      "pnl": -1125.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-09-01 00:00:00",
+      "exit_date": "2023-09-12 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": 0.23850000000000016,
+      "contracts": 5,
+      "pnl": 1557.5000000000027,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-09-13 00:00:00",
+      "exit_date": "2023-09-20 00:00:00",
+      "entry_spread": 0.8015000000000008,
+      "exit_spread": -0.07500000000000107,
+      "contracts": 5,
+      "pnl": 4382.500000000009,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-10-06 00:00:00",
+      "exit_date": "2023-10-09 00:00:00",
+      "entry_spread": 0.35919999999999774,
+      "exit_spread": -0.028300000000001546,
+      "contracts": 5,
+      "pnl": 1937.4999999999964,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-11-06 00:00:00",
+      "exit_date": "2023-11-10 00:00:00",
+      "entry_spread": 0.34609999999999985,
+      "exit_spread": 0.5259,
+      "contracts": 5,
+      "pnl": -899.0000000000009,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-11-10 00:00:00",
+      "exit_date": "2023-11-16 00:00:00",
+      "entry_spread": 0.5259,
+      "exit_spread": 0.15000000000000036,
+      "contracts": 5,
+      "pnl": 1879.4999999999984,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-11-17 00:00:00",
+      "exit_date": "2023-11-20 00:00:00",
+      "entry_spread": 0.29999999999999893,
+      "exit_spread": 0.5250000000000004,
+      "contracts": 5,
+      "pnl": -1125.000000000007,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-11-20 00:00:00",
+      "exit_date": "2023-12-06 00:00:00",
+      "entry_spread": 0.5250000000000004,
+      "exit_spread": 0.03700000000000081,
+      "contracts": 5,
+      "pnl": 2439.9999999999977,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-12-13 00:00:00",
+      "exit_date": "2023-12-19 00:00:00",
+      "entry_spread": 0.7157,
+      "exit_spread": 1.016,
+      "contracts": 5,
+      "pnl": -1501.5,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2023-12-19 00:00:00",
+      "exit_date": "2023-12-27 00:00:00",
+      "entry_spread": 1.016,
+      "exit_spread": 0.07499999999999929,
+      "contracts": 5,
+      "pnl": 4705.000000000004,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2023-12-29 00:00:00",
+      "exit_date": "2024-01-02 00:00:00",
+      "entry_spread": 0.27500000000000036,
+      "exit_spread": 0.45000000000000107,
+      "contracts": 5,
+      "pnl": -875.0000000000035,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-01-02 00:00:00",
+      "exit_date": "2024-01-08 00:00:00",
+      "entry_spread": 0.45000000000000107,
+      "exit_spread": 0.7225000000000001,
+      "contracts": 5,
+      "pnl": -1362.4999999999955,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-01-08 00:00:00",
+      "exit_date": "2024-01-10 00:00:00",
+      "entry_spread": 0.7225000000000001,
+      "exit_spread": 0.22969999999999935,
+      "contracts": 5,
+      "pnl": 2464.000000000004,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-01-11 00:00:00",
+      "exit_date": "2024-01-17 00:00:00",
+      "entry_spread": 0.29879999999999995,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 1493.9999999999998,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-01-19 00:00:00",
+      "exit_date": "2024-01-22 00:00:00",
+      "entry_spread": 0.3249999999999993,
+      "exit_spread": 0.42499999999999893,
+      "contracts": 5,
+      "pnl": -499.99999999999824,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-01-22 00:00:00",
+      "exit_date": "2024-01-23 00:00:00",
+      "entry_spread": 0.42499999999999893,
+      "exit_spread": 0.625,
+      "contracts": 5,
+      "pnl": -1000.0000000000053,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-01-23 00:00:00",
+      "exit_date": "2024-01-24 00:00:00",
+      "entry_spread": 0.625,
+      "exit_spread": 0.27500000000000036,
+      "contracts": 5,
+      "pnl": 1749.9999999999982,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-01-24 00:00:00",
+      "exit_date": "2024-01-30 00:00:00",
+      "entry_spread": 0.27500000000000036,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": -2374.999999999998,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-01-30 00:00:00",
+      "exit_date": "2024-01-31 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 0.32349999999999923,
+      "contracts": 5,
+      "pnl": 2132.5000000000036,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-01-31 00:00:00",
+      "exit_date": "2024-02-02 00:00:00",
+      "entry_spread": 0.32349999999999923,
+      "exit_spread": 0.07230000000000025,
+      "contracts": 5,
+      "pnl": 1255.999999999995,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-02-06 00:00:00",
+      "exit_date": "2024-02-07 00:00:00",
+      "entry_spread": 0.3270999999999997,
+      "exit_spread": 0.6902999999999988,
+      "contracts": 5,
+      "pnl": -1815.9999999999955,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-02-07 00:00:00",
+      "exit_date": "2024-02-14 00:00:00",
+      "entry_spread": 0.6902999999999988,
+      "exit_spread": -0.25,
+      "contracts": 5,
+      "pnl": 4701.499999999994,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-02-21 00:00:00",
+      "exit_date": "2024-02-26 00:00:00",
+      "entry_spread": 0.32500000000000107,
+      "exit_spread": 0.14999999999999858,
+      "contracts": 5,
+      "pnl": 875.0000000000124,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-03-04 00:00:00",
+      "exit_date": "2024-03-06 00:00:00",
+      "entry_spread": 0.34999999999999964,
+      "exit_spread": -0.0602999999999998,
+      "contracts": 5,
+      "pnl": 2051.4999999999973,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-03-13 00:00:00",
+      "exit_date": "2024-03-14 00:00:00",
+      "entry_spread": 0.30269999999999975,
+      "exit_spread": 0.05799999999999983,
+      "contracts": 5,
+      "pnl": 1223.4999999999995,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-03-19 00:00:00",
+      "exit_date": "2024-03-20 00:00:00",
+      "entry_spread": 0.38019999999999854,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": -1849.0000000000073,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-03-20 00:00:00",
+      "exit_date": "2024-03-25 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 1.0,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-03-25 00:00:00",
+      "exit_date": "2024-03-27 00:00:00",
+      "entry_spread": 1.0,
+      "exit_spread": -0.025000000000000355,
+      "contracts": 5,
+      "pnl": 5125.000000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-04-03 00:00:00",
+      "exit_date": "2024-04-04 00:00:00",
+      "entry_spread": 0.3445999999999998,
+      "exit_spread": -0.04420000000000002,
+      "contracts": 5,
+      "pnl": 1943.999999999999,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-04-10 00:00:00",
+      "exit_date": "2024-04-12 00:00:00",
+      "entry_spread": 0.5328999999999997,
+      "exit_spread": 0.01180000000000092,
+      "contracts": 5,
+      "pnl": 2605.499999999994,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-05-03 00:00:00",
+      "exit_date": "2024-05-07 00:00:00",
+      "entry_spread": 0.5,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": -1250.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-05-07 00:00:00",
+      "exit_date": "2024-05-08 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": -0.1388000000000016,
+      "contracts": 5,
+      "pnl": 4444.000000000008,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-05-15 00:00:00",
+      "exit_date": "2024-05-21 00:00:00",
+      "entry_spread": 0.7460000000000004,
+      "exit_spread": 1.0520999999999994,
+      "contracts": 5,
+      "pnl": -1530.4999999999945,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-05-21 00:00:00",
+      "exit_date": "2024-05-22 00:00:00",
+      "entry_spread": 1.0520999999999994,
+      "exit_spread": 0.3000000000000007,
+      "contracts": 5,
+      "pnl": 3760.499999999993,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-05-22 00:00:00",
+      "exit_date": "2024-05-30 00:00:00",
+      "entry_spread": 0.3000000000000007,
+      "exit_spread": 0.05000000000000071,
+      "contracts": 5,
+      "pnl": 1250.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-06-03 00:00:00",
+      "exit_date": "2024-06-06 00:00:00",
+      "entry_spread": 0.3249999999999993,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": -2125.0000000000036,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-06-06 00:00:00",
+      "exit_date": "2024-06-11 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": -0.1806000000000001,
+      "contracts": 5,
+      "pnl": 4653.000000000001,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-06-13 00:00:00",
+      "exit_date": "2024-06-18 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": 0.875,
+      "contracts": 5,
+      "pnl": -875.0000000000035,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-06-18 00:00:00",
+      "exit_date": "2024-06-27 00:00:00",
+      "entry_spread": 0.875,
+      "exit_spread": 0.40000000000000036,
+      "contracts": 5,
+      "pnl": 2374.999999999998,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-06-27 00:00:00",
+      "exit_date": "2024-07-01 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": 0.5749999999999993,
+      "contracts": 5,
+      "pnl": -874.9999999999947,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-07-01 00:00:00",
+      "exit_date": "2024-07-02 00:00:00",
+      "entry_spread": 0.5749999999999993,
+      "exit_spread": 0.75,
+      "contracts": 5,
+      "pnl": -875.0000000000035,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-07-02 00:00:00",
+      "exit_date": "2024-07-03 00:00:00",
+      "entry_spread": 0.75,
+      "exit_spread": 0.3199000000000005,
+      "contracts": 5,
+      "pnl": 2150.4999999999973,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-07-03 00:00:00",
+      "exit_date": "2024-07-08 00:00:00",
+      "entry_spread": 0.3199000000000005,
+      "exit_spread": 0.4820000000000011,
+      "contracts": 5,
+      "pnl": -810.5000000000028,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-07-08 00:00:00",
+      "exit_date": "2024-07-11 00:00:00",
+      "entry_spread": 0.4820000000000011,
+      "exit_spread": 0.7065999999999999,
+      "contracts": 5,
+      "pnl": -1122.999999999994,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-07-11 00:00:00",
+      "exit_date": "2024-07-15 00:00:00",
+      "entry_spread": 0.7065999999999999,
+      "exit_spread": 0.2881,
+      "contracts": 5,
+      "pnl": 2092.4999999999995,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-07-15 00:00:00",
+      "exit_date": "2024-07-16 00:00:00",
+      "entry_spread": 0.2881,
+      "exit_spread": 0.3907000000000007,
+      "contracts": 5,
+      "pnl": -513.0000000000034,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-07-16 00:00:00",
+      "exit_date": "2024-07-18 00:00:00",
+      "entry_spread": 0.3907000000000007,
+      "exit_spread": -0.09999999999999964,
+      "contracts": 5,
+      "pnl": 2453.500000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-07-22 00:00:00",
+      "exit_date": "2024-07-24 00:00:00",
+      "entry_spread": 0.3249999999999993,
+      "exit_spread": -0.9499999999999993,
+      "contracts": 5,
+      "pnl": 6374.999999999993,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-08-06 00:00:00",
+      "exit_date": "2024-08-07 00:00:00",
+      "entry_spread": 3.75,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 18750.0,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-08-26 00:00:00",
+      "exit_date": "2024-08-28 00:00:00",
+      "entry_spread": 0.5500000000000007,
+      "exit_spread": -0.375,
+      "contracts": 5,
+      "pnl": 4625.000000000004,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-09-23 00:00:00",
+      "exit_date": "2024-09-25 00:00:00",
+      "entry_spread": 0.7250000000000014,
+      "exit_spread": 2.3500000000000014,
+      "contracts": 5,
+      "pnl": -8125.0,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_date": "2024-09-25 00:00:00",
+      "exit_date": "2024-10-01 00:00:00",
+      "entry_spread": 2.3500000000000014,
+      "exit_spread": 0.6999999999999993,
+      "contracts": 5,
+      "pnl": 8250.000000000011,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-10-01 00:00:00",
+      "exit_date": "2024-10-02 00:00:00",
+      "entry_spread": 0.6999999999999993,
+      "exit_spread": -1.0984999999999978,
+      "contracts": 5,
+      "pnl": 8992.499999999985,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-12-05 00:00:00",
+      "exit_date": "2024-12-09 00:00:00",
+      "entry_spread": 0.3531999999999993,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 1765.9999999999964,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-12-10 00:00:00",
+      "exit_date": "2024-12-11 00:00:00",
+      "entry_spread": 0.6523000000000003,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 3261.500000000002,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2024-12-12 00:00:00",
+      "exit_date": "2024-12-13 00:00:00",
+      "entry_spread": 0.9938000000000002,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 4969.000000000001,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2025-01-22 00:00:00",
+      "exit_date": "2025-01-23 00:00:00",
+      "entry_spread": 0.40000000000000036,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 2000.0000000000018,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2025-02-11 00:00:00",
+      "exit_date": "2025-02-12 00:00:00",
+      "entry_spread": 0.6693999999999996,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 3346.9999999999977,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2025-10-29 00:00:00",
+      "exit_date": "2025-10-30 00:00:00",
+      "entry_spread": 2.1866999999999983,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 10933.49999999999,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2025-12-18 00:00:00",
+      "exit_date": "2025-12-22 00:00:00",
+      "entry_spread": 1.4366999999999983,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 7183.499999999992,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_date": "2025-12-30 00:00:00",
+      "exit_date": "2025-12-31 00:00:00",
+      "entry_spread": 0.3735999999999997,
+      "exit_spread": 0.0,
+      "contracts": 5,
+      "pnl": 1867.9999999999986,
+      "exit_reason": "take_profit"
+    }
+  ],
+  "kill_test": {
+    "sharpe_pass": true,
+    "max_dd_pass": true,
+    "return_pass": true,
+    "win_rate_pass": true,
+    "overall_pass": true,
+    "verdict": "PASS"
+  }
+}

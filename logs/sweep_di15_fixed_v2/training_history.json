@@ -1,0 +1,79 @@
+[
+  {
+    "episode": 20,
+    "val_sharpe": -49.150642214516864,
+    "val_mean_reward": -0.001063114481157498,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 0.9424799602085073
+  },
+  {
+    "episode": 40,
+    "val_sharpe": -103.90503068267397,
+    "val_mean_reward": -0.001316048125767326,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 1.1538569761927833
+  },
+  {
+    "episode": 60,
+    "val_sharpe": -80.35564130640023,
+    "val_mean_reward": -0.0010399732506131735,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 1.2265588570653623
+  },
+  {
+    "episode": 80,
+    "val_sharpe": -84.37518854539381,
+    "val_mean_reward": -0.00136945230329085,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 1.2265907756545722
+  },
+  {
+    "episode": 100,
+    "val_sharpe": -62.617136893811384,
+    "val_mean_reward": -0.0009923373300118085,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 0.9985150038971631
+  },
+  {
+    "episode": 120,
+    "val_sharpe": -114.9956905923646,
+    "val_mean_reward": -0.0013159411356555308,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 1.2678906094591238
+  },
+  {
+    "episode": 140,
+    "val_sharpe": -71.1008503472556,
+    "val_mean_reward": -0.0010906289460513956,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 0.935709161777115
+  },
+  {
+    "episode": 160,
+    "val_sharpe": -107.73231371473196,
+    "val_mean_reward": -0.0010889864886093287,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 1.0721238846273828
+  },
+  {
+    "episode": 180,
+    "val_sharpe": -89.8551605441644,
+    "val_mean_reward": -0.0016175588307116215,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 1.149375793118368
+  },
+  {
+    "episode": 200,
+    "val_sharpe": -59.594055867792555,
+    "val_mean_reward": -0.0011218577496097716,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 0.759903487478313
+  },
+  {
+    "episode": 220,
+    "val_sharpe": -72.1945247377287,
+    "val_mean_reward": -0.0014122890704133533,
+    "val_win_rate": 0.0,
+    "val_mean_entropy": 1.0595442252925107
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "episodes": 500,
+  "total_steps": 10500,
+  "elapsed_time": 1015.930144071579,
+  "best_val_sharpe": -2.1531409000565813,
+  "final_metrics": {
+    "val_sharpe": -37.8415946175354,
+    "val_mean_reward": -0.0008532765696617602,
+    "val_win_rate": 0.0
+  }
+}

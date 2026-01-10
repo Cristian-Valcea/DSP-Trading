@@ -1,0 +1,29 @@
+{
+  "data_dir": "/Users/Shared/wsl-export/wsl-home/data/dqn_val",
+  "episodes": 50,
+  "criteria": {
+    "max_drawdown_pct": 15.0,
+    "max_annual_turnover": 250.0,
+    "min_activity_pct": 5.0,
+    "min_sharpe": 0.0
+  },
+  "candidates": [
+    {
+      "name": "/Users/Shared/wsl-export/wsl-home/dsp100k/checkpoints/diagnostic_zero_cost/best_model.pt",
+      "cagr_proxy": -0.058570175980777184,
+      "sharpe_ratio": -509.1882943169506,
+      "activity_pct": 99.52153110047847,
+      "max_drawdown_pct": 1.1663751526005173,
+      "annual_turnover": 3604.07376,
+      "gates_passed": false,
+      "action_distribution": {
+        "0": 0.6399149388623073,
+        "1": 0.008899521531100478,
+        "2": 0.32415736310473153,
+        "3": 0.018926103136629454,
+        "4": 0.00810207336523126
+      }
+    }
+  ],
+  "best_model": null
+}
