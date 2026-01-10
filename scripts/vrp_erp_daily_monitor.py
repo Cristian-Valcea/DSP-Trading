@@ -24,6 +24,9 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Optional, Tuple
 
+import numpy as np
+import pandas as pd
+
 # Add src to path for imports
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
@@ -418,6 +421,42 @@ def get_vol_multiplier() -> float:
     Uses persisted state from VolTargetOverlay. If state doesn't exist,
     returns 1.0 (no scaling).
     """
+    def _compute_from_local_spy() -> float:
+        """
+        Fallback: compute multiplier from local SPY daily parquet.
+
+        This prevents "silent no-vol-target" if orchestrator hasn't written state yet.
+        Matches SPEC_VOL_TARGET_OVERLAY.md v1.0 defaults:
+        - 21 trading day lookback
+        - 10% target vol
+        - bounds [0.25, 1.50]
+        """
+        spy_path = PROJECT_ROOT / "data" / "vrp" / "equities" / "SPY_daily.parquet"
+        if not spy_path.exists():
+            return 1.0
+
+        df = pd.read_parquet(spy_path)
+        if df is None or df.empty or "close" not in df.columns:
+            return 1.0
+
+        closes = df["close"].astype(float).dropna()
+        if len(closes) < 30:
+            return 1.0
+
+        # Use last 21 trading days of log returns
+        log_rets = (closes / closes.shift(1)).apply(lambda x: float("nan") if x <= 0 else np.log(x)).dropna()
+        lookback = log_rets.tail(21)
+        if len(lookback) < 10:
+            return 1.0
+
+        realized_vol = float(lookback.std() * np.sqrt(252)) if lookback.std() and lookback.std() > 0 else 0.0
+        if realized_vol <= 0:
+            return 1.0
+
+        target_vol = 0.10
+        raw = target_vol / realized_vol
+        return float(min(1.50, max(0.25, raw)))
+
     try:
         # Read persisted multiplier directly from state file
         state_path = PROJECT_ROOT / "data" / "vol_target_overlay_state.json"
@@ -428,11 +467,13 @@ def get_vol_multiplier() -> float:
             print(f"📊 Vol-Target Overlay: loaded multiplier {mult:.2f} from state")
             return mult
         else:
-            print("📊 Vol-Target Overlay: no state file, using multiplier 1.0")
-            return 1.0
+            mult = _compute_from_local_spy()
+            print(f"📊 Vol-Target Overlay: no state file, computed multiplier {mult:.2f} from local SPY")
+            return mult
     except Exception as e:
-        print(f"⚠️  Vol-Target Overlay: error loading state ({e}), using 1.0")
-        return 1.0
+        mult = _compute_from_local_spy()
+        print(f"⚠️  Vol-Target Overlay: error loading state ({e}), using local SPY multiplier {mult:.2f}")
+        return mult
 
 
 def main():
