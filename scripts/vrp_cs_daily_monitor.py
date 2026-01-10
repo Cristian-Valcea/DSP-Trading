@@ -350,8 +350,8 @@ def append_to_log(config: PositionConfig, market: MarketData, log_path: Path):
     with open(log_path, 'a') as f:
         if write_header:
             f.write("date,time,vix,vx1,vx2,spread,entry_spread,pnl_usd,")
-            f.write("gate_state,gate_score,contango_pct,days_to_roll,")
-            f.write("stop_loss_hit,take_profit_hit,notes\n")
+            f.write("gate_state,gate_score,contango_pct,days_to_roll,roll_by,")
+            f.write("stop_loss_level,take_profit_level,stop_loss_hit,take_profit_hit,notes\n")
 
         row = [
             date.today().isoformat(),
@@ -366,6 +366,9 @@ def append_to_log(config: PositionConfig, market: MarketData, log_path: Path):
             f"{gate.get('score', 0):.3f}",
             f"{market.contango_pct:.2f}",
             str(roll['days_to_roll']),
+            roll['roll_date'],
+            f"{triggers['stop_loss_level']:.2f}",
+            f"{triggers['take_profit_level']:.2f}",
             str(triggers['stop_loss_hit']),
             str(triggers['take_profit_hit']),
             "",  # notes placeholder

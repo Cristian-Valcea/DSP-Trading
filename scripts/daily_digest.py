@@ -105,17 +105,27 @@ def _compute_vol_mult_from_spy() -> Tuple[float, Optional[float]]:
     return mult, realized_vol
 
 
-def _load_vol_state() -> Tuple[float, str, Optional[float]]:
+def _load_vol_state() -> Tuple[float, str, Optional[float], Optional[int]]:
+    """Returns (multiplier, source, realized_vol, days_since_update)."""
     if VOL_STATE.exists():
         try:
             with open(VOL_STATE, "r", encoding="utf-8") as f:
                 data = json.load(f)
             mult = float(data.get("last_multiplier", 1.0))
-            return mult, "state_file", None
+            # Check staleness
+            days_since = None
+            last_date_str = data.get("last_update_date")
+            if last_date_str:
+                try:
+                    last_date = date.fromisoformat(last_date_str)
+                    days_since = (_today() - last_date).days
+                except Exception:
+                    pass
+            return mult, "state_file", None, days_since
         except Exception:
             pass
     mult, realized = _compute_vol_mult_from_spy()
-    return mult, "computed_spy", realized
+    return mult, "computed_spy", realized, None
 
 
 @dataclass(frozen=True)
@@ -189,10 +199,13 @@ def build_digest(
     lines.append("")
 
     # Vol overlay
-    vol_mult, vol_src, realized_vol = _load_vol_state()
+    vol_mult, vol_src, realized_vol, vol_days_stale = _load_vol_state()
     lines.append("## Vol-Target Overlay")
     if vol_src == "state_file":
-        lines.append(f"- Multiplier: `{vol_mult:.2f}` (from `data/vol_target_overlay_state.json`)")
+        stale_note = ""
+        if vol_days_stale is not None and vol_days_stale > 0:
+            stale_note = f" (last updated {vol_days_stale} days ago)"
+        lines.append(f"- Multiplier: `{vol_mult:.2f}` (from `data/vol_target_overlay_state.json`){stale_note}")
     else:
         rv = f"{realized_vol:.1%}" if realized_vol is not None else "n/a"
         lines.append(f"- Multiplier: `{vol_mult:.2f}` (computed from SPY, realized_vol={rv})")
@@ -246,6 +259,7 @@ def build_digest(
     lines.append("")
 
     # Live account snapshot (optional)
+    snap: Optional[IBKRSnapshot] = None
     if live:
         snap = _ibkr_snapshot(host, port, client_id)
         lines.append("## IBKR Snapshot (live)")
@@ -267,16 +281,28 @@ def build_digest(
     # Alerts (lightweight heuristics)
     lines.append("## Alerts")
     alerts: List[str] = []
+
+    # Stale vol-target state (> 3 days)
+    if vol_days_stale is not None and vol_days_stale > 3:
+        alerts.append(f"Vol-target state is **{vol_days_stale} days stale** — run orchestrator to update")
+
+    # VRP-CS roll proximity
     if vrp_cs is not None:
         roll_by = vrp_cs.get("roll_by", "")
         if roll_by:
             try:
                 rb = date.fromisoformat(roll_by)
                 days = (rb - as_of).days
-                if days <= 1:
-                    alerts.append(f"VRP-CS roll-by is in `{days}` day(s): `{roll_by}`")
+                if days <= 0:
+                    alerts.append(f"🔴 VRP-CS ROLL IS DUE TODAY — execute runbook NOW")
+                elif days <= 1:
+                    alerts.append(f"VRP-CS roll-by is **tomorrow** (`{roll_by}`) — prepare runbook")
+                elif days <= 2:
+                    alerts.append(f"VRP-CS roll-by in `{days}` days (`{roll_by}`) — rehearse runbook")
             except Exception:
                 pass
+
+    # VRP-ERP drift
     if vrp_erp is not None:
         try:
             drift_str = (vrp_erp.get("drift_pct") or "").replace("%", "")
@@ -285,6 +311,20 @@ def build_digest(
                 alerts.append(f"VRP-ERP drift >= 5%: `{vrp_erp.get('drift_pct')}`")
         except Exception:
             pass
+
+    # Unexpected positions (live only)
+    if live and snap is not None and snap.positions:
+        # Expected: DM symbols + SPY + VXM/VX contracts
+        expected_prefixes = set(DM_SYMBOLS + ["SPY", "VXM", "VX"])
+        unexpected = []
+        for sym in snap.positions.keys():
+            if sym not in expected_prefixes and not sym.startswith("VXM") and not sym.startswith("VX"):
+                # Check if it's a known DM symbol variant
+                if sym not in expected_prefixes:
+                    unexpected.append(sym)
+        if unexpected:
+            alerts.append(f"🔴 Unexpected positions detected: `{', '.join(unexpected)}` — may contaminate sleeve results")
+
     if not alerts:
         lines.append("- None")
     else:
