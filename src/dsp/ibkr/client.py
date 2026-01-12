@@ -789,10 +789,16 @@ class IBKRClient:
                 continue
 
             try:
-                tickers = await self._api_call(self._ib.reqTickersAsync, *qualified)
-            except Exception:
-                # Market data can time out (especially outside RTH or without OPRA).
+                # Use longer timeout for bulk option requests (greeks can be slow).
+                result = self._ib.reqTickersAsync(*qualified)
+                tickers = await asyncio.wait_for(result, timeout=30.0)
+            except asyncio.TimeoutError:
+                logger.warning(f"Timeout fetching option quotes for strikes {strike_chunk}")
+                continue
+            except Exception as e:
+                # Market data can fail (especially outside RTH or without OPRA).
                 # Return partial results rather than failing the entire Sleeve C monitor.
+                logger.warning(f"Error fetching option quotes for strikes {strike_chunk}: {e}")
                 continue
             for ticker in tickers or []:
                 c = getattr(ticker, "contract", None)
@@ -827,6 +833,11 @@ class IBKRClient:
 
                 results[strike] = opt
 
+        # Log summary for debugging subscription/timeout issues.
+        with_greeks = sum(1 for o in results.values() if o.delta is not None)
+        logger.info(
+            f"get_option_quotes_bulk: {len(results)} quotes returned, {with_greeks} with greeks"
+        )
         return results
 
     # =========================================================================
