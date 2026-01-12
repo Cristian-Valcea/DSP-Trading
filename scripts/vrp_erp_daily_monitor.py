@@ -482,6 +482,10 @@ def main():
     parser.add_argument('--base', type=float, default=10000, help="Base allocation (default: $10,000)")
     parser.add_argument('--no-log', action='store_true', help="Skip appending to daily log")
     parser.add_argument('--no-vol-target', action='store_true', help="Disable vol-targeting overlay")
+    # Manual value arguments (for non-interactive use, e.g., from UI)
+    parser.add_argument('--vix', type=float, help="Manual VIX spot value")
+    parser.add_argument('--spy', type=float, help="Manual SPY price")
+    parser.add_argument('--shares', type=int, default=0, help="Current SPY shares held")
     args = parser.parse_args()
 
     # Initialize config
@@ -494,10 +498,16 @@ def main():
     # Get vol-targeting multiplier (from shared state with orchestrator)
     vol_mult = 1.0 if args.no_vol_target else get_vol_multiplier()
 
-    # Get market data
+    # Get market data - priority: CLI args > live > interactive prompt
     current_position = SPYPosition()
 
-    if args.live:
+    if args.vix is not None and args.spy is not None:
+        # Manual values provided via CLI
+        print(f"Using provided values: VIX={args.vix}, SPY={args.spy}, Shares={args.shares}")
+        vix, spy_price = args.vix, args.spy
+        current_position.shares = args.shares
+        current_position.current_price = spy_price
+    elif args.live:
         print("Fetching live quotes from IBKR...")
         result = get_live_quotes_ibkr()
         if result:

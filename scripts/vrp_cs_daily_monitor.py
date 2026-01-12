@@ -383,13 +383,28 @@ def main():
     parser.add_argument('--live', action='store_true', help="Fetch live quotes from IBKR")
     parser.add_argument('--config', type=Path, help="Position config JSON file")
     parser.add_argument('--no-log', action='store_true', help="Skip appending to daily log")
+    # Manual value arguments (for non-interactive use, e.g., from UI)
+    parser.add_argument('--vix', type=float, help="Manual VIX spot value")
+    parser.add_argument('--vx1', type=float, help="Manual VX1 (front month) price")
+    parser.add_argument('--vx2', type=float, help="Manual VX2 (back month) price")
+    parser.add_argument('--vvix', type=float, help="Manual VVIX value (optional)")
     args = parser.parse_args()
 
     # Load position config
     config = load_position_config(args.config)
 
-    # Get market data
-    if args.live:
+    # Get market data - priority: CLI args > live > interactive prompt
+    if args.vix is not None and args.vx1 is not None and args.vx2 is not None:
+        # Manual values provided via CLI
+        print(f"Using provided values: VIX={args.vix}, VX1={args.vx1}, VX2={args.vx2}")
+        market = MarketData(
+            vix=args.vix,
+            vx1=args.vx1,
+            vx2=args.vx2,
+            vvix=args.vvix,
+            timestamp=datetime.now()
+        )
+    elif args.live:
         print("Fetching live quotes from IBKR...")
         market = get_live_quotes_ibkr()
         if market is None:
