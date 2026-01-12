@@ -221,15 +221,14 @@ class PutSpreadManager:
         if not strikes:
             return None
 
-        # If we couldn't get a quote (e.g., market closed), estimate from highest strikes
-        # For SPY, valid strikes go up to near spot; use max strike as proxy
+        # If we couldn't get a quote (e.g., market closed), estimate from strike distribution
+        # For liquid ETFs like SPY, the median strike is typically near spot price
         if underlying_px <= 0 and strikes:
-            # Heuristic: max strike is usually near spot for liquid ETFs
-            max_strike = max(strikes)
-            # For puts, likely strikes are 70-99% of spot
-            # Use max_strike as approximate spot (slightly conservative)
-            underlying_px = max_strike
-            logger.info(f"No quote available, estimating underlying from max strike: {underlying_px}")
+            # Use median strike as proxy for spot (more robust than max/min)
+            sorted_strikes = sorted(strikes)
+            median_strike = sorted_strikes[len(sorted_strikes) // 2]
+            underlying_px = median_strike
+            logger.info(f"No quote available, estimating underlying from median strike: {underlying_px}")
 
         if underlying_px > 0:
             if target_delta < 0:  # puts
