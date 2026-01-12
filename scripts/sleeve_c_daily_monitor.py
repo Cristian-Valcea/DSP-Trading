@@ -171,7 +171,14 @@ async def _run_live(args: argparse.Namespace) -> int:
 
         if target is None:
             print("ERROR: Could not construct a candidate spread from IBKR option data.")
-            print("Most common causes: missing OPRA options market data (IBKR error 354), or running outside liquid hours.")
+            print("")
+            print("Common causes:")
+            print("  1. Market closed (weekends/holidays) - IBKR doesn't provide option greeks outside market hours.")
+            print("     → Run this monitor during RTH (9:30 AM - 4:00 PM ET, Mon-Fri).")
+            print("  2. Missing OPRA options market data subscription (IBKR error 354).")
+            print("     → Add 'US Securities Snapshot and Futures Value Bundle' in IBKR Account Management.")
+            print("  3. Competing live session (error 10197) - Another API connection has exclusive data access.")
+            print("     → Close other TWS/Gateway instances or use a different client ID.")
             return 3
 
         print("Suggested next spread (for manual TWS execution):")
