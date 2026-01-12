@@ -106,13 +106,18 @@ async def _run_live(args: argparse.Namespace) -> int:
 
         # Find candidate spread (expiry + strikes + quote-based premium estimate).
         mgr = PutSpreadManager(ib)
-        target = await mgr.find_strikes_by_delta(
-            underlying=sleeve_c.underlying,
-            target_long_delta=sleeve_c.long_delta_target,
-            target_short_delta=sleeve_c.short_delta_target,
-            min_dte=sleeve_c.target_dte_min,
-            max_dte=sleeve_c.target_dte_max,
-        )
+        failure_reason = ""
+        try:
+            target = await mgr.find_strikes_by_delta(
+                underlying=sleeve_c.underlying,
+                target_long_delta=sleeve_c.long_delta_target,
+                target_short_delta=sleeve_c.short_delta_target,
+                min_dte=sleeve_c.target_dte_min,
+                max_dte=sleeve_c.target_dte_max,
+            )
+        except Exception as e:
+            target = None
+            failure_reason = f"exception: {e}"
 
         # Positions (raw, so options don't collide under symbol="SPY").
         positions_raw = await ib.get_positions_raw()
@@ -176,9 +181,31 @@ async def _run_live(args: argparse.Namespace) -> int:
             print("  1. Market closed (weekends/holidays) - IBKR doesn't provide option greeks outside market hours.")
             print("     → Run this monitor during RTH (9:30 AM - 4:00 PM ET, Mon-Fri).")
             print("  2. Missing OPRA options market data subscription (IBKR error 354).")
-            print("     → Add 'US Securities Snapshot and Futures Value Bundle' in IBKR Account Management.")
+            print("     → Market Data Subscriptions → US Options (OPRA).")
             print("  3. Competing live session (error 10197) - Another API connection has exclusive data access.")
             print("     → Close other TWS/Gateway instances or use a different client ID.")
+
+            # Log failure so UI has a fresh status row.
+            log_path = Path(args.log_path)
+            row = {
+                "date": str(today),
+                "time_ny": now_ny.strftime("%H:%M:%S"),
+                "nav": round(nav, 2),
+                "annual_budget_pct": sleeve_c.annual_budget_pct,
+                "underlying": sleeve_c.underlying,
+                "has_legs": int(bool(put_legs)),
+                "min_dte": min_dte if min_dte is not None else "",
+                "needs_roll": int(needs_roll),
+                "suggested_expiry": "",
+                "suggested_long_strike": "",
+                "suggested_short_strike": "",
+                "estimated_debit": "",
+                "suggested_limit_debit": "",
+                "suggested_spreads": "",
+                "max_trade_budget_usd": round(max_trade_budget_usd, 2),
+                "error": failure_reason or "no_candidate_spread",
+            }
+            _append_csv_row(log_path, row)
             return 3
 
         print("Suggested next spread (for manual TWS execution):")
@@ -211,6 +238,7 @@ async def _run_live(args: argparse.Namespace) -> int:
             "suggested_limit_debit": round(float(limit_debit), 4) if limit_debit is not None else "",
             "suggested_spreads": int(contracts),
             "max_trade_budget_usd": round(max_trade_budget_usd, 2),
+            "error": "",
         }
         _append_csv_row(log_path, row)
 

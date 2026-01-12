@@ -40,4 +40,4 @@ Roll when **Min DTE <= 10** (or earlier if liquidity deteriorates):
 ## Known Constraints
 - DSP does **not** place options orders automatically yet.
 - If IBKR does not return greeks/quotes, you likely need an options market data subscription (OPRA).
-
+  - IBKR: Market Data Subscriptions → **US Options (OPRA)**

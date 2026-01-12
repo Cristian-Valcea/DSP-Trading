@@ -132,18 +132,12 @@ class PutSpreadManager:
             # Use the nearest valid expiry
             target_expiry = valid_expiries[0]
 
-            # Find strikes closest to target deltas
-            long_strike = await self._find_strike_by_delta(
+            # Find both strikes from a single bulk quote request (much faster and avoids timeouts)
+            long_strike, short_strike = await self._find_put_spread_strikes_by_delta(
                 underlying=underlying,
                 expiry=target_expiry,
-                target_delta=target_long_delta,
-                chain=chain,
-            )
-
-            short_strike = await self._find_strike_by_delta(
-                underlying=underlying,
-                expiry=target_expiry,
-                target_delta=target_short_delta,
+                target_long_delta=target_long_delta,
+                target_short_delta=target_short_delta,
                 chain=chain,
             )
 
@@ -184,6 +178,84 @@ class PutSpreadManager:
             logger.error(f"Error finding strikes: {e}")
             return None
 
+    async def _find_put_spread_strikes_by_delta(
+        self,
+        underlying: str,
+        expiry: date,
+        target_long_delta: float,
+        target_short_delta: float,
+        chain: OptionChain,
+    ) -> Tuple[Optional[float], Optional[float]]:
+        """
+        Select both put strikes (long 25Δ, short 10Δ) from one bulk quote request.
+
+        This is operationally important: requesting tickers/greeks per-strike is too slow
+        and frequently times out under IBKR. Bulk snapshot requests are more reliable.
+        """
+        # Determine an underlying price proxy (prefer quote; fall back to median strike).
+        try:
+            q = await self.ibkr.get_quote(underlying)
+            underlying_px = q.last or ((q.bid + q.ask) / 2 if (q.bid > 0 and q.ask > 0) else 0.0)
+        except Exception:
+            underlying_px = 0.0
+
+        strikes = list(chain.strikes)
+        if not strikes:
+            return None, None
+
+        if underlying_px <= 0:
+            sorted_strikes = sorted(strikes)
+            underlying_px = sorted_strikes[len(sorted_strikes) // 2]
+            logger.info("No quote available, estimating underlying from median strike: %s", underlying_px)
+
+        # Candidate selection: keep it tight to avoid contract-definition errors and missing greeks.
+        if underlying_px > 0:
+            lo = 0.90 * underlying_px
+            hi = 0.995 * underlying_px
+            strikes = [s for s in strikes if lo <= s <= hi]
+
+        # SPY strikes are typically $5 increments; filter out invalid increments that often fail qualification.
+        if underlying == "SPY":
+            strikes = [s for s in strikes if s % 5 == 0]
+
+        # Cap the request set (bulk snapshot is still not free).
+        strikes.sort(key=lambda s: abs(s - underlying_px))
+        strikes = strikes[:50]
+        strikes.sort()
+
+        quotes = await self.ibkr.get_option_quotes_bulk(
+            underlying=underlying,
+            expiry=expiry,
+            strikes=strikes,
+            right="P",
+            chunk_size=10,
+        )
+
+        if not quotes:
+            return None, None
+
+        # Find closest strikes to target deltas.
+        best_long: Optional[float] = None
+        best_short: Optional[float] = None
+        best_long_diff = float("inf")
+        best_short_diff = float("inf")
+
+        for strike, opt in quotes.items():
+            if opt.delta is None:
+                continue
+            # Long leg is more negative delta (e.g., -0.25), short leg less negative (e.g., -0.10).
+            d_long = abs(opt.delta - target_long_delta)
+            if d_long < best_long_diff:
+                best_long_diff = d_long
+                best_long = strike
+
+            d_short = abs(opt.delta - target_short_delta)
+            if d_short < best_short_diff:
+                best_short_diff = d_short
+                best_short = strike
+
+        return best_long, best_short
+
     async def _find_strike_by_delta(
         self,
         underlying: str,
@@ -203,77 +275,16 @@ class PutSpreadManager:
         Returns:
             Strike price or None
         """
-        best_strike: Optional[float] = None
-        best_delta_diff = float("inf")
-
-        # Contract universe pruning:
-        # - IBKR option chains can have hundreds/thousands of strikes.
-        # - Requesting greeks for every strike is too slow.
-        # We narrow candidates around plausible OTM strikes based on the current underlying price,
-        # then bulk-request tickers for the remaining candidates.
-        try:
-            q = await self.ibkr.get_quote(underlying)
-            underlying_px = q.last or ((q.bid + q.ask) / 2 if (q.bid > 0 and q.ask > 0) else 0.0)
-        except Exception:
-            underlying_px = 0.0
-
-        strikes = list(chain.strikes)
-        if not strikes:
-            return None
-
-        # If we couldn't get a quote (e.g., market closed), estimate from strike distribution
-        # For liquid ETFs like SPY, the median strike is typically near spot price
-        if underlying_px <= 0 and strikes:
-            # Use median strike as proxy for spot (more robust than max/min)
-            sorted_strikes = sorted(strikes)
-            median_strike = sorted_strikes[len(sorted_strikes) // 2]
-            underlying_px = median_strike
-            logger.info(f"No quote available, estimating underlying from median strike: {underlying_px}")
-
-        if underlying_px > 0:
-            if target_delta < 0:  # puts
-                # Keep OTM puts: strikes below spot, not absurdly deep OTM.
-                lo = 0.85 * underlying_px
-                hi = 0.995 * underlying_px
-            else:  # calls (not used for Sleeve C)
-                lo = 1.005 * underlying_px
-                hi = 1.30 * underlying_px
-
-            strikes = [s for s in strikes if lo <= s <= hi]
-
-            # SPY and similar ETFs have $5 strike increments for OTM options.
-            # IBKR chain may include invalid $1 increments; filter to valid ones.
-            # Valid strikes are divisible by 5 (e.g., 580, 585, 590, not 581, 582).
-            if underlying == "SPY":
-                strikes = [s for s in strikes if s % 5 == 0]
-
-            strikes.sort(key=lambda s: abs(s - underlying_px))
-
-            # Tight cap: bulk requests still cost time; 60 is typically enough to bracket deltas.
-            strikes = strikes[:80]
-            strikes.sort()
-        else:
-            # Fallback: still cap to avoid huge chains (no spot price available).
-            strikes = strikes[:80]
-
+        # Back-compat helper kept for potential reuse.
         right = "P" if target_delta < 0 else "C"
-        quotes_by_strike = await self.ibkr.get_option_quotes_bulk(
+        long_strike, short_strike = await self._find_put_spread_strikes_by_delta(
             underlying=underlying,
             expiry=expiry,
-            strikes=strikes,
-            right=right,
-            chunk_size=25,
+            target_long_delta=target_delta if right == "P" else 0.0,
+            target_short_delta=target_delta if right == "P" else 0.0,
+            chain=chain,
         )
-
-        for strike, contract in quotes_by_strike.items():
-            if contract.delta is None:
-                continue
-            delta_diff = abs(contract.delta - target_delta)
-            if delta_diff < best_delta_diff:
-                best_delta_diff = delta_diff
-                best_strike = strike
-
-        return best_strike
+        return long_strike or short_strike
 
     def calculate_contracts(
         self,
