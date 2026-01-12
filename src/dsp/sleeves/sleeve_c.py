@@ -233,7 +233,7 @@ class PutSpreadManager:
         if underlying_px > 0:
             if target_delta < 0:  # puts
                 # Keep OTM puts: strikes below spot, not absurdly deep OTM.
-                lo = 0.70 * underlying_px
+                lo = 0.85 * underlying_px
                 hi = 0.995 * underlying_px
             else:  # calls (not used for Sleeve C)
                 lo = 1.005 * underlying_px
@@ -250,11 +250,11 @@ class PutSpreadManager:
             strikes.sort(key=lambda s: abs(s - underlying_px))
 
             # Tight cap: bulk requests still cost time; 60 is typically enough to bracket deltas.
-            strikes = strikes[:60]
+            strikes = strikes[:80]
             strikes.sort()
         else:
             # Fallback: still cap to avoid huge chains (no spot price available).
-            strikes = strikes[:60]
+            strikes = strikes[:80]
 
         right = "P" if target_delta < 0 else "C"
         quotes_by_strike = await self.ibkr.get_option_quotes_bulk(
@@ -262,7 +262,7 @@ class PutSpreadManager:
             expiry=expiry,
             strikes=strikes,
             right=right,
-            chunk_size=50,
+            chunk_size=25,
         )
 
         for strike, contract in quotes_by_strike.items():

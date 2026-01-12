@@ -780,11 +780,20 @@ class IBKRClient:
                 for s in strike_chunk
             ]
 
-            qualified = await self._api_call(self._ib.qualifyContractsAsync, *contracts)
+            try:
+                qualified = await self._api_call(self._ib.qualifyContractsAsync, *contracts)
+            except Exception:
+                # If a chunk fails qualification (e.g., transient IB issues), skip chunk.
+                continue
             if not qualified:
                 continue
 
-            tickers = await self._api_call(self._ib.reqTickersAsync, *qualified)
+            try:
+                tickers = await self._api_call(self._ib.reqTickersAsync, *qualified)
+            except Exception:
+                # Market data can time out (especially outside RTH or without OPRA).
+                # Return partial results rather than failing the entire Sleeve C monitor.
+                continue
             for ticker in tickers or []:
                 c = getattr(ticker, "contract", None)
                 if c is None:
