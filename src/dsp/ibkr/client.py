@@ -17,7 +17,7 @@ from typing import Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-from ib_insync import IB, Contract, Stock, Option, Order as IBOrder
+from ib_insync import IB, Contract, Stock, Option, Order as IBOrder, Bag, ComboLeg
 from ib_insync import MarketOrder, LimitOrder, util
 
 from .models import (
@@ -886,6 +886,119 @@ class IBKRClient:
         await asyncio.sleep(0.5)
 
         # Return status
+        return OrderStatusInfo(
+            order_id=trade.order.orderId,
+            status=trade.orderStatus.status,
+            filled_quantity=int(trade.orderStatus.filled),
+            remaining_quantity=int(trade.orderStatus.remaining),
+            avg_fill_price=trade.orderStatus.avgFillPrice,
+        )
+
+    async def place_option_spread(
+        self,
+        underlying: str,
+        expiry: date,
+        long_strike: float,
+        short_strike: float,
+        right: str,  # "P" or "C"
+        quantity: int,
+        limit_price: float,
+        action: str = "BUY",  # "BUY" for debit spread, "SELL" to close
+        exchange: str = "SMART",
+    ) -> OrderStatusInfo:
+        """
+        Place a vertical option spread order (combo order).
+
+        For a PUT DEBIT spread (Sleeve C tail hedge):
+        - BUY the higher strike put (long_strike)
+        - SELL the lower strike put (short_strike)
+        - Pay a net debit (limit_price)
+
+        Args:
+            underlying: Underlying symbol (e.g., "SPY")
+            expiry: Expiration date
+            long_strike: Strike to buy (higher for put spread)
+            short_strike: Strike to sell (lower for put spread)
+            right: "P" for put, "C" for call
+            quantity: Number of spreads
+            limit_price: Limit debit per spread (e.g., 3.08 for $308 per spread)
+            action: "BUY" for opening debit spread, "SELL" to close
+            exchange: Exchange (default SMART)
+
+        Returns:
+            OrderStatusInfo with order status
+        """
+        self._ensure_connected()
+
+        expiry_str = expiry.strftime("%Y%m%d")
+
+        # Create and qualify both option contracts to get conIds
+        long_opt = Option(underlying, expiry_str, long_strike, right, exchange)
+        short_opt = Option(underlying, expiry_str, short_strike, right, exchange)
+
+        qualified = await self._api_call(
+            self._ib.qualifyContractsAsync, long_opt, short_opt
+        )
+        if len(qualified) < 2:
+            raise ValueError(
+                f"Could not qualify option contracts: {underlying} {expiry} "
+                f"{long_strike}/{short_strike} {right}"
+            )
+
+        long_contract = qualified[0]
+        short_contract = qualified[1]
+
+        logger.info(
+            f"Qualified option contracts: "
+            f"LONG {long_contract.localSymbol} (conId={long_contract.conId}), "
+            f"SHORT {short_contract.localSymbol} (conId={short_contract.conId})"
+        )
+
+        # Create combo (Bag) contract
+        combo = Bag()
+        combo.symbol = underlying
+        combo.exchange = exchange
+        combo.currency = "USD"
+        combo.comboLegs = [
+            ComboLeg(
+                conId=long_contract.conId,
+                ratio=1,
+                action="BUY" if action == "BUY" else "SELL",
+                exchange=exchange,
+            ),
+            ComboLeg(
+                conId=short_contract.conId,
+                ratio=1,
+                action="SELL" if action == "BUY" else "BUY",
+                exchange=exchange,
+            ),
+        ]
+
+        # Create limit order for the spread
+        # For a debit spread, limit_price is positive (we pay)
+        ib_order = LimitOrder(
+            action=action,
+            totalQuantity=quantity,
+            lmtPrice=limit_price,
+            tif="DAY",
+        )
+
+        logger.info(
+            f"Placing {action} {quantity}x {underlying} {expiry} "
+            f"{long_strike}/{short_strike} {right} spread @ ${limit_price:.2f} limit"
+        )
+
+        # Place combo order
+        trade = self._ib.placeOrder(combo, ib_order)
+
+        # Wait briefly for status update
+        await asyncio.sleep(0.5)
+
+        logger.info(
+            f"Spread order submitted: orderId={trade.order.orderId}, "
+            f"status={trade.orderStatus.status}"
+        )
+
         return OrderStatusInfo(
             order_id=trade.order.orderId,
             status=trade.orderStatus.status,
