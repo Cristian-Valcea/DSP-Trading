@@ -240,6 +240,13 @@ class PutSpreadManager:
                 hi = 1.30 * underlying_px
 
             strikes = [s for s in strikes if lo <= s <= hi]
+
+            # SPY and similar ETFs have $5 strike increments for OTM options.
+            # IBKR chain may include invalid $1 increments; filter to valid ones.
+            # Valid strikes are divisible by 5 (e.g., 580, 585, 590, not 581, 582).
+            if underlying == "SPY":
+                strikes = [s for s in strikes if s % 5 == 0]
+
             strikes.sort(key=lambda s: abs(s - underlying_px))
 
             # Tight cap: bulk requests still cost time; 60 is typically enough to bracket deltas.
