@@ -208,42 +208,50 @@ class PutSpreadManager:
 
         # Contract universe pruning:
         # - IBKR option chains can have hundreds/thousands of strikes.
-        # - Greedily requesting greeks for every strike via reqTickersAsync is too slow.
-        # We narrow candidates around plausible OTM strikes based on the current underlying price.
+        # - Requesting greeks for every strike is too slow.
+        # We narrow candidates around plausible OTM strikes based on the current underlying price,
+        # then bulk-request tickers for the remaining candidates.
         try:
             q = await self.ibkr.get_quote(underlying)
             underlying_px = q.last or ((q.bid + q.ask) / 2 if (q.bid > 0 and q.ask > 0) else 0.0)
         except Exception:
             underlying_px = 0.0
 
-        strikes = chain.strikes
+        strikes = list(chain.strikes)
+        if not strikes:
+            return None
+
         if underlying_px > 0:
             if target_delta < 0:  # puts
-                # Keep OTM puts: strikes below spot, but not absurdly deep OTM.
+                # Keep OTM puts: strikes below spot, not absurdly deep OTM.
                 lo = 0.70 * underlying_px
                 hi = 0.995 * underlying_px
-            else:  # calls (not used for Sleeve C, but keep generic)
+            else:  # calls (not used for Sleeve C)
                 lo = 1.005 * underlying_px
                 hi = 1.30 * underlying_px
 
             strikes = [s for s in strikes if lo <= s <= hi]
-
-            # Bound runtime further: take closest N strikes to spot (most liquid).
             strikes.sort(key=lambda s: abs(s - underlying_px))
-            strikes = strikes[:120]
+
+            # Tight cap: bulk requests still cost time; 60 is typically enough to bracket deltas.
+            strikes = strikes[:60]
             strikes.sort()
+        else:
+            # Fallback: still cap to avoid huge chains (no spot price available).
+            strikes = strikes[:60]
 
-        for strike in strikes:
-            contract = chain.get_contract(strike, expiry, "P")
-            if contract is None:
-                # Fetch individual quote
-                contract = await self.ibkr.get_option_quote(
-                    underlying, strike, expiry, "P"
-                )
+        right = "P" if target_delta < 0 else "C"
+        quotes_by_strike = await self.ibkr.get_option_quotes_bulk(
+            underlying=underlying,
+            expiry=expiry,
+            strikes=strikes,
+            right=right,
+            chunk_size=50,
+        )
 
-            if contract is None or contract.delta is None:
+        for strike, contract in quotes_by_strike.items():
+            if contract.delta is None:
                 continue
-
             delta_diff = abs(contract.delta - target_delta)
             if delta_diff < best_delta_diff:
                 best_delta_diff = delta_diff

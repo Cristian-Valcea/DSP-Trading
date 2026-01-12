@@ -734,6 +734,92 @@ class IBKRClient:
 
         return opt
 
+    async def get_option_quotes_bulk(
+        self,
+        underlying: str,
+        expiry: date,
+        strikes: List[float],
+        right: str,  # "P" or "C"
+        exchange: str = "SMART",
+        chunk_size: int = 50,
+    ) -> Dict[float, OptionContract]:
+        """
+        Bulk fetch quotes + greeks for many option strikes.
+
+        This exists for Sleeve C performance:
+        requesting 100+ strikes one-by-one is too slow and can time out.
+
+        Returns:
+            Dict[strike -> OptionContract] for strikes that successfully return a ticker.
+        """
+        self._ensure_connected()
+
+        if not strikes:
+            return {}
+
+        if right not in ("P", "C"):
+            raise ValueError(f"Invalid right: {right!r} (expected 'P' or 'C')")
+
+        # IB has practical limits on how many contracts you can qualify/request in one go.
+        # Chunking makes this resilient across accounts and machines.
+        results: Dict[float, OptionContract] = {}
+        expiry_str = expiry.strftime("%Y%m%d")
+
+        def _chunks(xs: List[float], n: int) -> List[List[float]]:
+            return [xs[i : i + n] for i in range(0, len(xs), n)]
+
+        for strike_chunk in _chunks(list(strikes), max(1, int(chunk_size))):
+            contracts = [
+                Option(
+                    underlying,
+                    expiry_str,
+                    float(s),
+                    right,
+                    exchange,
+                )
+                for s in strike_chunk
+            ]
+
+            qualified = await self._api_call(self._ib.qualifyContractsAsync, *contracts)
+            if not qualified:
+                continue
+
+            tickers = await self._api_call(self._ib.reqTickersAsync, *qualified)
+            for ticker in tickers or []:
+                c = getattr(ticker, "contract", None)
+                if c is None:
+                    continue
+                strike = float(getattr(c, "strike", 0.0) or 0.0)
+
+                opt = OptionContract(
+                    symbol=underlying,
+                    strike=strike,
+                    expiry=expiry,
+                    right=right,
+                    bid=ticker.bid if ticker.bid and ticker.bid > 0 else None,
+                    ask=ticker.ask if ticker.ask and ticker.ask > 0 else None,
+                    last=ticker.last if ticker.last and ticker.last > 0 else None,
+                )
+
+                if getattr(ticker, "modelGreeks", None):
+                    opt.delta = ticker.modelGreeks.delta
+                    opt.gamma = ticker.modelGreeks.gamma
+                    opt.theta = ticker.modelGreeks.theta
+                    opt.vega = ticker.modelGreeks.vega
+                    opt.implied_vol = ticker.modelGreeks.impliedVol
+                    opt.underlying_price = ticker.modelGreeks.undPrice
+
+                # Do not overwrite a non-null-delta result with a null delta.
+                if strike in results:
+                    if results[strike].delta is not None:
+                        continue
+                    if opt.delta is None:
+                        continue
+
+                results[strike] = opt
+
+        return results
+
     # =========================================================================
     # Order Management
     # =========================================================================
