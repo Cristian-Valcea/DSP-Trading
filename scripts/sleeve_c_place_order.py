@@ -64,12 +64,22 @@ async def place_spread(args: argparse.Namespace) -> int:
         print("Use --dry-run to preview without placing.")
         return 2
 
-    # Confirm with user
-    print("\n⚠️  WARNING: This will place a REAL order.")
-    confirm = input("Type 'YES' to confirm: ")
-    if confirm != "YES":
-        print("Order cancelled.")
-        return 0
+    # Confirmation (supports non-interactive use from the Control UI)
+    if args.confirm == "YES":
+        pass
+    else:
+        if not sys.stdin.isatty():
+            print("\nERROR: Refusing to place a live order without confirmation in a non-interactive session.")
+            print("Use one of:")
+            print("  - --dry-run")
+            print("  - --confirm YES")
+            return 2
+
+        print("\n⚠️  WARNING: This will place a REAL order.")
+        confirm = input("Type 'YES' to confirm: ")
+        if confirm != "YES":
+            print("Order cancelled.")
+            return 0
 
     ib = IBKRClient(host=cfg.ibkr.host, port=cfg.ibkr.port, client_id=cfg.ibkr.client_id)
     if not await ib.connect():
@@ -129,6 +139,12 @@ def main() -> int:
     p.add_argument("--limit", type=float, required=True, help="Limit debit per spread.")
     p.add_argument("--live", action="store_true", help="Place real order (required).")
     p.add_argument("--dry-run", action="store_true", help="Preview without placing order.")
+    p.add_argument(
+        "--confirm",
+        type=str,
+        default="",
+        help="Non-interactive confirmation. Set to YES to place the order without prompting (for UI automation).",
+    )
     args = p.parse_args()
 
     if args.long_strike <= args.short_strike:

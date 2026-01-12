@@ -1,2 +1,4 @@
 date,time,vix,spy_price,regime,target_shares,actual_shares,actual_exposure_usd,avg_cost,fill_price,drift_pct,rebalance_signal,action_taken,notes
 2026-01-10,12:04:53,16.15,689.51,ELEVATED,10,0,0.00,,,100.00%,True,,
+2026-01-10,16:39:31,16.24,595.00,ELEVATED,13,0,0.00,,,100.00%,True,,
+2026-01-12,16:25:43,15.57,590.00,ELEVATED,13,0,0.00,,,100.00%,True,,

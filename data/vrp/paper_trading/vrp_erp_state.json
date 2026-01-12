@@ -1,6 +1,6 @@
 {
   "regime": "ELEVATED",
-  "vix": 16.15,
-  "days_in_regime": 1,
+  "vix": 15.575,
+  "days_in_regime": 3,
   "last_transition_date": "2026-01-10"
 }
