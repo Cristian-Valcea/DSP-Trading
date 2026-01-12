@@ -620,13 +620,22 @@ class IBKRClient:
         """
         self._ensure_connected()
 
-        # Get chain info
+        # First qualify the underlying to get conId (required for reqSecDefOptParams)
+        stock = Stock(underlying, exchange, "USD")
+        qualified = await self._api_call(self._ib.qualifyContractsAsync, stock)
+        if not qualified:
+            logger.warning(f"Could not qualify underlying {underlying}")
+            return OptionChain(underlying=underlying, expirations=[], strikes=[])
+
+        con_id = qualified[0].conId
+
+        # Get chain info with the actual conId
         chains = await self._api_call(
             self._ib.reqSecDefOptParamsAsync,
             underlying,
             "",
             "STK",
-            0,  # No specific conId
+            con_id,  # Use actual conId instead of 0
         )
 
         if not chains:
