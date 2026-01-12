@@ -400,6 +400,42 @@ class IBKRClient:
 
         return result
 
+    async def get_positions_raw(self) -> List[Dict]:
+        """
+        Get all current positions as a raw list with full contract metadata.
+
+        NOTE:
+        - `get_positions()` returns a symbol-keyed dict, which is fine for stocks/ETFs but
+          loses information for derivatives (e.g., multiple SPY option strikes all have symbol="SPY").
+        - This raw form is intended for monitoring/ops tooling (e.g., Sleeve C options) where we
+          need strike/expiry/right/localSymbol/conId.
+        """
+        self._ensure_connected()
+
+        await self._api_call(self._ib.reqPositionsAsync)
+        positions = self._ib.positions()
+
+        raw: List[Dict] = []
+        for pos in positions:
+            c = pos.contract
+            raw.append({
+                "account": pos.account,
+                "secType": getattr(c, "secType", ""),
+                "symbol": getattr(c, "symbol", ""),
+                "localSymbol": getattr(c, "localSymbol", ""),
+                "conId": getattr(c, "conId", 0),
+                "exchange": getattr(c, "exchange", ""),
+                "currency": getattr(c, "currency", ""),
+                "multiplier": getattr(c, "multiplier", ""),
+                "lastTradeDateOrContractMonth": getattr(c, "lastTradeDateOrContractMonth", ""),
+                "strike": float(getattr(c, "strike", 0.0) or 0.0),
+                "right": getattr(c, "right", ""),
+                "position": float(getattr(pos, "position", 0.0) or 0.0),
+                "avgCost": float(getattr(pos, "avgCost", 0.0) or 0.0),
+            })
+
+        return raw
+
     # =========================================================================
     # Market Data
     # =========================================================================

@@ -203,10 +203,37 @@ class PutSpreadManager:
         Returns:
             Strike price or None
         """
-        best_strike = None
-        best_delta_diff = float('inf')
+        best_strike: Optional[float] = None
+        best_delta_diff = float("inf")
 
-        for strike in chain.strikes:
+        # Contract universe pruning:
+        # - IBKR option chains can have hundreds/thousands of strikes.
+        # - Greedily requesting greeks for every strike via reqTickersAsync is too slow.
+        # We narrow candidates around plausible OTM strikes based on the current underlying price.
+        try:
+            q = await self.ibkr.get_quote(underlying)
+            underlying_px = q.last or ((q.bid + q.ask) / 2 if (q.bid > 0 and q.ask > 0) else 0.0)
+        except Exception:
+            underlying_px = 0.0
+
+        strikes = chain.strikes
+        if underlying_px > 0:
+            if target_delta < 0:  # puts
+                # Keep OTM puts: strikes below spot, but not absurdly deep OTM.
+                lo = 0.70 * underlying_px
+                hi = 0.995 * underlying_px
+            else:  # calls (not used for Sleeve C, but keep generic)
+                lo = 1.005 * underlying_px
+                hi = 1.30 * underlying_px
+
+            strikes = [s for s in strikes if lo <= s <= hi]
+
+            # Bound runtime further: take closest N strikes to spot (most liquid).
+            strikes.sort(key=lambda s: abs(s - underlying_px))
+            strikes = strikes[:120]
+            strikes.sort()
+
+        for strike in strikes:
             contract = chain.get_contract(strike, expiry, "P")
             if contract is None:
                 # Fetch individual quote

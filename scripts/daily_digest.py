@@ -40,6 +40,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 DEFAULT_OUT_DIR = PROJECT_ROOT / "data" / "daily_digest"
 VRP_CS_LOG = PROJECT_ROOT / "data" / "vrp" / "paper_trading" / "daily_log.csv"
 VRP_ERP_LOG = PROJECT_ROOT / "data" / "vrp" / "paper_trading" / "vrp_erp_log.csv"
+SLEEVE_C_LOG = PROJECT_ROOT / "data" / "sleeve_c" / "paper_trading" / "sleeve_c_log.csv"
 VOL_STATE = PROJECT_ROOT / "data" / "vol_target_overlay_state.json"
 SPY_DAILY = PROJECT_ROOT / "data" / "vrp" / "equities" / "SPY_daily.parquet"
 VIX_SPOT = PROJECT_ROOT / "data" / "vrp" / "indices" / "VIX_spot.parquet"
@@ -258,6 +259,27 @@ def build_digest(
         )
     lines.append("")
 
+    # Sleeve C (Tail Hedge) status (from paper log)
+    sleeve_c = _read_last_row_csv(SLEEVE_C_LOG)
+    lines.append("## Sleeve C (Tail Hedge — SPY Put Spreads)")
+    if sleeve_c is None:
+        lines.append(f"- No log found at `{SLEEVE_C_LOG}`")
+    else:
+        lines.append(
+            "- "
+            + " | ".join(
+                [
+                    f"Hedge on `{sleeve_c.get('has_legs', 'n/a')}`",
+                    f"Min DTE `{sleeve_c.get('min_dte', 'n/a')}`",
+                    f"Needs roll `{sleeve_c.get('needs_roll', 'n/a')}`",
+                    f"Suggested expiry `{sleeve_c.get('suggested_expiry', 'n/a')}`",
+                    f"Suggested strikes `{sleeve_c.get('suggested_long_strike', 'n/a')}/{sleeve_c.get('suggested_short_strike', 'n/a')}`",
+                    f"Suggested spreads `{sleeve_c.get('suggested_spreads', 'n/a')}`",
+                ]
+            )
+        )
+    lines.append("")
+
     # Live account snapshot (optional)
     snap: Optional[IBKRSnapshot] = None
     if live:
@@ -309,6 +331,15 @@ def build_digest(
             drift = float(drift_str) / 100.0 if drift_str else None
             if drift is not None and drift >= 0.05:
                 alerts.append(f"VRP-ERP drift >= 5%: `{vrp_erp.get('drift_pct')}`")
+        except Exception:
+            pass
+
+    # Sleeve C roll (from its own log)
+    if sleeve_c is not None:
+        try:
+            needs_roll = int(sleeve_c.get("needs_roll") or 0)
+            if needs_roll == 1:
+                alerts.append("🔴 Sleeve C needs roll (DTE <= trigger) — hedge may expire soon")
         except Exception:
             pass
 
@@ -370,4 +401,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
