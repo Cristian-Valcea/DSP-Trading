@@ -179,8 +179,27 @@ def get_manual_quotes() -> Tuple[float, float]:
     return vix, spy_price
 
 
-def get_live_quotes_ibkr() -> Optional[Tuple[float, float, SPYPosition]]:
-    """Fetch live quotes and position from IBKR."""
+def get_vix_from_state() -> Optional[float]:
+    """Try to load VIX from the regime state file (updated by digest/monitor)."""
+    state_path = PROJECT_ROOT / "data" / "vrp" / "paper_trading" / "vrp_erp_state.json"
+    if state_path.exists():
+        try:
+            with open(state_path) as f:
+                data = json.load(f)
+            vix = data.get("vix")
+            if vix and float(vix) > 0:
+                return float(vix)
+        except Exception:
+            pass
+    return None
+
+
+def get_live_quotes_ibkr(non_interactive: bool = False) -> Optional[Tuple[float, float, SPYPosition]]:
+    """Fetch live quotes and position from IBKR.
+
+    Args:
+        non_interactive: If True, avoid prompting for input (use state file for VIX).
+    """
     try:
         from ib_insync import IB, Stock
         import math
@@ -202,30 +221,55 @@ def get_live_quotes_ibkr() -> Optional[Tuple[float, float, SPYPosition]]:
         elif ticker.close and not math.isnan(ticker.close):
             spy_price = ticker.close
 
-        # Get current position
+        # Get current position - aggregate all SPY lots
         positions = ib.positions()
         spy_pos = SPYPosition()
+        total_shares = 0
+        total_cost = 0.0
         for pos in positions:
-            if pos.contract.symbol == 'SPY':
-                spy_pos.shares = int(pos.position)
-                spy_pos.avg_cost = pos.avgCost
-                if spy_price:
-                    spy_pos.current_price = spy_price
-                break
+            if pos.contract.symbol == 'SPY' and pos.contract.secType == 'STK':
+                shares = int(pos.position)
+                total_shares += shares
+                # Weighted average cost calculation
+                if shares != 0:
+                    total_cost += shares * pos.avgCost
+        spy_pos.shares = total_shares
+        if total_shares != 0:
+            spy_pos.avg_cost = total_cost / total_shares
+        if spy_price:
+            spy_pos.current_price = spy_price
 
         ib.disconnect()
 
-        # If no valid price, fall back to manual entry
+        # If no valid price, fall back to manual entry or state
         if spy_price is None or math.isnan(spy_price):
             print("\n⚠️  Market closed - no live SPY quote available.")
             print(f"SPY Position: {spy_pos.shares} shares")
+            if non_interactive:
+                print("❌ Cannot proceed in non-interactive mode without SPY price.")
+                return None
             print("\n--- Enter Current Market Data ---")
             spy_price = float(input("SPY Price (check Yahoo Finance): "))
             vix = float(input("VIX Spot: "))
         else:
             print(f"\nSPY Price: ${spy_price:.2f}")
             print(f"SPY Position: {spy_pos.shares} shares")
-            vix = float(input("Enter current VIX: "))
+
+            # Try to get VIX from state file first (for non-interactive mode)
+            state_vix = get_vix_from_state()
+            if non_interactive:
+                if state_vix:
+                    print(f"VIX (from state): {state_vix:.2f}")
+                    vix = state_vix
+                else:
+                    print("❌ Cannot proceed in non-interactive mode without VIX in state file.")
+                    return None
+            else:
+                if state_vix:
+                    vix_input = input(f"Enter current VIX [{state_vix:.2f}]: ").strip()
+                    vix = float(vix_input) if vix_input else state_vix
+                else:
+                    vix = float(input("Enter current VIX: "))
 
         spy_pos.current_price = spy_price
         return vix, spy_price, spy_pos
@@ -482,6 +526,7 @@ def main():
     parser.add_argument('--base', type=float, default=10000, help="Base allocation (default: $10,000)")
     parser.add_argument('--no-log', action='store_true', help="Skip appending to daily log")
     parser.add_argument('--no-vol-target', action='store_true', help="Disable vol-targeting overlay")
+    parser.add_argument('--non-interactive', action='store_true', help="Non-interactive mode (use state file for VIX, fail if unavailable)")
     # Manual value arguments (for non-interactive use, e.g., from UI)
     parser.add_argument('--vix', type=float, help="Manual VIX spot value")
     parser.add_argument('--spy', type=float, help="Manual SPY price")
@@ -509,14 +554,20 @@ def main():
         current_position.current_price = spy_price
     elif args.live:
         print("Fetching live quotes from IBKR...")
-        result = get_live_quotes_ibkr()
+        result = get_live_quotes_ibkr(non_interactive=args.non_interactive)
         if result:
             vix, spy_price, current_position = result
         else:
+            if args.non_interactive:
+                print("❌ Failed to get live quotes in non-interactive mode. Exiting.")
+                sys.exit(1)
             print("Failed to get live quotes. Falling back to manual entry.")
             vix, spy_price = get_manual_quotes()
             current_position.shares = int(input("Current SPY shares (0 if none): ") or "0")
     else:
+        if args.non_interactive:
+            print("❌ Non-interactive mode requires --live or explicit --vix/--spy values.")
+            sys.exit(1)
         vix, spy_price = get_manual_quotes()
         current_position.shares = int(input("Current SPY shares (0 if none): ") or "0")
 
