@@ -24,35 +24,45 @@
 
 ## 2. ROLL EXECUTION (Combo Order Method)
 
-### Option A: Single Combo Ticket (PREFERRED)
+### Option A: Two Combo Tickets (PREFERRED, 2 orders)
 
 ```
 TWS → Trading → Combo/Strategy → Futures Calendar Spread
 
+Step 1 — CLOSE old spread (VXMF6/VXMG6):
+1. Select: VXM
+2. Near Month: Jan 2026 (VXMF6) — BUY
+3. Far Month: Feb 2026 (VXMG6) — SELL
+4. Action: SELL 1 spread (buys F6, sells G6)
+5. Order Type: LMT
+6. Limit: Current spread ± 0.05 (be patient)
+7. Submit → wait for fill
+
+Step 2 — OPEN new spread (VXMG6/VXMH6):
 1. Select: VXM
 2. Near Month: Feb 2026 (VXMG6) — SELL
 3. Far Month: Mar 2026 (VXMH6) — BUY
-4. Action: BUY 1 spread (buys H6, sells G6)
+4. Action: BUY 1 spread (sells G6, buys H6)
 5. Order Type: LMT
 6. Limit: Current spread ± 0.05 (be patient)
 7. Submit → wait for fill
 ```
 
-This **closes old back month (G6) and opens new back month (H6)** in one atomic order.
+This produces the correct target position: **-1 VXMG6, +1 VXMH6**.
 
-**Old F6 position**: Close separately with `BUY to cover 1 VXMF6` (front month short).
-
-### Option B: Two Separate Combos (If Option A fails)
+### Option B: Explicit Legs (If combos fail)
 
 **Step 1 — Close old spread**:
 ```
-SELL 1 spread: SELL VXMG6, BUY VXMF6
+BUY 1 VXMF6 (close short)
+SELL 1 VXMG6 (close long)
 Order Type: LMT at current spread ± 0.05
 ```
 
 **Step 2 — Open new spread** (only if gate OPEN, contango > 0.50):
 ```
-BUY 1 spread: BUY VXMH6, SELL VXMG6
+SELL 1 VXMG6 (open new short)
+BUY 1 VXMH6 (open new long)
 Order Type: LMT at current spread ± 0.05
 ```
 

@@ -80,6 +80,9 @@ class MarketData:
 
 def load_position_config(config_path: Optional[Path] = None) -> PositionConfig:
     """Load position config from file or use defaults."""
+    default_path = PROJECT_ROOT / "data" / "vrp" / "paper_trading" / "position_config.json"
+    config_path = config_path or default_path
+
     if config_path and config_path.exists():
         with open(config_path) as f:
             data = json.load(f)
@@ -381,7 +384,7 @@ def append_to_log(config: PositionConfig, market: MarketData, log_path: Path):
 def main():
     parser = argparse.ArgumentParser(description="VRP-CS Daily Position Monitor")
     parser.add_argument('--live', action='store_true', help="Fetch live quotes from IBKR")
-    parser.add_argument('--config', type=Path, help="Position config JSON file")
+    parser.add_argument('--config', type=Path, help="Position config JSON file (default: data/vrp/paper_trading/position_config.json)")
     parser.add_argument('--no-log', action='store_true', help="Skip appending to daily log")
     # Manual value arguments (for non-interactive use, e.g., from UI)
     parser.add_argument('--vix', type=float, help="Manual VIX spot value")

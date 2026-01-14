@@ -1,0 +1,6 @@
+ts_iso,action,mode,details_json
+2026-01-14T16:51:51,roll,live,{"close_order_id": 13, "close_status": "PendingSubmit", "from": "VXMF6/VXMG6", "open_order_id": 18, "open_status": "PendingSubmit", "to": "VXMG6/VXMH6"}
+2026-01-14T16:58:31,open,live,{"order_id": 29, "status": "Submitted"}
+2026-01-14T17:01:15,open,live,{"order_id": 40, "status": "Submitted"}
+2026-01-14T17:02:00,open,live,{"order_id": 11, "status": "Submitted"}
+2026-01-14T17:03:18,open,live,{"order_id": 11200, "status": "Submitted"}
