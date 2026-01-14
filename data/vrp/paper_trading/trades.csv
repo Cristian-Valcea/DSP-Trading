@@ -4,3 +4,4 @@ ts_iso,action,mode,details_json
 2026-01-14T17:01:15,open,live,{"order_id": 40, "status": "Submitted"}
 2026-01-14T17:02:00,open,live,{"order_id": 11, "status": "Submitted"}
 2026-01-14T17:03:18,open,live,{"order_id": 11200, "status": "Submitted"}
+2026-01-14T17:13:24,close,live,{"order_id": 49, "status": "PendingSubmit"}

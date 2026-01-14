@@ -212,6 +212,50 @@ def check_exit_triggers(config: PositionConfig, market: MarketData) -> dict:
     }
 
 
+def auto_execute_close(config: PositionConfig, reason: str) -> bool:
+    """Auto-execute close with MKT order when trigger hit.
+
+    Returns True if order submitted successfully.
+    """
+    import subprocess
+
+    print("\n" + "!" * 60)
+    print(f"  AUTO-EXECUTING CLOSE: {reason}")
+    print("!" * 60)
+
+    # Build command for vrp_cs_trade.py close with MKT order
+    cmd = [
+        "python", str(PROJECT_ROOT / "scripts" / "vrp_cs_trade.py"),
+        "close",
+        "--live",
+        "--confirm", "YES",
+        "--order-type", "MKT",  # MARKET order for immediate fill
+        "--override-checks",    # Don't block on position mismatch
+    ]
+
+    print(f"Executing: {' '.join(cmd)}")
+    print()
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        print(result.stdout)
+        if result.stderr:
+            print(f"STDERR: {result.stderr}")
+
+        if result.returncode == 0:
+            print("\n✅ AUTO-CLOSE ORDER SUBMITTED SUCCESSFULLY")
+            return True
+        else:
+            print(f"\n❌ AUTO-CLOSE FAILED (exit code {result.returncode})")
+            return False
+    except subprocess.TimeoutExpired:
+        print("\n❌ AUTO-CLOSE TIMED OUT (30s)")
+        return False
+    except Exception as e:
+        print(f"\n❌ AUTO-CLOSE ERROR: {e}")
+        return False
+
+
 def check_roll_status(config: PositionConfig) -> dict:
     """Check roll timing."""
     today = date.today()
@@ -404,6 +448,9 @@ def main():
     parser.add_argument('--vx1', type=float, help="Manual VX1 (front month) price")
     parser.add_argument('--vx2', type=float, help="Manual VX2 (back month) price")
     parser.add_argument('--vvix', type=float, help="Manual VVIX value (optional)")
+    # Auto-execution on trigger
+    parser.add_argument('--auto-exit', action='store_true',
+                        help="Auto-execute MKT close order when stop-loss or take-profit triggers hit")
     args = parser.parse_args()
 
     # Load position config
@@ -431,6 +478,18 @@ def main():
 
     # Print report
     print_report(config, market)
+
+    # Check triggers for auto-exit
+    triggers = check_exit_triggers(config, market)
+
+    # Auto-execute close if trigger hit and --auto-exit enabled
+    if args.auto_exit:
+        if triggers['stop_loss_hit']:
+            auto_execute_close(config, "STOP-LOSS HIT")
+        elif triggers['take_profit_hit']:
+            auto_execute_close(config, "TAKE-PROFIT HIT")
+        else:
+            print("\n[auto-exit] No triggers hit - position maintained")
 
     # Append to daily log
     if not args.no_log:

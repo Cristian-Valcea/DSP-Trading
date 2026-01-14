@@ -133,7 +133,8 @@ def _load_vol_state() -> Tuple[float, str, Optional[float], Optional[int]]:
 class IBKRSnapshot:
     nlv: Optional[float]
     cash: Optional[float]
-    positions: Dict[str, Dict[str, float]]  # symbol -> {position, avg_cost, market_price, market_value}
+    positions: Dict[str, Dict[str, float]]  # key -> {position, avg_cost, ...}
+    # Key format: "SYMBOL" for STK, "SYMBOL_STRIKE_RIGHT_EXPIRY" for OPT, localSymbol for FUT
 
 
 def _ibkr_snapshot(host: str, port: int, client_id: int) -> IBKRSnapshot:
@@ -156,13 +157,37 @@ def _ibkr_snapshot(host: str, port: int, client_id: int) -> IBKRSnapshot:
 
         positions: Dict[str, Dict[str, float]] = {}
         for p in ib.positions():
-            sym = getattr(p.contract, "symbol", "") or getattr(p.contract, "localSymbol", "")
-            if not sym:
+            contract = p.contract
+            sym = getattr(contract, "symbol", "") or ""
+            sec_type = getattr(contract, "secType", "") or ""
+            local_sym = getattr(contract, "localSymbol", "") or ""
+
+            # Build a unique key based on security type
+            if sec_type == "OPT":
+                # Option: include strike, right, expiry for uniqueness
+                strike = getattr(contract, "strike", 0.0) or 0.0
+                right = getattr(contract, "right", "") or ""
+                expiry = getattr(contract, "lastTradeDateOrContractMonth", "") or ""
+                key = f"{sym}_{sec_type}_{strike}_{right}_{expiry}"
+            elif sec_type == "FUT":
+                # Futures: use localSymbol for proper identification (e.g., VXMF6, VXMG6)
+                key = local_sym if local_sym else f"{sym}_{sec_type}"
+            else:
+                # STK/ETF: use symbol directly
+                key = sym
+
+            if not key:
                 continue
-            # keep STK/ETF positions by symbol; keep VXM/VX by localSymbol prefix
-            positions[sym] = {
+
+            positions[key] = {
                 "position": float(p.position),
                 "avg_cost": float(getattr(p, "avgCost", 0.0) or 0.0),
+                "symbol": sym,
+                "sec_type": sec_type,
+                "local_symbol": local_sym,
+                "strike": float(getattr(contract, "strike", 0.0) or 0.0),
+                "right": getattr(contract, "right", "") or "",
+                "expiry": getattr(contract, "lastTradeDateOrContractMonth", "") or "",
             }
         return IBKRSnapshot(nlv=nlv, cash=cash, positions=positions)
     finally:
@@ -185,6 +210,17 @@ def _digest_path(out_dir: Path, as_of: date) -> Path:
     return out_dir / f"digest_{as_of.isoformat()}.md"
 
 
+def _get_spy_stock_position(snap: Optional["IBKRSnapshot"]) -> Optional[float]:
+    """Extract SPY stock (STK) position from IBKR snapshot, ignoring options."""
+    if snap is None or not snap.positions:
+        return None
+    # Look for SPY with secType STK (key is just "SPY" for stocks)
+    for key, p in snap.positions.items():
+        if p.get("symbol") == "SPY" and p.get("sec_type", "") in ("", "STK"):
+            return float(p.get("position", 0.0))
+    return None
+
+
 def build_digest(
     *,
     as_of: date,
@@ -198,6 +234,11 @@ def build_digest(
     lines.append("")
     lines.append(f"Generated: `{datetime.now().isoformat(timespec='seconds')}`")
     lines.append("")
+
+    # Fetch IBKR snapshot early so it can be used in sleeve sections
+    snap: Optional[IBKRSnapshot] = None
+    if live:
+        snap = _ibkr_snapshot(host, port, client_id)
 
     # Vol overlay
     vol_mult, vol_src, realized_vol, vol_days_stale = _load_vol_state()
@@ -228,7 +269,8 @@ def build_digest(
     else:
         # The monitor script logs key fields; display what exists.
         entry = vrp_cs.get("entry_spread", "") or vrp_cs.get("entry_spread_points", "")
-        cur = vrp_cs.get("current_spread", "") or vrp_cs.get("current_spread_points", "")
+        # Current spread can be in "spread", "current_spread", or "current_spread_points"
+        cur = vrp_cs.get("spread", "") or vrp_cs.get("current_spread", "") or vrp_cs.get("current_spread_points", "")
         pnl = vrp_cs.get("pnl", "") or vrp_cs.get("pnl_usd", "")
         roll_by = vrp_cs.get("roll_by", "")
         gate = vrp_cs.get("gate_state", "")
@@ -239,12 +281,33 @@ def build_digest(
             lines.append(f"- Gate: `{gate}`")
     lines.append("")
 
-    # VRP-ERP status (from paper log)
+    # VRP-ERP status (from paper log, enriched with live position if available)
     vrp_erp = _read_last_row_csv(VRP_ERP_LOG)
     lines.append("## Sleeve VRP-ERP (VIX-gated SPY)")
     if vrp_erp is None:
         lines.append(f"- No log found at `{VRP_ERP_LOG}`")
     else:
+        # Get actual SPY shares from live IBKR if available
+        actual_shares_str = vrp_erp.get('actual_shares', 'n/a')
+        drift_str = vrp_erp.get('drift_pct', 'n/a')
+
+        if live and snap is not None:
+            live_spy = _get_spy_stock_position(snap)
+            if live_spy is not None:
+                actual_shares_str = f"{live_spy:.0f}"
+                # Recalculate drift if we have target
+                try:
+                    target = float(vrp_erp.get('target_shares', 0))
+                    if target > 0:
+                        drift = abs(live_spy - target) / target
+                        drift_str = f"{drift:.1%}"
+                    elif live_spy != 0:
+                        drift_str = "100.0%"  # Position but no target
+                    else:
+                        drift_str = "0.0%"  # No position, no target
+                except (ValueError, TypeError):
+                    pass
+
         lines.append(
             "- "
             + " | ".join(
@@ -252,8 +315,8 @@ def build_digest(
                     f"VIX `{vrp_erp.get('vix', 'n/a')}`",
                     f"Regime `{vrp_erp.get('regime', 'n/a')}`",
                     f"Target `{vrp_erp.get('target_shares', 'n/a')}`",
-                    f"Actual `{vrp_erp.get('actual_shares', 'n/a')}`",
-                    f"Drift `{vrp_erp.get('drift_pct', 'n/a')}`",
+                    f"Actual `{actual_shares_str}`" + (" (live)" if live and snap else ""),
+                    f"Drift `{drift_str}`",
                 ]
             )
         )
@@ -280,22 +343,69 @@ def build_digest(
         )
     lines.append("")
 
-    # Live account snapshot (optional)
-    snap: Optional[IBKRSnapshot] = None
-    if live:
-        snap = _ibkr_snapshot(host, port, client_id)
+    # Live account snapshot (already fetched earlier if live=True)
+    if live and snap is not None:
         lines.append("## IBKR Snapshot (live)")
         lines.append(f"- Net Liquidation: `{_fmt_money(snap.nlv)}`")
         lines.append(f"- Total Cash: `{_fmt_money(snap.cash)}`")
         if snap.positions:
             lines.append("")
             lines.append("### Positions (selected)")
-            # DM holdings + SPY + any VX/VXM contracts if present
-            want = set(DM_SYMBOLS + ["SPY"])
-            for sym in sorted(snap.positions.keys()):
-                if sym in want or sym.startswith("VX") or sym.startswith("VXM"):
-                    p = snap.positions[sym]
-                    lines.append(f"- `{sym}`: pos `{p.get('position', 0.0)}` avg_cost `{p.get('avg_cost', 0.0):.2f}`")
+
+            # Group positions by type for cleaner display
+            stocks: List[Tuple[str, dict]] = []
+            options: List[Tuple[str, dict]] = []
+            futures: List[Tuple[str, dict]] = []
+
+            want_symbols = set(DM_SYMBOLS + ["SPY"])
+            for key, p in sorted(snap.positions.items()):
+                sym = p.get("symbol", key)
+                sec_type = p.get("sec_type", "")
+                # Filter: DM symbols, SPY, or VX/VXM futures
+                if sym not in want_symbols and not sym.startswith("VX"):
+                    continue
+
+                if sec_type == "OPT":
+                    options.append((key, p))
+                elif sec_type == "FUT":
+                    futures.append((key, p))
+                else:
+                    stocks.append((key, p))
+
+            # Display stocks/ETFs
+            if stocks:
+                lines.append("")
+                lines.append("**Stocks/ETFs:**")
+                for key, p in stocks:
+                    sym = p.get("symbol", key)
+                    pos = p.get("position", 0.0)
+                    avg = p.get("avg_cost", 0.0)
+                    lines.append(f"- `{sym}`: pos `{pos:.0f}` @ `${avg:.2f}`")
+
+            # Display options
+            if options:
+                lines.append("")
+                lines.append("**Options:**")
+                for key, p in options:
+                    sym = p.get("symbol", "")
+                    strike = p.get("strike", 0.0)
+                    right = p.get("right", "")
+                    expiry = p.get("expiry", "")
+                    pos = p.get("position", 0.0)
+                    avg = p.get("avg_cost", 0.0)
+                    right_str = "Put" if right == "P" else "Call" if right == "C" else right
+                    lines.append(f"- `{sym} {strike:.0f} {right_str} {expiry}`: pos `{pos:.0f}` @ `${avg:.2f}`")
+
+            # Display futures
+            if futures:
+                lines.append("")
+                lines.append("**Futures:**")
+                for key, p in futures:
+                    local_sym = p.get("local_symbol", key)
+                    pos = p.get("position", 0.0)
+                    avg = p.get("avg_cost", 0.0)
+                    lines.append(f"- `{local_sym}`: pos `{pos:.0f}` @ `${avg:.2f}`")
+
         else:
             lines.append("- Positions: `n/a`")
         lines.append("")
@@ -324,13 +434,24 @@ def build_digest(
             except Exception:
                 pass
 
-    # VRP-ERP drift
+    # VRP-ERP drift (use live position if available)
     if vrp_erp is not None:
         try:
-            drift_str = (vrp_erp.get("drift_pct") or "").replace("%", "")
-            drift = float(drift_str) / 100.0 if drift_str else None
+            drift = None
+            drift_display = ""
+            if live and snap is not None:
+                live_spy = _get_spy_stock_position(snap)
+                target = float(vrp_erp.get('target_shares', 0) or 0)
+                if live_spy is not None and target > 0:
+                    drift = abs(live_spy - target) / target
+                    drift_display = f"{drift:.1%} (live: {live_spy:.0f} vs target: {target:.0f})"
+            if drift is None:
+                # Fall back to log file
+                drift_str = (vrp_erp.get("drift_pct") or "").replace("%", "")
+                drift = float(drift_str) / 100.0 if drift_str else None
+                drift_display = vrp_erp.get('drift_pct', '')
             if drift is not None and drift >= 0.05:
-                alerts.append(f"VRP-ERP drift >= 5%: `{vrp_erp.get('drift_pct')}`")
+                alerts.append(f"VRP-ERP drift >= 5%: `{drift_display}`")
         except Exception:
             pass
 
@@ -345,16 +466,25 @@ def build_digest(
 
     # Unexpected positions (live only)
     if live and snap is not None and snap.positions:
-        # Expected: DM symbols + SPY + VXM/VX contracts
-        expected_prefixes = set(DM_SYMBOLS + ["SPY", "VXM", "VX"])
+        # Expected symbols: DM symbols + SPY (including options) + VXM/VX contracts
+        expected_symbols = set(DM_SYMBOLS + ["SPY", "VX"])
         unexpected = []
-        for sym in snap.positions.keys():
-            if sym not in expected_prefixes and not sym.startswith("VXM") and not sym.startswith("VX"):
-                # Check if it's a known DM symbol variant
-                if sym not in expected_prefixes:
-                    unexpected.append(sym)
+        for key, p in snap.positions.items():
+            sym = p.get("symbol", key)
+            sec_type = p.get("sec_type", "")
+            local_sym = p.get("local_symbol", "")
+            # Check by underlying symbol, not by key
+            is_expected = (
+                sym in expected_symbols
+                or sym.startswith("VX")  # VXM, VX futures
+                or local_sym.startswith("VXM")
+                or local_sym.startswith("VX")
+            )
+            if not is_expected:
+                display = local_sym if sec_type == "FUT" else sym
+                unexpected.append(display)
         if unexpected:
-            alerts.append(f"🔴 Unexpected positions detected: `{', '.join(unexpected)}` — may contaminate sleeve results")
+            alerts.append(f"🔴 Unexpected positions detected: `{', '.join(sorted(set(unexpected)))}` — may contaminate sleeve results")
 
     if not alerts:
         lines.append("- None")
