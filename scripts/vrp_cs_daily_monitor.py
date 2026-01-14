@@ -50,6 +50,7 @@ class PositionConfig:
     # Contract specs
     multiplier: float = 100.0  # VXM = $100 per point
     position_size: int = 1     # 1 spread
+    quantity: int = 1          # Alias for position_size (from config JSON)
 
     # Roll schedule
     vx1_expiry: str = "2026-01-21"  # Jan expiry (Wednesday)
