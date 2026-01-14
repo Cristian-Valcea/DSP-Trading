@@ -299,14 +299,21 @@ async def _place_calendar_spread(
     if action not in ("BUY", "SELL"):
         raise ValueError(f"Invalid action: {action}")
 
-    if action == "BUY":
-        limit_price = _round_to_tick(spread_mid + limit_buffer)
-        far_leg_action = "BUY"
-        near_leg_action = "SELL"
-    else:
-        limit_price = _round_to_tick(spread_mid - limit_buffer)
-        far_leg_action = "SELL"
-        near_leg_action = "BUY"
+    # IMPORTANT (IBKR combo semantics):
+    # - `ComboLeg.action` expresses the leg directions for a BUY of the combo.
+    # - The IB order `action` (BUY/SELL) flips those legs automatically.
+    # If we invert both legs AND set order.action=SELL, IBKR flips again and we
+    # can accidentally OPEN when we intended to CLOSE.
+    #
+    # For a VXM calendar spread, define BUY-combo legs as:
+    #   - SELL near (front month)
+    #   - BUY  far  (back month)
+    # That opens: short near, long far.
+    # Then use order.action=SELL to close that spread.
+    near_leg_action = "SELL"
+    far_leg_action = "BUY"
+
+    limit_price = _round_to_tick(spread_mid + limit_buffer) if action == "BUY" else _round_to_tick(spread_mid - limit_buffer)
 
     combo = Bag()
     combo.symbol = "VXM"
@@ -641,4 +648,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
