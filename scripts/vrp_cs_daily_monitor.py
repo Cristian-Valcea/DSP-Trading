@@ -181,15 +181,26 @@ def calculate_pnl(config: PositionConfig, market: MarketData) -> dict:
 
 
 def check_exit_triggers(config: PositionConfig, market: MarketData) -> dict:
-    """Check if any exit triggers are hit."""
+    """Check if any exit triggers are hit.
+
+    For VRP calendar spread (short front, long back):
+    - We PROFIT when spread WIDENS (front drops faster than back)
+    - We LOSE when spread NARROWS (front rises faster than back)
+
+    Therefore:
+    - Stop-loss: spread narrows below threshold (loss)
+    - Take-profit: spread widens above threshold (profit)
+    """
     current_spread = market.spread
 
-    stop_loss_hit = current_spread >= config.stop_loss_spread
-    take_profit_hit = current_spread <= config.take_profit_spread
+    # Stop-loss when spread NARROWS (we're losing)
+    stop_loss_hit = current_spread <= config.stop_loss_spread
+    # Take-profit when spread WIDENS (we're profiting)
+    take_profit_hit = current_spread >= config.take_profit_spread
 
     # Distance to triggers
-    stop_loss_distance = config.stop_loss_spread - current_spread
-    take_profit_distance = current_spread - config.take_profit_spread
+    stop_loss_distance = current_spread - config.stop_loss_spread  # Positive = safe
+    take_profit_distance = config.take_profit_spread - current_spread  # Positive = not yet hit
 
     return {
         "stop_loss_hit": stop_loss_hit,
@@ -282,11 +293,12 @@ def print_report(config: PositionConfig, market: MarketData):
     print(f"Unrealized P&L: ${pnl['total_pnl']:+.2f}")
 
     # Exit Triggers
+    # For VRP-CS: stop-loss when spread narrows (<), take-profit when spread widens (>)
     print("\n--- EXIT TRIGGERS ---")
     sl_status = "HIT!" if triggers['stop_loss_hit'] else f"OK (distance: {triggers['stop_loss_distance']:.2f})"
     tp_status = "HIT!" if triggers['take_profit_hit'] else f"OK (distance: {triggers['take_profit_distance']:.2f})"
-    print(f"Stop-Loss  (>{triggers['stop_loss_level']:.2f}): {sl_status}")
-    print(f"Take-Profit (<{triggers['take_profit_level']:.2f}): {tp_status}")
+    print(f"Stop-Loss  (<{triggers['stop_loss_level']:.2f}): {sl_status}")
+    print(f"Take-Profit (>{triggers['take_profit_level']:.2f}): {tp_status}")
 
     if triggers['stop_loss_hit']:
         print("\n  >>> STOP-LOSS TRIGGERED - EXIT POSITION IMMEDIATELY <<<")

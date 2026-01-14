@@ -6,8 +6,8 @@
   "long_entry_price": 19.77,
   "entry_date": "2026-01-14",
   "entry_spread": 0.65,
-  "stop_loss_spread": 0.81,
-  "take_profit_spread": 0.32,
+  "stop_loss_spread": 0.32,
+  "take_profit_spread": 1.30,
   "vx1_expiry": "2026-02-19",
   "roll_by_date": "2026-02-12"
 }
