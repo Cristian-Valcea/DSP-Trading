@@ -143,7 +143,7 @@ class IBKRClient:
         host: str = "127.0.0.1",
         port: int = 7497,
         client_id: int = 1,
-        timeout: float = 10.0,
+        timeout: float = 20.0,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
@@ -218,6 +218,9 @@ class IBKRClient:
                 )
 
                 self._connected = True
+
+                # Request live market data (type 1) - required for real-time quotes/greeks
+                self._ib.reqMarketDataType(1)
 
                 # Start connection monitoring
                 self._monitor = ConnectionMonitor(self._ib, self._reconnect)

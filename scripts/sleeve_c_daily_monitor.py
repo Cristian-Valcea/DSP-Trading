@@ -95,7 +95,8 @@ async def _run_live(args: argparse.Namespace) -> int:
     now_ny = get_ny_time()
     today = now_ny.date()
 
-    ib = IBKRClient(host=cfg.ibkr.host, port=cfg.ibkr.port, client_id=cfg.ibkr.client_id)
+    # Use unique client ID 203 for Sleeve C monitor to avoid conflicts with other scripts
+    ib = IBKRClient(host=cfg.ibkr.host, port=cfg.ibkr.port, client_id=203, timeout=cfg.ibkr.timeout_s)
     if not await ib.connect():
         print("ERROR: Could not connect to IBKR. Is TWS/Gateway running?")
         return 2
