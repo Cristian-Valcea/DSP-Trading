@@ -201,11 +201,18 @@ def get_live_quotes_ibkr(non_interactive: bool = False) -> Optional[Tuple[float,
         non_interactive: If True, avoid prompting for input (use state file for VIX).
     """
     try:
-        from ib_insync import IB, Stock
+        from ib_insync import IB, Stock, Index
         import math
 
         ib = IB()
-        ib.connect('127.0.0.1', 7497, clientId=201, timeout=10)
+        ibkr_host = os.environ.get('IBKR_HOST', '127.0.0.1')
+        ibkr_port = int(os.environ.get('IBKR_PORT', '7497'))
+        # Use unique client ID 210 for VRP-ERP monitor to avoid conflicts
+        # Client ID mapping: VRP-CS=200, VRP-ERP trade=201/202, Sleeve C=203, VRP-ERP monitor=210
+        ib.connect(ibkr_host, ibkr_port, clientId=210, timeout=20)
+
+        # Request live market data (type 1) - required for real-time quotes
+        ib.reqMarketDataType(1)
 
         # Request SPY quotes
         spy_contract = Stock('SPY', 'SMART', 'USD')
@@ -239,6 +246,34 @@ def get_live_quotes_ibkr(non_interactive: bool = False) -> Optional[Tuple[float,
         if spy_price:
             spy_pos.current_price = spy_price
 
+        # Fetch VIX from IBKR (user has CBOE subscription)
+        vix = None
+        try:
+            vix_contract = Index('VIX', 'CBOE', 'USD')
+            ib.qualifyContracts(vix_contract)
+
+            # Request real-time data (type 1 = live)
+            ib.reqMarketDataType(1)
+            [vix_ticker] = ib.reqTickers(vix_contract)
+
+            # Debug: show what IBKR returned
+            print(f"[DEBUG] VIX ticker: last={vix_ticker.last}, close={vix_ticker.close}, bid={vix_ticker.bid}, ask={vix_ticker.ask}")
+
+            # Try multiple price sources for VIX
+            if vix_ticker.last and not math.isnan(vix_ticker.last):
+                vix = vix_ticker.last
+            elif vix_ticker.close and not math.isnan(vix_ticker.close):
+                vix = vix_ticker.close
+            elif vix_ticker.midpoint() and not math.isnan(vix_ticker.midpoint()):
+                vix = vix_ticker.midpoint()
+
+            if vix:
+                print(f"VIX (from IBKR): {vix:.2f}")
+            else:
+                print("VIX: No live data from IBKR (check CBOE subscription)")
+        except Exception as vix_err:
+            print(f"VIX fetch from IBKR failed: {vix_err}")
+
         ib.disconnect()
 
         # If no valid price, fall back to manual entry or state
@@ -255,21 +290,43 @@ def get_live_quotes_ibkr(non_interactive: bool = False) -> Optional[Tuple[float,
             print(f"\nSPY Price: ${spy_price:.2f}")
             print(f"SPY Position: {spy_pos.shares} shares")
 
-            # Try to get VIX from state file first (for non-interactive mode)
-            state_vix = get_vix_from_state()
-            if non_interactive:
-                if state_vix:
-                    print(f"VIX (from state): {state_vix:.2f}")
-                    vix = state_vix
+            # If IBKR VIX failed (e.g., market closed), try Yahoo Finance as fallback
+            if vix is None:
+                print("Trying Yahoo Finance for VIX (fallback)...")
+                try:
+                    import urllib.request
+                    import json as json_lib
+
+                    url = "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d"
+                    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                    with urllib.request.urlopen(req, timeout=10) as response:
+                        data = json_lib.loads(response.read().decode())
+
+                    result = data.get('chart', {}).get('result', [])
+                    if result:
+                        meta = result[0].get('meta', {})
+                        vix = meta.get('regularMarketPrice')
+                        if vix:
+                            print(f"VIX (from Yahoo): {vix:.2f}")
+                except Exception as yahoo_err:
+                    print(f"Yahoo VIX fallback failed: {yahoo_err}")
+
+            # Final fallback to state file
+            if vix is None:
+                state_vix = get_vix_from_state()
+                if non_interactive:
+                    if state_vix:
+                        print(f"VIX (from state): {state_vix:.2f}")
+                        vix = state_vix
+                    else:
+                        print("❌ Cannot proceed in non-interactive mode without VIX in state file.")
+                        return None
                 else:
-                    print("❌ Cannot proceed in non-interactive mode without VIX in state file.")
-                    return None
-            else:
-                if state_vix:
-                    vix_input = input(f"Enter current VIX [{state_vix:.2f}]: ").strip()
-                    vix = float(vix_input) if vix_input else state_vix
-                else:
-                    vix = float(input("Enter current VIX: "))
+                    if state_vix:
+                        vix_input = input(f"Enter current VIX [{state_vix:.2f}]: ").strip()
+                        vix = float(vix_input) if vix_input else state_vix
+                    else:
+                        vix = float(input("Enter current VIX: "))
 
         spy_pos.current_price = spy_price
         return vix, spy_price, spy_pos
