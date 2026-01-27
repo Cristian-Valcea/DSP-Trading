@@ -16,6 +16,7 @@ Output:
 
 import argparse
 import json
+import math
 import os
 import sys
 from dataclasses import dataclass
@@ -115,37 +116,57 @@ def get_manual_quotes() -> MarketData:
     )
 
 
-def get_live_quotes_ibkr() -> Optional[MarketData]:
+def _vxm_code_to_yyyymm(code: str) -> str:
+    """Convert VXM contract code like VXMG6 -> YYYYMM (e.g., 202602)."""
+    # VXM codes: F=Jan, G=Feb, H=Mar, J=Apr, K=May, M=Jun, N=Jul, Q=Aug, U=Sep, V=Oct, X=Nov, Z=Dec
+    month_map = {'F': 1, 'G': 2, 'H': 3, 'J': 4, 'K': 5, 'M': 6,
+                 'N': 7, 'Q': 8, 'U': 9, 'V': 10, 'X': 11, 'Z': 12}
+    # Extract month letter and year digit (e.g., "VXMG6" -> "G", "6")
+    month_letter = code[3].upper()
+    year_digit = int(code[4])
+    month = month_map.get(month_letter, 1)
+    year = 2020 + year_digit  # Assumes 2020s decade
+    return f"{year}{month:02d}"
+
+
+def get_live_quotes_ibkr(config: PositionConfig) -> Optional[MarketData]:
     """Fetch live quotes from IBKR (requires connection)."""
     try:
         from ib_insync import IB, Future
+        import os
 
         ib = IB()
-        ib.connect('127.0.0.1', 7497, clientId=200, timeout=10)
+        ibkr_host = os.environ.get('IBKR_HOST', '127.0.0.1')
+        ibkr_port = int(os.environ.get('IBKR_PORT', '7497'))
+        ib.connect(ibkr_host, ibkr_port, clientId=200, timeout=10)
 
-        # Request VIX index (not always available)
-        # For VX futures, use CFE exchange
-        vxm_f6 = Future(symbol='VXM', lastTradeDateOrContractMonth='202601', exchange='CFE')
-        vxm_g6 = Future(symbol='VXM', lastTradeDateOrContractMonth='202602', exchange='CFE')
+        # Convert contract codes to YYYYMM format
+        short_yyyymm = _vxm_code_to_yyyymm(config.short_contract)
+        long_yyyymm = _vxm_code_to_yyyymm(config.long_contract)
 
-        ib.qualifyContracts(vxm_f6, vxm_g6)
+        print(f"Fetching: {config.short_contract} ({short_yyyymm}), {config.long_contract} ({long_yyyymm})")
+
+        vxm_short = Future(symbol='VXM', lastTradeDateOrContractMonth=short_yyyymm, exchange='CFE')
+        vxm_long = Future(symbol='VXM', lastTradeDateOrContractMonth=long_yyyymm, exchange='CFE')
+
+        ib.qualifyContracts(vxm_short, vxm_long)
 
         # Get market data
-        [ticker_f6] = ib.reqTickers(vxm_f6)
-        [ticker_g6] = ib.reqTickers(vxm_g6)
+        [ticker_short] = ib.reqTickers(vxm_short)
+        [ticker_long] = ib.reqTickers(vxm_long)
 
-        vx1 = ticker_f6.midpoint() if ticker_f6.midpoint() else ticker_f6.last
-        vx2 = ticker_g6.midpoint() if ticker_g6.midpoint() else ticker_g6.last
+        vx1 = ticker_short.midpoint() if ticker_short.midpoint() else ticker_short.last
+        vx2 = ticker_long.midpoint() if ticker_long.midpoint() else ticker_long.last
 
         ib.disconnect()
 
         # Approximate VIX from VX1 (VX1 typically 0.5-2 points above VIX in contango)
-        vix_approx = vx1 - 1.0
+        vix_approx = vx1 - 1.0 if vx1 and not math.isnan(vx1) else None
 
         return MarketData(
-            vix=vix_approx,
-            vx1=vx1,
-            vx2=vx2,
+            vix=vix_approx if vix_approx else 0.0,
+            vx1=vx1 if vx1 else 0.0,
+            vx2=vx2 if vx2 else 0.0,
             timestamp=datetime.now()
         )
     except Exception as e:
@@ -469,7 +490,7 @@ def main():
         )
     elif args.live:
         print("Fetching live quotes from IBKR...")
-        market = get_live_quotes_ibkr()
+        market = get_live_quotes_ibkr(config)
         if market is None:
             print("Failed to get live quotes. Falling back to manual entry.")
             market = get_manual_quotes()

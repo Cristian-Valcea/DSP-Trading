@@ -17,6 +17,7 @@ Usage:
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -64,7 +65,9 @@ def execute_spy_order(action: str, qty: int, dry_run: bool = False) -> dict:
         from ib_insync import IB, Stock, MarketOrder
 
         ib = IB()
-        ib.connect('127.0.0.1', 7497, clientId=202, timeout=10)
+        ibkr_host = os.environ.get('IBKR_HOST', '127.0.0.1')
+        ibkr_port = int(os.environ.get('IBKR_PORT', '7497'))
+        ib.connect(ibkr_host, ibkr_port, clientId=202, timeout=10)
 
         # Create SPY contract
         spy = Stock('SPY', 'SMART', 'USD')
