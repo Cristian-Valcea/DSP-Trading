@@ -1,0 +1,179 @@
+# DSP-100K LIVE Configuration
+# Diversified Systematic Portfolio - $100K Target Capital
+#
+# ============================================================
+#  WARNING: THIS IS THE LIVE TRADING CONFIG
+#  - Uses port 4001 (Docker live gateway)
+#  - Requires IBKR_LIVE_CONFIRMED=yes to execute
+#  - All trades will use REAL MONEY
+# ============================================================
+#
+# STRICT MODE COMPATIBLE - All keys match dataclass fields exactly
+
+# General Portfolio Settings
+general:
+  nlv_target: 100000
+  cash_buffer: 0.10           # 10% cash buffer
+  margin_cap: 0.60            # 60% margin cap
+  risk_scale: 0.05            # ~$50k exposure (adjust for your NLV)
+  allow_external_positions: false  # Fail closed if account has unmanaged positions
+  sleeve_a_nav_pct: 0.00      # KILLED
+  sleeve_b_nav_pct: 0.00      # KILLED
+  sleeve_dm_nav_pct: 0.60     # ETF Dual Momentum ACTIVE
+
+# IBKR Connection Settings - LIVE
+ibkr:
+  host: "127.0.0.1"
+  port: 4001                  # LIVE port (Docker gateway)
+  client_id: 100
+  timeout_s: 30               # Connection timeout in seconds
+  historical_duration: "2 Y"
+  historical_bar_size: "1 day"
+  # Account validation happens in connect_ib() helper
+  # Expected: non-DU account (e.g., U1234567)
+
+# Risk Management Configuration
+risk:
+  # Volatility targeting
+  vol_target: 0.07            # 7% portfolio volatility target
+  vol_cap: 0.08               # 8% hard cap
+  sleeve_a_vol_target: 0.05   # 5% for equity L/S (disabled)
+  sleeve_b_vol_target: 0.035  # 3.5% for cross-asset trend (disabled)
+
+  # Drawdown controls
+  dd_warning: 0.06            # 6% drawdown warning
+  dd_hard_stop: 0.10          # 10% hard stop - liquidate to cash
+
+  # Margin controls
+  margin_cap: 0.60            # 60% margin utilization cap
+
+  # Correlation limits
+  sleeve_correlation_limit: 0.60  # A-B correlation limit
+  sleeve_correlation_window: 30   # days
+
+# Sleeve A Configuration - DISABLED (killed due to survivorship bias)
+sleeve_a:
+  enabled: false
+  vol_target: 0.05
+  n_long: 20
+  n_short: 0
+  max_weight_per_name: 0.04
+  max_sector_gross: 0.20
+  rebalance_frequency: "monthly"
+  trade_band: 0.0025
+  hedge_trade_band: 0.05
+  short_squeeze_gap: 0.20
+  max_loss_per_name: 0.0075
+  beta_limit: 0.60
+  spy_hedge_cap: 0.20
+  min_price: 10.0
+  min_adv: 20000000
+  kill_sharpe_threshold: 0.0
+  kill_drawdown_threshold: 0.15
+
+# Sleeve B Configuration - DISABLED (killed - just SPY beta)
+sleeve_b:
+  enabled: false
+  vol_target: 0.035
+  rebalance_frequency: "weekly"
+  turnover_cap: 0.50
+  deadband: 0.25
+  single_name_cap: 0.15
+  rebal_threshold: 0.05
+  weight_1m: 0.25
+  weight_3m: 0.50
+  weight_12m: 0.25
+  universe:
+    - TLT
+    - IEF
+    - LQD
+    - HYG
+    - EMB
+    - TIP
+    - GLD
+    - SLV
+    - USO
+    - UNG
+    - DBA
+    - DBB
+    - UUP
+    - FXE
+    - FXY
+    - FXB
+    - VIXY
+  spy_correlation_limit: 0.70
+  spy_correlation_days: 60
+
+# Sleeve DM Configuration (ETF Dual Momentum) - ACTIVE
+sleeve_dm:
+  enabled: true               # LIVE: ETF Dual Momentum active
+
+  # Universe (risky assets + cash ETF)
+  risky_universe:
+    - SPY
+    - EFA
+    - EEM
+    - IEF
+    - TLT
+    - TIP
+    - GLD
+    - PDBC
+    - UUP
+  cash_symbol: SHY
+
+  # Signal: 12-1 momentum (skip-month)
+  top_k: 3
+  min_momentum: 0.0
+  momentum_window_days: 252
+  momentum_skip_days: 21
+
+  # Vol targeting (conservative estimator, matches backtest)
+  vol_target: 0.08
+  vol_lookback_days: 63
+  max_leverage: 1.5
+
+  # Execution / sizing
+  rebalance_frequency: monthly
+  lookback_days: 420
+  min_order_notional: 100.0
+
+# Sleeve C Configuration (Put Spread Hedge) - MANUAL EXECUTION
+sleeve_c:
+  enabled: true               # Monitor active, execution is manual
+  annual_budget_pct: 0.0125   # 1.25% annual budget for hedges
+
+  # Delta targets
+  long_delta_target: -0.25    # 25-delta long put
+  short_delta_target: -0.10   # 10-delta short put
+  delta_drift_min: -0.35
+  delta_drift_max: -0.15
+
+  # Expiration targeting
+  target_dte_min: 30          # Minimum 30 DTE
+  target_dte_max: 45          # Maximum 45 DTE
+  roll_dte_trigger: 10        # Roll when DTE < 10
+
+  # Underlying
+  underlying: "SPY"
+
+  # Maximum spread count
+  max_spreads: 5
+
+# Execution Configuration
+execution:
+  # Execution window (ET)
+  window_start: "09:35"
+  window_end: "10:15"
+
+  # Order settings
+  order_timeout_s: 120        # 2 minute timeout per order
+  max_slippage_bps: 50        # 50 bps max slippage
+  retry_count: 3
+
+# Transaction Cost Model
+transaction_costs:
+  stock_slippage_bps: 10.0
+  stock_commission_per_share: 0.005
+  etf_slippage_bps: 5.0
+  option_commission_per_contract: 0.65
+  option_friction_pct: 0.05   # 5% of premium
