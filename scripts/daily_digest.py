@@ -502,8 +502,8 @@ def main() -> int:
     p.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
     p.add_argument("--no-write", action="store_true", help="Print only; do not write file")
     p.add_argument("--live", action="store_true", help="Enrich with IBKR snapshot via ib_insync")
-    p.add_argument("--host", default="127.0.0.1")
-    p.add_argument("--port", type=int, default=7497)
+    p.add_argument("--host", default=os.environ.get("IBKR_HOST", "127.0.0.1"))
+    p.add_argument("--port", type=int, default=int(os.environ.get("IBKR_PORT", "7497")))
     p.add_argument("--client-id", type=int, default=901)
     args = p.parse_args()
 

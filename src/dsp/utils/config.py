@@ -288,13 +288,16 @@ DSPConfig = Config
 def _apply_env_overrides(config: Config) -> Config:
     """Apply environment variable overrides to config."""
 
-    # IBKR overrides
-    if os.getenv("DSP_IBKR_HOST"):
-        config.ibkr.host = os.getenv("DSP_IBKR_HOST")
-    if os.getenv("DSP_IBKR_PORT"):
-        config.ibkr.port = int(os.getenv("DSP_IBKR_PORT"))
-    if os.getenv("DSP_IBKR_CLIENT_ID"):
-        config.ibkr.client_id = int(os.getenv("DSP_IBKR_CLIENT_ID"))
+    # IBKR overrides (check DSP_ prefixed first, then non-prefixed as fallback)
+    ibkr_host = os.getenv("DSP_IBKR_HOST") or os.getenv("IBKR_HOST")
+    if ibkr_host:
+        config.ibkr.host = ibkr_host
+    ibkr_port = os.getenv("DSP_IBKR_PORT") or os.getenv("IBKR_PORT")
+    if ibkr_port:
+        config.ibkr.port = int(ibkr_port)
+    ibkr_client_id = os.getenv("DSP_IBKR_CLIENT_ID") or os.getenv("IBKR_CLIENT_ID")
+    if ibkr_client_id:
+        config.ibkr.client_id = int(ibkr_client_id)
 
     # General overrides
     if os.getenv("DSP_RISK_SCALE"):
