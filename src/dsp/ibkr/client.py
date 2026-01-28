@@ -146,6 +146,7 @@ class IBKRClient:
         timeout: float = 20.0,
         max_retries: int = 3,
         retry_delay: float = 1.0,
+        market_data_type: int = 1,
     ):
         """
         Initialize IBKR client.
@@ -157,6 +158,11 @@ class IBKRClient:
             timeout: Default timeout for API calls (seconds)
             max_retries: Maximum reconnection attempts
             retry_delay: Base delay between retries (exponential backoff)
+            market_data_type: IBKR market data type:
+                1 = Live (default, only one session per account can use this)
+                2 = Frozen (last available if market closed)
+                3 = Delayed (15-min delay, always available, no competing session issues)
+                4 = Delayed frozen
         """
         self.host = host
         self.port = port
@@ -164,6 +170,7 @@ class IBKRClient:
         self.timeout = timeout
         self.max_retries = max_retries
         self.retry_delay = retry_delay
+        self.market_data_type = market_data_type
 
         self._ib: Optional[IB] = None
         self._rate_limiter = RateLimiter(max_calls=30, period_seconds=1.0)
@@ -219,8 +226,9 @@ class IBKRClient:
 
                 self._connected = True
 
-                # Request live market data (type 1) - required for real-time quotes/greeks
-                self._ib.reqMarketDataType(1)
+                # Request market data type (1=live, 2=frozen, 3=delayed, 4=delayed-frozen)
+                # Type 3 (delayed) avoids "competing live session" errors when TWS is open
+                self._ib.reqMarketDataType(self.market_data_type)
 
                 # Start connection monitoring
                 self._monitor = ConnectionMonitor(self._ib, self._reconnect)
